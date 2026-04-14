@@ -5,6 +5,7 @@ import java.net.*;
 class Server {
 	public static void main(String[] args)
 	{
+		Server ref = new Server();
 		ServerSocket server = null;
 
 		try {
@@ -29,7 +30,7 @@ class Server {
 
 				// create a new thread object
 				ClientHandler clientSock
-					= new ClientHandler(client);
+					= new ClientHandler(client,ref);
 
 				// This thread will handle the client
 				// separately
@@ -54,11 +55,13 @@ class Server {
 	// ClientHandler class
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
+		private final Server server;
 
 		// Constructor
-		public ClientHandler(Socket socket)
+		public ClientHandler(Socket socket, Server server)
 		{
 			this.clientSocket = socket;
+			this.server = server;
 		}
 
 		public void run()
