@@ -1,8 +1,19 @@
 import java.io.Serializable;
 
+enum Status{
+	SUCCESS,
+	IN_PROGRESS,
+	ERROR
+}
+
+enum msgType{
+	DEPOSIT_REQUEST,
+	WITHDRAWAL_REQUEST,
+	LOGIN_REQUEST,
+	ACCOUNTS_REQUEST
+}
 // must implement Serializable in order to be sent
 public class Message implements Serializable{
-    private static int count = 0;
     private final int id;
     private final String text;
     private final String type;
@@ -10,7 +21,6 @@ public class Message implements Serializable{
     public Message(String text) {
         this.text = text;
         this.type = "default";
-        this.id = ++count;
     }
 
     public String getText() {
