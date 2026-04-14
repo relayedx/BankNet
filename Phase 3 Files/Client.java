@@ -9,7 +9,7 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
-        System.out.print("Enter the port number to connect to: <7777>");
+        System.out.print("Enter the port number to connect to: <1234>");
         int port = sc.nextInt();
         System.out.print("Enter the host address to connect to: <localhost> ");
         String host = sc.next();
@@ -22,19 +22,27 @@ public class Client {
         OutputStream outputStream = socket.getOutputStream();
 
         // Create object output stream from the output stream to send an object through it
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        ObjectOutputStream out = new ObjectOutputStream(outputStream);
+        // Create a input stream to read these objects as well
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
         // List of Message objects
-        List<Message> messages = new ArrayList<>();
-        messages.add(new Message("This is a test message!"));
+        //List<Message> messages = new ArrayList<>();
+       // messages.add(new Message("This is a test message!"));
 
-        System.out.print("Enter message info. <enter> to quit\n");
-        String msg = sc.next();
-        messages.add(new Message(msg));
 
-        System.out.println("Sending Message Objects");
-        objectOutputStream.writeObject(messages);
-
+        System.out.println("Sending Message Object");
+        out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, "user","pass"));
+        
+        try {
+			Message msg = (Message) in.readObject();
+			System.out.println(msg.getStatus() + " " + msg.getType());
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
         System.out.println("Closing socket");
         socket.close();
     }
