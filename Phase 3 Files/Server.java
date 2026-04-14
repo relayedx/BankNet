@@ -56,6 +56,8 @@ class Server {
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
 		private final Server server;
+		private ObjectOutputStream out = null;
+		private ObjectInputStream in = null;
 
 		// Constructor
 		public ClientHandler(Socket socket, Server server)
@@ -66,29 +68,15 @@ class Server {
 
 		public void run()
 		{
-			PrintWriter out = null;
-			BufferedReader in = null;
 			try {
 					
 				// get the outputstream of client
-				out = new PrintWriter(
-					clientSocket.getOutputStream(), true);
+				out = new ObjectOutputStream(clientSocket.getOutputStream());
 
 				// get the inputstream of client
-				in = new BufferedReader(
-					new InputStreamReader(
-						clientSocket.getInputStream()));
+				in = new ObjectInputStream(clientSocket.getInputStream());
 
-				String line;
-				while ((line = in.readLine()) != null) {
 
-					// writing the received message from
-					// client
-					System.out.printf(
-						" Sent from the client: %s\n",
-						line);
-					out.println(line);
-				}
 			}
 			catch (IOException e) {
 				e.printStackTrace();
