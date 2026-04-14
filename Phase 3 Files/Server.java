@@ -52,6 +52,7 @@ class Server {
 		}
 	}
 
+	
 	// ClientHandler class
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
@@ -75,10 +76,27 @@ class Server {
 
 				// get the inputstream of client
 				in = new ObjectInputStream(clientSocket.getInputStream());
+				
+				while(true) { // While client is connected
+					Message msg = (Message) in.readObject(); // Wait for client to send a msg
+					if (msg.getType() == msgType.LOGIN_REQUEST) { // If it is a login request, we can upcast it into a LoginMessage
+						LoginMessage lMsg = (LoginMessage) msg;
+						boolean auth = server.isUser(lMsg.getUser(),lMsg.getPass()); // Is the user an actual user?
+						if (auth) { // if so,
+							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();// send msg to server
+					}
+					
+				}
 
 
 			}
 			catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			finally {
@@ -96,5 +114,12 @@ class Server {
 				}
 			}
 		}
+	
+	}
+	
+	public boolean isUser(String user, String pass) {
+		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
+		// For now, we will assume they are a user.
+		return true;
 	}
 }
