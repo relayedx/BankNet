@@ -1,7 +1,14 @@
+import java.time.LocalDateTime;
 
 public class MsgTest {
 	public static void main(String[] args) {
-		LoginMessage msg = new LoginMessage(msgType.LOGIN_REQUEST,Status.IN_PROGRESS,"test","pass");
-		System.out.println(msg.getUser());
+		LocalDateTime test = LocalDateTime.now();
+		System.out.println(test.getHour() + ":" + test.getMinute());
+		String well = "100@help me@well";
+		System.out.println(well.replaceAll("@", ","));
+		
+		LocalDateTime help = LocalDateTime.parse(test.toString());
+		System.out.println(help.getHour() + ":" + help.getMinute());
+		
 	}
 }
