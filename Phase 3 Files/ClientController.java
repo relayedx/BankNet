@@ -21,4 +21,12 @@ public class ClientController {
 			JOptionPane.showMessageDialog(null, "Error");
 		}
 	}
+	
+	public void logout() throws ClassNotFoundException, IOException {
+		boolean logout = client.logout();
+		if (logout) { // If they were able to logout
+			// TODO: Return back to login (?)
+		}
+		// TODO: What if they were not able to log out....
+	}
 }

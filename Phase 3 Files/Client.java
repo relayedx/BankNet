@@ -66,11 +66,21 @@ public class Client {
 		}
     }
     
-    public ArrayList<Message> getAccts(String user) throws IOException, ClassNotFoundException{
+    public void getAccts(String user) throws IOException, ClassNotFoundException{
     	System.out.println("Sending Accounts Object");
     	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
     	out.flush();
     	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject();
+    }
+    
+    public boolean logout() throws ClassNotFoundException, IOException{
+    	out.writeObject(new Message(msgType.LOGOUT_REQUEST,Status.IN_PROGRESS));
+    	out.flush();
+    	Message msg = (Message) in.readObject(); // We are expecting a msg back
+    	if (msg.getStatus() == Status.SUCCESS) { // If logout is successful
+    		return true; // We were able to logout
+    	}
+    	return false; // otherwise, return error
     }
 }
 
