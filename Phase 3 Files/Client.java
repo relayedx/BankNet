@@ -65,6 +65,10 @@ public class Client {
 			return false;
 		}
     }
+    
+    public ArrayList<Message> getAccts(String user){
+    	
+    }
 }
 
 
