@@ -1,0 +1,42 @@
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+enum TranType{
+	WITHDRAWAL,
+	DEPOSIT,
+	SYSTEM
+}
+
+public class Transaction implements Serializable{
+	private final LocalDateTime date;
+	private final String user;
+	private final float amount;
+	private final TranType tranType;
+	public Transaction(String user, float amt, TranType type) {
+		date = LocalDateTime.now();
+		this.user = user;
+		amount = amt;
+		tranType = type;
+	}
+	
+	/// GETTERS / SETTERS
+	public float getAmount() {
+		return amount;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+	
+	public TranType getType() {
+		return tranType;
+	}
+	
+
+	
+	public String toString() {
+		String temp = "" + date + "%"+ user + "%" + amount + "%" + tranType;
+		return temp;
+	}
+	
+}

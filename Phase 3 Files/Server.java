@@ -97,6 +97,14 @@ class Server {
 						// We will skip the rest of the logic, and wait for our login message
 						continue;
 					}
+					msgType type = msg.getType();
+					if (type == msgType.WITHDRAWAL_REQUEST) {
+						TransactionMessage tMsg = (TransactionMessage) msg;
+						TransactionMessage withdraw = server.withdraw(tMsg.getID(), tMsg.getTransaction());
+						// We will send back a transaction message
+						out.writeObject(withdraw);
+						out.flush();
+					}
 					
 					
 				}
@@ -131,5 +139,13 @@ class Server {
 		// We can also check here whether or not the user is already logged into the system.
 		// For now, we will assume they are a user.
 		return true;
+	}
+	
+	public TransactionMessage withdraw(int acctID, Transaction trans) {
+		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
+		// (since we need both the updated balance, and whether or not this is a success)
+		// For now, we will assume they don't have enough funds
+		TransactionMessage temp = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans,acctID);
+		return temp;
 	}
 }

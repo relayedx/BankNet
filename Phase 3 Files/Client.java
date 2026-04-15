@@ -43,13 +43,16 @@ public class Client {
 
 
 
+
         
         
+        System.out.println("Closing socket");
         socket.close();
     }
     
     public boolean login(String user, String pass) throws IOException, ClassNotFoundException { // Called from ClientController
    
+        System.out.println("Sending LoginMessage Object");
         out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, "user","pass")); // Client makes msg to send to the server
         out.flush(); // Sends the message
 		Message msg = (Message) in.readObject(); // We are expecting a message back
@@ -63,11 +66,28 @@ public class Client {
 		}
     }
     
-    public void getAccts(String user) throws IOException, ClassNotFoundException{ // TODO: return ArrayList<Messages>
+    public void getAccts(String user) throws IOException, ClassNotFoundException{
     	System.out.println("Sending Accounts Object");
     	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
     	out.flush();
     	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject();
+    }
+    
+    public boolean logout() throws ClassNotFoundException, IOException{
+    	out.writeObject(new Message(msgType.LOGOUT_REQUEST,Status.IN_PROGRESS));
+    	out.flush();
+    	Message msg = (Message) in.readObject(); // We are expecting a msg back
+    	if (msg.getStatus() == Status.SUCCESS) { // If logout is successful
+    		return true; // We were able to logout
+    	}
+    	return false; // otherwise, return error
+    }
+   
+    public TransactionMessage withdraw(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
+    	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
+    	out.flush();
+    	TransactionMessage msg = (TransactionMessage) in.readObject();
+    	return msg;
     }
 }
 
