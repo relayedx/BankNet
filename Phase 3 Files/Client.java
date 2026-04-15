@@ -7,13 +7,16 @@ import java.util.Scanner;
 
 public class Client {
 
-    public static void main(String[] args) throws IOException {
+	static ObjectOutputStream out; 
+	static ObjectInputStream in;
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
         System.out.print("Enter the port number to connect to: <1234>");
         int port = sc.nextInt();
         System.out.print("Enter the host address to connect to: <localhost> ");
         String host = sc.next();
-
+        
+        Client ref = new Client(); 
         // Connect to the ServerSocket at host:port
         Socket socket = new Socket(host, port);
         System.out.println("Connected to " + host + ":" + port);
@@ -34,13 +37,9 @@ public class Client {
         System.out.println("Sending Message Object");
         out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, "user","pass"));
         
-        try {
-			Message msg = (Message) in.readObject();
-			System.out.println(msg.getStatus() + " " + msg.getType());
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Message msg = (Message) in.readObject();
+		System.out.println(msg.getStatus() + " " + msg.getType());
+
         
         
         System.out.println("Closing socket");
