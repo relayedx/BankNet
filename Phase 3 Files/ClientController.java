@@ -29,4 +29,11 @@ public class ClientController {
 		}
 		// TODO: What if they were not able to log out....
 	}
+	
+	public void withdraw(int acctID, float amount, String user, float updatedBal) throws ClassNotFoundException, IOException {
+		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
+		TransactionMessage msg = client.withdraw(acctID,temp);
+		// TODO: Decide what/how this info is passed to the GUI
+	
+	}
 }

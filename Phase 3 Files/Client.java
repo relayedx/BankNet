@@ -82,6 +82,13 @@ public class Client {
     	}
     	return false; // otherwise, return error
     }
+   
+    public TransactionMessage withdraw(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
+    	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
+    	out.flush();
+    	TransactionMessage msg = (TransactionMessage) in.readObject();
+    	return msg;
+    }
 }
 
 

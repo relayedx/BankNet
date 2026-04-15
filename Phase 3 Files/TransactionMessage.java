@@ -10,6 +10,13 @@ public class TransactionMessage extends Message{
 		acctID = id;
 	}
 	
+	public TransactionMessage(msgType type, Status status, Transaction trans, int id) {
+		super(type,status);
+		transaction = trans;
+		updatedBalance = 0;
+		acctID = id;
+	}
+	
 	public Transaction getTransaction() {
 		return transaction;
 	}
