@@ -95,6 +95,16 @@ public class Client {
     	out.flush();
     	TransactionMessage msg = (TransactionMessage) in.readObject(); // We're expecting a transaction msf back
     	return msg;
+    }
+    
+    public boolean resetPass(String user, String pass) throws IOException, ClassNotFoundException {
+    	out.writeObject(new LoginMessage(msgType.PWRESET_REQUEST,Status.IN_PROGRESS,user,pass));
+    	out.flush();
+    	Message msg = (Message) in.readObject();
+    	if (msg.getStatus() == Status.SUCCESS){
+    		return true;
+    	}
+    	return false;
     	
     }
 }

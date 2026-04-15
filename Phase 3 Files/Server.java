@@ -114,6 +114,17 @@ class Server {
 						
 					}
 					
+					if (type == msgType.PWRESET_REQUEST) {
+						LoginMessage lMsg = (LoginMessage) msg;
+						boolean reset = server.resetPassword(lMsg.getUser(), lMsg.getPass());
+						if (reset) { // if so,
+							out.writeObject(new Message(msgType.PWRESET_REQUEST, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.PWRESET_REQUEST, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();// send msg to server
+					}
+					
 					
 				}
 
@@ -163,5 +174,11 @@ class Server {
 		// For now, we will assume they don't have enough funds
 		TransactionMessage temp = new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()+10);
 		return temp;
+	}
+	
+	public boolean resetPassword(String user, String newPass) {
+		// TODO: This is where the ArrayList of user is called, and their password is changed.
+		// For now we will assume the password is changed
+		return true;
 	}
 }

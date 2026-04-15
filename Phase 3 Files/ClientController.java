@@ -54,4 +54,13 @@ public class ClientController {
 		}
 		
 	}
+	
+	/// These are TELLER OPERATIONS, called from the respective GUI
+	public void resetPassword(String user, String pass) throws ClassNotFoundException, IOException{ 
+		
+	}
+	
+	
+	
+	
 }
