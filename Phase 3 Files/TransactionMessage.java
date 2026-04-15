@@ -3,7 +3,7 @@ public class TransactionMessage extends Message{
 	private final Transaction transaction;
 	private final float updatedBalance;
 	private final int acctID;
-	public TransactionMessage(msgType type, Status status, Transaction trans, int bal, int id) {
+	public TransactionMessage(msgType type, Status status, Transaction trans, int id, float bal) {
 		super(type,status);
 		transaction = trans;
 		updatedBalance = bal;

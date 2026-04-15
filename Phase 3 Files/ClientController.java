@@ -34,6 +34,7 @@ public class ClientController {
 		TransactionMessage msg = client.withdraw(acctID,temp);
 		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deduct the balance from the account
 			// Update GUI
+			JOptionPane.showMessageDialog(null, msg.getUpdatedBalance());
 		}else {
 			JOptionPane.showMessageDialog(null, "You broke.");
 			// Else throw error

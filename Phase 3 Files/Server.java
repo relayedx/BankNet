@@ -145,7 +145,7 @@ class Server {
 		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
 		// For now, we will assume they don't have enough funds
-		TransactionMessage temp = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans,acctID);
+		TransactionMessage temp = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()-10);
 		return temp;
 	}
 }
