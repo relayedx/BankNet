@@ -35,7 +35,7 @@ public class Client {
         
         /// SIMULATED LOGIN
         controller.login("test", "test"); // This will be called from GUI
-        
+        controller.withdraw(1, 10, "User");
         // 
         // List of Message objects
         //List<Message> messages = new ArrayList<>();

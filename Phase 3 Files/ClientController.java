@@ -29,10 +29,15 @@ public class ClientController {
 		// TODO: What if they were not able to log out....
 	}
 	
-	public void withdraw(int acctID, float amount, String user, float updatedBal) throws ClassNotFoundException, IOException {
+	public void withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
 		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
 		TransactionMessage msg = client.withdraw(acctID,temp);
-		// TODO: Decide what/how this info is passed to the GUI
+		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deduct the balance from the account
+			// Update GUI
+		}else {
+			JOptionPane.showMessageDialog(null, "You broke.");
+			// Else throw error
+		}
 	
 	}
 }
