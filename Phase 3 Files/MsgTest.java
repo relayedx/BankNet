@@ -9,6 +9,9 @@ public class MsgTest {
 		
 		LocalDateTime help = LocalDateTime.parse(test.toString());
 		System.out.println(help.getHour() + ":" + help.getMinute());
+		Transaction l = new Transaction("me",10,TranType.SYSTEM);
+		System.out.println(l);
+		
 		
 	}
 }
