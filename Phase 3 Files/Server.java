@@ -59,6 +59,7 @@ class Server {
 		private final Server server;
 		private ObjectOutputStream out = null;
 		private ObjectInputStream in = null;
+		private boolean loggedIn = false;
 
 		// Constructor
 		public ClientHandler(Socket socket, Server server)
@@ -84,11 +85,19 @@ class Server {
 						boolean auth = server.isUser(lMsg.getUser(),lMsg.getPass()); // Is the user an actual user?
 						if (auth) { // if so,
 							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.SUCCESS)); // Send a success msg
+							loggedIn = true; // Mark user as logged in.
 						}else {
 							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.ERROR)); // Otherwise send error
 						}
 						out.flush();// send msg to server
 					}
+					// Here, we will never do a command as long as the user is not logged in
+					if (!loggedIn) { // if the user is not logged in
+						System.out.println("ERROR: USER IS NOT LOGGED IN AND INCORRECT MSG SENT");
+						// We will skip the rest of the logic, and wait for our login message
+						continue;
+					}
+					
 					
 				}
 
@@ -119,6 +128,7 @@ class Server {
 	
 	public boolean isUser(String user, String pass) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
+		// We can also check here whether or not the user is already logged into the system.
 		// For now, we will assume they are a user.
 		return true;
 	}
