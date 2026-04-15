@@ -11,7 +11,6 @@ public class ClientController {
 	/// METHODS CALLED FROM GUI
 	public void login(String user, String pass) throws ClassNotFoundException, IOException { // This method is called from GUI
 		// We call client login with the arguments we are given
-		System.out.println("Calling to see if " + user + pass + " is authenticatdd");
 		boolean auth = client.login(user, pass); // See if the client is an auth user
 		// Request for accounts
 		// TODO: Display ATM GUI or Teller GUI (Fosa)

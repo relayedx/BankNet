@@ -43,16 +43,13 @@ public class Client {
 
 
 
-
         
         
-        System.out.println("Closing socket");
         socket.close();
     }
     
     public boolean login(String user, String pass) throws IOException, ClassNotFoundException { // Called from ClientController
    
-        System.out.println("Sending LoginMessage Object");
         out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, "user","pass")); // Client makes msg to send to the server
         out.flush(); // Sends the message
 		Message msg = (Message) in.readObject(); // We are expecting a message back
