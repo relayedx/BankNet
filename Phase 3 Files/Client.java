@@ -66,8 +66,11 @@ public class Client {
 		}
     }
     
-    public ArrayList<Message> getAccts(String user){
-    	
+    public ArrayList<Message> getAccts(String user) throws IOException, ClassNotFoundException{
+    	System.out.println("Sending Accounts Object");
+    	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
+    	out.flush();
+    	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject();
     }
 }
 
