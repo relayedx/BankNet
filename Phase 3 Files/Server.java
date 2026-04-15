@@ -105,6 +105,14 @@ class Server {
 						out.writeObject(withdraw);
 						out.flush();
 					}
+					if (type == msgType.DEPOSIT_REQUEST) {
+						TransactionMessage tMsg = (TransactionMessage) msg;
+						// We'll call the arguments
+						TransactionMessage sendback = server.deposit(tMsg.getID(), tMsg.getTransaction());
+						out.writeObject(sendback);
+						out.flush();
+						
+					}
 					
 					
 				}
@@ -144,8 +152,16 @@ class Server {
 	public TransactionMessage withdraw(int acctID, Transaction trans) {
 		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
-		// For now, we will assume they don't have enough funds
+		// For now, we will assume they have enough funds
 		TransactionMessage temp = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()-10);
+		return temp;
+	}
+	
+	public TransactionMessage deposit(int acctID, Transaction trans) {
+		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
+		// (since we need both the updated balance, and whether or not this is a success)
+		// For now, we will assume they don't have enough funds
+		TransactionMessage temp = new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()+10);
 		return temp;
 	}
 }

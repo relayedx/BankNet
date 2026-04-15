@@ -86,8 +86,16 @@ public class Client {
     public TransactionMessage withdraw(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
     	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
     	out.flush();
-    	TransactionMessage msg = (TransactionMessage) in.readObject();
+    	TransactionMessage msg = (TransactionMessage) in.readObject(); // We're expecting a transaction msf back
     	return msg;
+    }
+    
+    public TransactionMessage deposit(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
+    	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
+    	out.flush();
+    	TransactionMessage msg = (TransactionMessage) in.readObject(); // We're expecting a transaction msf back
+    	return msg;
+    	
     }
 }
 

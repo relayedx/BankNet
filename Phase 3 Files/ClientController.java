@@ -31,7 +31,7 @@ public class ClientController {
 	
 	public void withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
 		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
-		TransactionMessage msg = client.withdraw(acctID,temp);
+		TransactionMessage msg = client.withdraw(acctID,temp); // We're going to get a transaction msg back so we can have the updated bal and whether it was an error
 		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deduct the balance from the account
 			// Update GUI
 			JOptionPane.showMessageDialog(null, msg.getUpdatedBalance());
@@ -40,5 +40,18 @@ public class ClientController {
 			// Else throw error
 		}
 	
+	}
+	
+	public void deposit (int acctID, float amount, String user) throws ClassNotFoundException, IOException{
+		Transaction temp = new Transaction(user, amount, TranType.DEPOSIT); 
+		TransactionMessage msg  = client.deposit(acctID, temp);
+		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deposit the balance to the account
+			// Update GUI
+			JOptionPane.showMessageDialog(null, msg.getUpdatedBalance());
+		}else {
+			JOptionPane.showMessageDialog(null, "You broke.");
+			// Else throw error
+		}
+		
 	}
 }
