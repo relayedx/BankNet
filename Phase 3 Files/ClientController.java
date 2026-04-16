@@ -109,5 +109,16 @@ public class ClientController {
 		}
 	}
 	
+	public void freezeAccount(int acctID) throws ClassNotFoundException, IOException {
+		boolean freeze = client.closeAccount(acctID);
+		if (freeze) {
+			JOptionPane.showMessageDialog(null,"Freezed/Unfrozen");
+
+		}else {
+			JOptionPane.showMessageDialog(null, "Error in freezing");
+
+		}
+	}
+	
 	
 }

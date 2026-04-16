@@ -159,6 +159,16 @@ class Server {
 						}
 						out.flush();
 					}
+					if (type == msgType.ACCOUNTS_FREEZE) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						boolean close = server.closeAcct(aMsg.getID());
+						if (close) { // if so,
+							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
 					
 					
 					
@@ -245,13 +255,19 @@ class Server {
 	
 	public boolean closeAcct(int acctID) {
 		// TODO: This is where we will call Accounts to close an account 
-		// We'll assume for now the freeze worked
+		// We'll assume for now the closing worked (would return false if acct does not exist or already closed
 		return true;
 	}
 	
 	public boolean addAuthUser(String user, int acctID) {
 		// TODO: This is where we will call accounts and add an authorized user, and returning whether they worked or not.
 		// We'll assume for now the user was added.
+		return true;
+	}
+	
+	public boolean freezeAcct(int acctID) {
+		// TODO: This is where we will call Accounts to freeze an account 
+		// We'll assume for now the freeze worked
 		return true;
 	}
 }

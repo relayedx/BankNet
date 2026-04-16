@@ -147,6 +147,16 @@ public class Client {
 		}
 		return false;
 	}
+	
+	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException{
+		out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_FREEZE,Status.IN_PROGRESS,acctID));
+		out.flush();
+		Message msg = (Message) in.readObject();
+		if (msg.getStatus() == Status.SUCCESS) {
+			return true;
+		}
+		return false;
+	}
 }
 
 
