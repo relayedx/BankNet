@@ -36,6 +36,7 @@ public class Client {
         /// SIMULATED LOGIN
         controller.login("test", "test"); // This will be called from GUI
         controller.withdraw(1, 10, "User");
+        controller.resetPassword("test", "test");
         // 
         // List of Message objects
         //List<Message> messages = new ArrayList<>();
@@ -66,7 +67,7 @@ public class Client {
 		}
     }
     
-    public void getAccts(String user) throws IOException, ClassNotFoundException{
+    public void getAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
     	System.out.println("Sending Accounts Object");
     	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
     	out.flush();
@@ -83,6 +84,8 @@ public class Client {
     	return false; // otherwise, return error
     }
    
+    
+    // TODO: we can prolly combine this and then just send in a msgType as the argument but either works 
     public TransactionMessage withdraw(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
     	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
     	out.flush();
@@ -105,6 +108,13 @@ public class Client {
     		return true;
     	}
     	return false;
+    	
+    }
+    
+    // When user log into GUI and has al
+    public void requestAccount(String user, int acctID)throws ClassNotFoundException, IOException{
+    	out.writeObject(new AccountsRequestMessage(msgType.USER_REQUEST,Status.IN_PROGRESS,user, acctID));
+    	out.flush();
     	
     }
 }

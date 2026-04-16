@@ -57,9 +57,20 @@ public class ClientController {
 	
 	/// These are TELLER OPERATIONS, called from the respective GUI
 	public void resetPassword(String user, String pass) throws ClassNotFoundException, IOException{ 
-		
+		boolean reset = client.resetPass("he", "yeah");
+		if (reset) {
+			JOptionPane.showMessageDialog(null, "Password reset");
+
+		}else {
+			JOptionPane.showMessageDialog(null, "no.");
+
+		}
 	}
 	
+	// When the teller looks up a user w/ an acct id
+	public void requestUser(String user, int acctID) throws ClassNotFoundException, IOException{
+		
+	}
 	
 	
 	

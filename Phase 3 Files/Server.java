@@ -124,7 +124,10 @@ class Server {
 						}
 						out.flush();// send msg to server
 					}
-					
+					if (type == msgType.USER_REQUEST) {  // This returns a LIST OF ACCOUNTS USER HAS.
+						
+						
+					}
 					
 				}
 
@@ -180,5 +183,11 @@ class Server {
 		// TODO: This is where the ArrayList of user is called, and their password is changed.
 		// For now we will assume the password is changed
 		return true;
+	}
+	
+	public void getAcct(String user, int acctID) { 
+		// TODO: This returns an account, which is used to give to the teller when the user wants to make a transaction
+		// This.... will not return anything for now!!
+		
 	}
 }
