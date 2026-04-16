@@ -16,12 +16,13 @@ enum msgType{
 	AUTHUSER_DELETE,
 	PWRESET_REQUEST,
 	CREDIT_REQUEST,
-	ACCOUNT_ADD,
+	ACCOUNT_CREATE,
 	ACCOUNT_DELETE,
 	ACCOUNTS_REQUEST,
 	ACCOUNTS_EDIT,
 	WITHDRAWAL_REQUEST,
-	DEPOSIT_REQUEST
+	DEPOSIT_REQUEST,
+	TRANSFER_REQUEST
 }
 // must implement Serializable in order to be sent
 public class Message implements Serializable{

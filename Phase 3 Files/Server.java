@@ -132,6 +132,13 @@ class Server {
 						out.flush();
 						 
 					}
+					if (type == msgType.ACCOUNT_CREATE) {
+						CreateAccountMessage aMsg =(CreateAccountMessage) msg; 
+						SkeletonAccountMessage acct = (SkeletonAccountMessage) server.createAcct(aMsg.getUser(), aMsg.getAcctType());
+						out.writeObject(acct);
+						out.flush();
+						
+					}
 					
 				}
 
@@ -193,9 +200,9 @@ class Server {
 		// TODO: This gets an arraylist of skeleton accounts that will be sent back to user/teller from accounts
 		// There should be and if else statement if the array is empty, which will then send an error message of empty skeleton account.
 		ArrayList<Message> msgs = new ArrayList<Message>();
-		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,1,100));
-		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,2,200));
-		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100));
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,1,100,"credit"));
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,2,200,"savings"));
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings"));
 		return msgs;
 
 
@@ -205,5 +212,12 @@ class Server {
 		// TODO: This returns an account, which is used to give to the teller when the user wants to make a transaction
 		// This.... will not return anything for now!!
 		
+	}
+	
+	public SkeletonAccountMessage createAcct(String user, String acctType) { // This will return a skeleton acct back to user
+		// TODO: This will call accounts to create an account with these details, also automatically assinging the account to the user
+		// Call create account, returned is a skeleton acct msg
+		SkeletonAccountMessage test = new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings");
+		return test;
 	}
 }

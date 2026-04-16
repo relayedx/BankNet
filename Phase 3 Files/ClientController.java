@@ -68,11 +68,14 @@ public class ClientController {
 		}
 	}
 	
-	// When the teller looks up a user w/ an acct id
-	public void requestUser(String user, int acctID) throws ClassNotFoundException, IOException{
-		
+	public SkeletonAccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException{ // TODO: Swap accType with the actual account type later
+		// Call create account
+		SkeletonAccountMessage acct = client.createAccount(user, accType);
+		return acct; // We return this acct so the GUI knows to update w/ this skeleton acct, or display error.
 	}
 	
+	
+	// Getting skeleton accounts can be used when user is looked up by teller, AND when user logs in through ATM GUI.
 	public ArrayList<Message> getSkelAccts(String user) throws ClassNotFoundException, IOException{
 		ArrayList<Message> accts = client.getSkelAccts(user);
 		String temp = "";

@@ -120,6 +120,13 @@ public class Client {
     	out.flush();
     	
     }
+    
+	public SkeletonAccountMessage createAccount(String user, String acctType) throws ClassNotFoundException, IOException{ // TODO: swap this w/ actual account type
+    	out.writeObject(new CreateAccountMessage(msgType.ACCOUNT_CREATE,Status.IN_PROGRESS,user,acctType));
+    	out.flush();
+    	SkeletonAccountMessage msg = (SkeletonAccountMessage) in.readObject();
+    	return msg;
+    }
 }
 
 
