@@ -14,7 +14,7 @@ public class Client {
         System.out.print("Enter the port number to connect to: <1234>");
         int port = sc.nextInt();
         System.out.print("Enter the host address to connect to: <localhost> ");
-        String host = sc.next();
+        String host = sc.nextLine();
         
         Client ref = new Client(); 
         controller = new ClientController(ref);
