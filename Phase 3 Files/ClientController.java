@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -72,6 +73,16 @@ public class ClientController {
 		
 	}
 	
+	public ArrayList<Message> getSkelAccts(String user) throws ClassNotFoundException, IOException{
+		ArrayList<Message> accts = client.getSkelAccts(user);
+		String temp = "";
+		for (Message msg : accts) {
+			temp += msg + "\n";
+		}
+		JOptionPane.showMessageDialog(null, temp);
+		return accts;
+		
+	}
 	
 	
 }

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 // Server class
 class Server {
@@ -124,9 +125,12 @@ class Server {
 						}
 						out.flush();// send msg to server
 					}
-					if (type == msgType.USER_REQUEST) {  // This returns a LIST OF ACCOUNTS USER HAS.
-						
-						
+					if (type == msgType.ACCOUNTS_REQUEST) { 
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						ArrayList<Message> msgs = server.getSkelAccts(aMsg.getUser());
+						out.writeObject(msgs);
+						out.flush();
+						 
 					}
 					
 				}
@@ -183,6 +187,18 @@ class Server {
 		// TODO: This is where the ArrayList of user is called, and their password is changed.
 		// For now we will assume the password is changed
 		return true;
+	}
+	
+	public ArrayList<Message> getSkelAccts(String user){
+		// TODO: This gets an arraylist of skeleton accounts that will be sent back to user/teller from accounts
+		// There should be and if else statement if the array is empty, which will then send an error message of empty skeleton account.
+		ArrayList<Message> msgs = new ArrayList<Message>();
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,1,100));
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,2,200));
+		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100));
+		return msgs;
+
+
 	}
 	
 	public void getAcct(String user, int acctID) { 

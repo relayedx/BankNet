@@ -37,6 +37,8 @@ public class Client {
         controller.login("test", "test"); // This will be called from GUI
         controller.withdraw(1, 10, "User");
         controller.resetPassword("test", "test");
+        controller.deposit(1, 120, "user");
+        controller.getSkelAccts("user");
         // 
         // List of Message objects
         //List<Message> messages = new ArrayList<>();
@@ -67,11 +69,12 @@ public class Client {
 		}
     }
     
-    public void getAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
-    	System.out.println("Sending Accounts Object");
+    public ArrayList<Message> getSkelAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
+    	System.out.println("Sending Skeleton Accts Msgs");
     	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
     	out.flush();
-    	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject();
+    	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject(); // We are expecting the list of their accts
+    	return msgs;
     }
     
     public boolean logout() throws ClassNotFoundException, IOException{

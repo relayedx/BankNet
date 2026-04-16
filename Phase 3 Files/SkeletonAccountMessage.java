@@ -6,7 +6,6 @@ public class SkeletonAccountMessage extends Message{
 		super(type, status);
 		this.acctID = id;
 		this.balance = bal;
-		// TODO Auto-generated constructor stub
 	}
 	
 	public int getAcctID() {
@@ -17,6 +16,6 @@ public class SkeletonAccountMessage extends Message{
 	}
 	public String toString() {
 		String temp = "";
-		return temp + "ID: " + acctID + " Balance: balance";
+		return temp + "ID: " + acctID + " Balance:" + balance;
 	}
 }
