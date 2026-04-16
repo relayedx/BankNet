@@ -14,7 +14,18 @@ public class AccountsRequestMessage extends Message {
 		this.acctID = acctID;
 	}
 	
+	public AccountsRequestMessage(msgType type, Status status, int acctID) {
+		super(type,status);
+		this.user = "";
+		this.acctID = acctID;
+		
+	}
+	
 	public String getUser() {
 		return user;
+	}
+	
+	public int getID() {
+		return acctID;
 	}
 }

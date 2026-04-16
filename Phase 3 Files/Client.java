@@ -127,6 +127,16 @@ public class Client {
     	SkeletonAccountMessage msg = (SkeletonAccountMessage) in.readObject();
     	return msg;
     }
+	
+	public boolean closeAccount(int acctID) throws ClassNotFoundException, IOException{
+		out.writeObject(new AccountsRequestMessage(msgType.ACCOUNT_CLOSE,Status.IN_PROGRESS,acctID));
+		out.flush();
+		Message msg = (Message) in.readObject();
+		if (msg.getStatus() == Status.SUCCESS) {
+			return true;
+		}
+		return false;
+	}
 }
 
 

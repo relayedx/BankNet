@@ -87,5 +87,16 @@ public class ClientController {
 		
 	}
 	
+	public void closeAccount(int acctID) throws ClassNotFoundException, IOException {
+		boolean close = client.closeAccount(acctID);
+		if (close) {
+			JOptionPane.showMessageDialog(null,"Closed");
+
+		}else {
+			JOptionPane.showMessageDialog(null, "Error in closing");
+
+		}
+	}
+	
 	
 }

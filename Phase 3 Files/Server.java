@@ -139,6 +139,16 @@ class Server {
 						out.flush();
 						
 					}
+					if (type == msgType.ACCOUNT_CLOSE) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						boolean close = server.closeAcct(aMsg.getID());
+						if (close) { // if so,
+							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
 					
 				}
 
@@ -219,5 +229,11 @@ class Server {
 		// Call create account, returned is a skeleton acct msg
 		SkeletonAccountMessage test = new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings");
 		return test;
+	}
+	
+	public boolean closeAcct(int acctID) {
+		// TODO: This is where we will call Accounts to close an account 
+		// We'll assume for now the freeze worked
+		return true;
 	}
 }
