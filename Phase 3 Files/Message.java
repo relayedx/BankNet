@@ -22,7 +22,8 @@ enum msgType{
 	ACCOUNTS_FREEZE,
 	WITHDRAWAL_REQUEST,
 	DEPOSIT_REQUEST,
-	TRANSFER_REQUEST
+	TRANSFER_REQUEST,
+	USER_CREATE
 }
 // must implement Serializable in order to be sent
 public class Message implements Serializable{

@@ -169,6 +169,16 @@ class Server {
 						}
 						out.flush();
 					}
+					if (type == msgType.USER_CREATE) {
+						CreateUserMessage aMsg = (CreateUserMessage) msg;
+						boolean add = server.createUser(aMsg.getInfo(), aMsg.getUser(), aMsg.getPass());
+						if (add) { // if so,
+							out.writeObject(new Message(msgType.USER_CREATE, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.USER_CREATE, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
 					
 					
 					
@@ -268,6 +278,14 @@ class Server {
 	public boolean freezeAcct(int acctID) {
 		// TODO: This is where we will call Accounts to freeze an account 
 		// We'll assume for now the freeze worked
+		return true;
+	}
+	
+	public boolean createUser(String userInfo, String user, String pass){
+		// TODO: This is where we will have the ArrayList of users, check if they exist and then add.
+		// Create user object
+		// Add to array
+		// We assume that this process is succesful (error would be if user already exists
 		return true;
 	}
 }
