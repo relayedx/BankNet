@@ -98,5 +98,16 @@ public class ClientController {
 		}
 	}
 	
+	public void addAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
+		boolean add = client.addAuthUser(user, acctID);
+		if (add) {
+			JOptionPane.showMessageDialog(null,"User added");
+
+		}else {
+			JOptionPane.showMessageDialog(null, "Error in adding authorized user");
+
+		}
+	}
+	
 	
 }

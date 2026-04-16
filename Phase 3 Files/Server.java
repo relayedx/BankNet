@@ -149,6 +149,18 @@ class Server {
 						}
 						out.flush();
 					}
+					if (type == msgType.AUTHUSER_REQUEST) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						boolean add = server.addAuthUser(aMsg.getUser(), aMsg.getID());
+						if (add) { // if so,
+							out.writeObject(new Message(msgType.AUTHUSER_REQUEST, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.AUTHUSER_REQUEST, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
+					
+					
 					
 				}
 
@@ -234,6 +246,12 @@ class Server {
 	public boolean closeAcct(int acctID) {
 		// TODO: This is where we will call Accounts to close an account 
 		// We'll assume for now the freeze worked
+		return true;
+	}
+	
+	public boolean addAuthUser(String user, int acctID) {
+		// TODO: This is where we will call accounts and add an authorized user, and returning whether they worked or not.
+		// We'll assume for now the user was added.
 		return true;
 	}
 }

@@ -137,6 +137,16 @@ public class Client {
 		}
 		return false;
 	}
+	
+	public boolean addAuthUser(String user, int acctID) throws ClassNotFoundException, IOException {
+		out.writeObject(new AccountsRequestMessage(msgType.AUTHUSER_REQUEST, Status.IN_PROGRESS,user,acctID));
+		out.flush();
+		Message msg = (Message) in.readObject();
+		if (msg.getStatus() == Status.SUCCESS) {
+			return true;
+		}
+		return false;
+	}
 }
 
 
