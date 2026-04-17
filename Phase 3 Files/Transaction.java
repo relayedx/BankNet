@@ -35,6 +35,9 @@ public class Transaction implements Serializable {
 		return tranType;
 	}
 	
+	public int getUID() {
+		return id;
+	}
 
 	
 	public String toString() {
