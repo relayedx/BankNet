@@ -7,12 +7,15 @@ enum TranType{
 	SYSTEM
 }
 
-public class Transaction implements Serializable{
+public class Transaction implements Serializable {
+	private static int count = 0;
+	private final int id;
 	private final LocalDateTime date;
 	private final String user;
 	private final float amount;
 	private final TranType tranType;
 	public Transaction(String user, float amt, TranType type) {
+		this.id = count++;
 		date = LocalDateTime.now();
 		this.user = user;
 		amount = amt;
