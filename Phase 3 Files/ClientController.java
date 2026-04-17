@@ -5,8 +5,12 @@ import javax.swing.JOptionPane;
 
 public class ClientController {
 	private Client client;
+	private RoleBasedGUI currentGUI;
+	
 	public ClientController(Client client){
-		this.client = client; 
+		this.client = client;
+		this.currentGUI = new LoginGUI(this);
+		currentGUI.launchUI();
 	}
 	
 	/// METHODS CALLED FROM GUI
