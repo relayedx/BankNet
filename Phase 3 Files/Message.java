@@ -26,11 +26,14 @@ enum msgType{
 	USER_CREATE
 }
 // must implement Serializable in order to be sent
-public class Message implements Serializable{
+public class Message implements Serializable {
+	private static int count = 0;
+	private final int id;
     private final msgType type;
     private final Status status;
 
     public Message(msgType type, Status status) {
+    	this.id = count++;
     	this.type = type;
     	this.status = status;
     }
@@ -40,6 +43,10 @@ public class Message implements Serializable{
     }
     public Status getStatus() {
     	return status;
+    }
+    
+    public int getID() {
+    	return id;
     }
 }
 
