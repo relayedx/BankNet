@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 
 // Server class
 class Server {
@@ -14,7 +15,7 @@ class Server {
 			// server is listening on port 1234
 			server = new ServerSocket(1234);
 			server.setReuseAddress(true);
-
+			var pool = Executors.newFixedThreadPool(20);
 			// running infinite loop for getting
 			// client request
 			while (true) {
@@ -28,14 +29,11 @@ class Server {
 				System.out.println("New client connected"
 								+ client.getInetAddress()
 										.getHostAddress());
-
-				// create a new thread object
-				ClientHandler clientSock
-					= new ClientHandler(client,ref);
-
+				
+				// using pool of threads to execute new client thread
 				// This thread will handle the client
 				// separately
-				new Thread(clientSock).start();
+				pool.execute(new ClientHandler(client,ref));
 			}
 		}
 		catch (IOException e) {
