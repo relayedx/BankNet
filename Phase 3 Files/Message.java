@@ -45,7 +45,7 @@ public class Message implements Serializable {
     	return status;
     }
     
-    public int getID() {
+    public int getUID() {
     	return id;
     }
 }
