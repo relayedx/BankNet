@@ -16,12 +16,16 @@ public class Client {
         System.out.print("Enter the host address to connect to: <localhost> ");
         String host = sc.nextLine();
         
-        Client ref = new Client(); 
-        controller = new ClientController(ref);
         // Connect to the ServerSocket at host:port
         Socket socket = new Socket(host, port);
         System.out.println("Connected to " + host + ":" + port);
 
+        // instantiation of client and clientController
+        // once a clientController is instantiated it will call LoginGUI on its own!
+        Client ref = new Client(); 
+        controller = new ClientController(ref);
+        
+ 
         // Output stream socket.
         OutputStream outputStream = socket.getOutputStream();
 
@@ -29,9 +33,6 @@ public class Client {
         out = new ObjectOutputStream(outputStream);
         // Create a input stream to read these objects as well
         in = new ObjectInputStream(socket.getInputStream());
-
-        
-        // TODO: Call for login GUI here (Fosa)
         
         /// SIMULATED LOGIN
         controller.login("test", "test"); // This will be called from GUI
