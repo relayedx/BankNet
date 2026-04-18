@@ -79,8 +79,8 @@ class Server {
 				while(true) { // While client is connected
 					Message msg = (Message) in.readObject(); // Wait for client to send a msg
 					if (msg.getType() == msgType.LOGIN_REQUEST) { // If it is a login request, we can upcast it into a LoginMessage
-						LoginMessage lMsg = (LoginMessage) msg;
-						boolean auth = server.isUser(lMsg.getUser(),lMsg.getPass()); // Is the user an actual user?
+						LoginMessage loginMsg = (LoginMessage) msg;
+						boolean auth = server.isUser(loginMsg.getUsername(),loginMsg.getPassword()); // Is the user an actual user?
 						if (auth) { // if so,
 							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.SUCCESS)); // Send a success msg
 							loggedIn = true; // Mark user as logged in.
@@ -114,7 +114,7 @@ class Server {
 					
 					if (type == msgType.PWRESET_REQUEST) {
 						LoginMessage lMsg = (LoginMessage) msg;
-						boolean reset = server.resetPassword(lMsg.getUser(), lMsg.getPass());
+						boolean reset = server.resetPassword(lMsg.getUsername(), lMsg.getPassword());
 						if (reset) { // if so,
 							out.writeObject(new Message(msgType.PWRESET_REQUEST, Status.SUCCESS)); // Send a success msg
 						}else {
@@ -206,10 +206,11 @@ class Server {
 	
 	}
 	
-	public boolean isUser(String user, String pass) {
+	public boolean isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
 		// We can also check here whether or not the user is already logged into the system.
 		// For now, we will assume they are a user.
+		
 		return true;
 	}
 	
