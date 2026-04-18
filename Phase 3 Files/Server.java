@@ -26,13 +26,12 @@ class Server {
 
 				// Displaying that new client is connected
 				// to server
-				System.out.println("New client connected"
+				System.out.println("New client connected "
 								+ client.getInetAddress()
 										.getHostAddress());
 				
 				// using pool of threads to execute new client thread
-				// This thread will handle the client
-				// separately
+				// This thread will handle the client separately
 				pool.execute(new ClientHandler(client,ref));
 			}
 		}
