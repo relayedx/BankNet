@@ -1,18 +1,18 @@
 
 public class LoginMessage extends Message{
-	private final String user;
-	private final String pass;
-	public LoginMessage(msgType type, Status status, String user, String pass) {
+	private final String username;
+	private final String password;
+	public LoginMessage(msgType type, Status status, String username, String password) {
 		super(type,status);
-		this.user = user;
-		this.pass = pass;
+		this.username = username;
+		this.password = password;
 	}
 	
-	public String getUser() {
-		return user;
+	public String getUsername() {
+		return username;
 	}
 	
-	public String getPass() {
-		return pass;
+	public String getPassword() {
+		return password;
 	}
 }

@@ -5,8 +5,8 @@ import java.awt.event.*;
 public class LoginGUI implements RoleBasedGUI {
 	ClientController clientController;
 	private JFrame frame;
-	private JTextField userField;
-	private JPasswordField passField;
+	private JTextField usernameField;
+	private JPasswordField passwordField;
 	private JLabel errorLabel;
 	private JButton loginButton;
 	
@@ -35,16 +35,16 @@ public class LoginGUI implements RoleBasedGUI {
         // Username row
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Username:"), gbc);
-        userField = new JTextField();
+        usernameField = new JTextField();
         gbc.gridy = 1;
-        panel.add(userField, gbc);
+        panel.add(usernameField, gbc);
 
         // Password row
         gbc.gridy = 2;
         panel.add(new JLabel("Password:"), gbc);
-        passField = new JPasswordField();
+        passwordField = new JPasswordField();
         gbc.gridy = 3;
-        panel.add(passField, gbc);
+        panel.add(passwordField, gbc);
         
         // Login button
         loginButton = new JButton("Log In");
@@ -58,6 +58,13 @@ public class LoginGUI implements RoleBasedGUI {
 	}
 	
 	public void handleLogin() {
+		String username = usernameField.getText();
+		String password = new String(passwordField.getPassword());
+		try {
+			clientController.login(username, password);
+		} catch (Exception e) {
+			System.out.print("Error: " + e);
+		}
 		
 	}
 	

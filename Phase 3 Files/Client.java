@@ -43,7 +43,7 @@ public class Client {
         System.out.println("Connected to " + host + ":" + port);
  
         Client clientRef = new Client(socket, latch);
-        ClientController controller = new ClientController(clientRef);
+        ClientController clientController = new ClientController(clientRef);
         latch.await();
         // Output stream socket.
         //OutputStream outputStream = socket.getOutputStream();
@@ -74,10 +74,10 @@ public class Client {
         //socket.close();
     }
     
-    public boolean login(String user, String pass) throws IOException, ClassNotFoundException { // Called from ClientController
+    public boolean login(String username, String password) throws IOException, ClassNotFoundException { // Called from ClientController
    
-        System.out.println("Sending LoginMessage Object");
-        out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, "user","pass")); // Client makes msg to send to the server
+        System.out.println("Sending Login Message Object");
+        out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, username,password)); // Client makes msg to send to the server
         out.flush(); // Sends the message
 		Message msg = (Message) in.readObject(); // We are expecting a message back
 		if (msg.getType() != msgType.LOGIN_REQUEST) { // If the server sends back anything else other than a login_request
