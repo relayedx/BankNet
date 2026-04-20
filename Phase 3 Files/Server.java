@@ -1,10 +1,23 @@
 import java.io.*;
+import java.util.List;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
+import java.util.Scanner;
 
 // Server class
 class Server {
+	private File UsersFile;
+	private File BankAccountsFile;
+	private List<User> Users;
+	
+	Server() {
+		this.UsersFile = new File("Users.txt");
+		this.BankAccountsFile = new File("BankAccounts.txt");
+		this.Users = new ArrayList<>();
+		loadData();
+	}
+	
 	public static void main(String[] args)
 	{
 		Server ref = new Server();
@@ -206,12 +219,42 @@ class Server {
 	
 	}
 	
+	public void loadData() {
+		try {
+			Scanner scanner = new Scanner(UsersFile);
+			while(scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				String[] data = line.split(":");
+				// 0 -> username, 1 -> password, 2 -> acctType
+				// 3 -> authAccts, 4 -> isLoggedIn
+				String username = data[0];
+				String password = data[1];
+				Boolean isTeller = Boolean.parseBoolean(data[2]);
+				List<Integer> authAcctIDs = new ArrayList<>();
+				String[] AcctIDsAsString = data[3].split(",");
+				for (String id : AcctIDsAsString) {
+					authAcctIDs.add(Integer.parseInt(id));
+				}
+				Boolean isLoggedIn = Boolean.parseBoolean(data[4]);
+				Users.add(new User(username, password,
+					isTeller, authAcctIDs, isLoggedIn));
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e);
+		}
+	}
+	
 	public boolean isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
 		// We can also check here whether or not the user is already logged into the system.
 		// For now, we will assume they are a user.
+		for (User user : Users) {
+			if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
+				return true;
+			}
+		}
 		
-		return true;
+		return false;
 	}
 	
 	public TransactionMessage withdraw(int acctID, Transaction trans) {
