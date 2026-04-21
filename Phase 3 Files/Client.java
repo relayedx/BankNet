@@ -74,20 +74,22 @@ public class Client {
         //socket.close();
     }
     
-    public boolean login(String username, String password) throws IOException, ClassNotFoundException { // Called from ClientController
-   
+    public Message login(String username, String password) throws IOException, ClassNotFoundException { // Called from ClientController
         System.out.println("Sending Login Message Object");
         out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, username,password)); // Client makes msg to send to the server
         out.flush(); // Sends the message
-		Message msg = (Message) in.readObject(); // We are expecting a message back
-		if (msg.getType() != msgType.LOGIN_REQUEST) { // If the server sends back anything else other than a login_request
-			return false; // Something is wrong, return false.
+		Message res = (Message) in.readObject(); // We are expecting a message back
+		return res; // sending response from server back to clientController
+		
+		/*if (msg.getType() != msgType.LOGIN_REQUEST) { // If the server sends back anything else other than a login_request
+			return new LoginMessage(msgType.LOGIN_REQUEST, Stat); // Something is wrong, return false.
 		}
 		if (msg.getStatus() == Status.SUCCESS) { // If the login_request is true
 			return true;
 		}else {
 			return false;
 		}
+		*/
     }
     
     public ArrayList<Message> getSkelAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
