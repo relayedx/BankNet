@@ -26,4 +26,8 @@ public class User {
 		return password;
 	}
 	
+	public Boolean getRole() {
+		return isTeller;
+	}
+	
 }
