@@ -57,6 +57,10 @@ public class Message implements Serializable {
     	return status;
     }
     
+    public String getText() {
+    	return text;
+    }
+    
     public int getUID() {
     	return id;
     }
