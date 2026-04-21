@@ -15,7 +15,7 @@ public class Transaction implements Serializable {
 	private final float amount;
 	private final TranType tranType;
 	public Transaction(String user, float amt, TranType type) {
-		this.id = count++;
+		this.id = ++count;
 		date = LocalDateTime.now();
 		this.user = user;
 		amount = amt;
