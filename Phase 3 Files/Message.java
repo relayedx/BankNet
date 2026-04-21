@@ -34,7 +34,7 @@ public class Message implements Serializable {
     private final String text;
 
     public Message(msgType type, Status status, String text) {
-    	this.id = count++;
+    	this.id = ++count;
     	this.type = type;
     	this.status = status;
     	this.text = text;
@@ -42,7 +42,7 @@ public class Message implements Serializable {
     
 
     public Message(msgType type, Status status) {
-    	this.id = count++;
+    	this.id = ++count;
     	this.type = type;
     	this.status = status;
     	this.text = "";
