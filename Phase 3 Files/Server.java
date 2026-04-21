@@ -79,8 +79,7 @@ class Server {
 			this.server = server;
 		}
 
-		public void run()
-		{
+		public void run() {
 			try {
 					
 				// get the outputstream of client
@@ -93,12 +92,13 @@ class Server {
 					Message msg = (Message) in.readObject(); // Wait for client to send a msg
 					if (msg.getType() == msgType.LOGIN_REQUEST) { // If it is a login request, we can upcast it into a LoginMessage
 						LoginMessage loginMsg = (LoginMessage) msg;
-						boolean auth = server.isUser(loginMsg.getUsername(),loginMsg.getPassword()); // Is the user an actual user?
-						if (auth) { // if so,
-							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.SUCCESS)); // Send a success msg
+						Message res = server.isUser(loginMsg.getUsername(),loginMsg.getPassword()); // Is the user an actual user?
+						if (res.getStatus() == Status.SUCCESS) { // if so,
 							loggedIn = true; // Mark user as logged in.
-						}else {
-							out.writeObject(new Message(msgType.LOGIN_REQUEST, Status.ERROR)); // Otherwise send error
+							out.writeObject(res); // Send a success msg
+							System.out.println("a " + res.getText() + " has logged in");
+						} else {
+							out.writeObject(res); // Otherwise send error
 						}
 						out.flush();// send msg to server
 					}
@@ -244,17 +244,22 @@ class Server {
 		}
 	}
 	
-	public boolean isUser(String username, String password) {
+	public Message isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
-		// We can also check here whether or not the user is already logged into the system.
-		// For now, we will assume they are a user.
+		// I ended up doing the implementaion, so i can test for role based GUI - fosa
 		for (User user : Users) {
 			if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
-				return true;
+				String role = "";
+				if (user.getRole()) {
+					role = "teller";
+				} else {
+					role = "customer";
+				}
+				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
 			}
 		}
 		
-		return false;
+		return new Message(msgType.LOGIN_REQUEST, Status.ERROR);
 	}
 	
 	public TransactionMessage withdraw(int acctID, Transaction trans) {
