@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class LoginGUI implements RoleBasedGUI {
-	ClientController clientController;
+	private ClientController clientController;
 	private JFrame frame;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -67,7 +67,6 @@ public class LoginGUI implements RoleBasedGUI {
 		}
 		
 	}
-	
 	
 	public void closeUI() {
 		if (frame != null) {
