@@ -15,13 +15,20 @@ public class ClientController {
 	/// METHODS CALLED FROM GUI
 	public void login(String username, String password) throws ClassNotFoundException, IOException { // This method is called from GUI
 		// We call client login with the arguments we are given
-		boolean auth = client.login(username, password); // See if the client is an auth user
-		// Request for accounts
-		// TODO: Display ATM GUI or Teller GUI (Fosa)
-		if (auth) {
-			JOptionPane.showMessageDialog(null, "User is a user"); // TODO: These will be replaced w/ gui, placeholder for debugging
-		}else {
-			JOptionPane.showMessageDialog(null, "Error");
+		Message res = client.login(username, password); // See if the client is an auth user
+		if (res.getStatus() == Status.ERROR) {
+			JOptionPane.showMessageDialog(null, "Could not successfully login");
+			return;
+		}
+		
+		if (res.getStatus() == Status.SUCCESS && res.getText().equals("customer") ) {
+			currentGUI.closeUI();
+			currentGUI = new AtmGUI(this);
+			currentGUI.launchUI();
+		} else {
+			currentGUI.closeUI();
+			currentGUI = new TellerGUI(this);
+			currentGUI.launchUI();
 		}
 	}
 	
