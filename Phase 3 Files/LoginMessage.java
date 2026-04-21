@@ -1,7 +1,8 @@
 
-public class LoginMessage extends Message{
+public class LoginMessage extends Message {
 	private final String username;
 	private final String password;
+	
 	public LoginMessage(msgType type, Status status, String username, String password) {
 		super(type,status);
 		this.username = username;
