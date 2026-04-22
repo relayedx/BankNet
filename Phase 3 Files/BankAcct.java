@@ -16,6 +16,7 @@ public class BankAcct {
     private List<User> authUser;
     private int acctID;
     private float balance;
+    private float availCredit;
     private AcctType type;
     private boolean frozen;
     private boolean closed;
@@ -24,7 +25,7 @@ public class BankAcct {
     private LocalDate dueDate;
 
     public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
-        this.authUser = new ArrayList<>(); // TODO: will be from za parsed
+        this.authUser = new ArrayList<>(); // TODO: will need to instatiate below from parsed
         this.transactions = new ArrayList<Transaction>(trans);
     }
     
@@ -35,10 +36,10 @@ public class BankAcct {
     	if (type != AcctType.Checking) {
     		dueDate = LocalDate.now().plusDays(30);
     	}
-    	if (type != AcctType.Credit) {
-    		balance = 0;
-    	}else {
-    		balance = creditLine;
+    	balance = 0;
+    	if(type == AcctType.Credit) {
+    		creditLine = 40;
+    		availCredit = creditLine;
     	}
     	frozen = false;
     	closed = false;
@@ -48,9 +49,31 @@ public class BankAcct {
     	
 
     }
+    
 
     public boolean withdraw(Transaction trans) {
-        // TODO: implement withdraw logic
+    	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
+    		return false; // Return error
+    	}
+        if (type != AcctType.Credit) { // If it's checking or savings
+        	float tempBal = balance - trans.getAmount();
+        	if (tempBal < 0) { // If they try and withdraw
+        		System.out.println("Balance would overdraft acct, error!");
+        		return false;
+        	}
+        	balance = tempBal;
+        	transactions.add(trans);
+        }else {
+        	float tempAvailCredit = availCredit - trans.getAmount();
+        	if (tempAvailCredit < 0) {
+        		System.out.println("Withdrawal goes below availbile credit, error!");
+        		return false;
+        	}
+        	balance -= trans.getAmount(); // We'll just add onto the balance.
+        	System.out.println("New Balance: " + balance);
+        	availCredit -= trans.getAmount();
+        	System.out.println("New Availible Credit: " + availCredit);
+        }
         return false;
     }
 
@@ -60,8 +83,13 @@ public class BankAcct {
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
         	balance += trans.getAmount(); // We'll just add onto the balance.
-        	System.out.println("New Balance: " + balance);
+        }else {
+        	balance -= trans.getAmount();
+        	availCredit += trans.getAmount();
+        	System.out.println("New Availible Credit: " + availCredit);
+        	
         }
+        System.out.println("New Balance: " + balance);
         transactions.add(trans);
         return true;
     }
@@ -107,9 +135,13 @@ public class BankAcct {
     public List<Transaction> getTrans() {
         return transactions;
     }
-
+    
     public float getCredit() {
         return creditLine;
+    }
+
+    public float getAvailCredit() {
+        return availCredit;
     }
 
     public LocalDate getDueDate() {
@@ -119,4 +151,5 @@ public class BankAcct {
     public boolean getClosed() {
     	return closed;
     }
+    
 }

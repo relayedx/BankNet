@@ -42,7 +42,7 @@ public class Transaction implements Serializable {
 
 	
 	public String toString() {
-		String temp = "" + date.format(DateTimeFormatter.ofPattern("MM/dd/yy HH:MM")) + "%"+ user + "%" + amount + "%" + tranType;
+		String temp = "" + date.format(DateTimeFormatter.ofPattern("MM/dd/yy HH:mm")) + "%"+ user + "%" + amount + "%" + tranType;
 		return temp;
 	}
 	

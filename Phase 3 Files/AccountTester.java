@@ -12,17 +12,20 @@ public class AccountTester {
 		authAccts.add(1);
 		authAccts.add(2);
 		User user = new User("jerrick", "pass", false,authAccts, true);
-		BankAcct test = new BankAcct(AcctType.Savings,user);
+		BankAcct test = new BankAcct(AcctType.Checking,user);
 		Transaction trans1 = new Transaction(user.getUsername(), 10, TranType.DEPOSIT);
+		Transaction trans2 = new Transaction(user.getUsername(), 10, TranType.WITHDRAWAL);
+
+		
 		test.deposit(trans1);
+		test.withdraw(trans2);
 		test.deposit(trans1);
-		test.deposit(trans1);
-		test.deposit(trans1);
+		test.withdraw(trans2);
+		test.withdraw(trans2);
 		List<Transaction> transactions = test.getTrans();
 		for (Transaction transaction : transactions) {
-			String[] m = transaction.toString().split("%");
 			System.out.println(transaction);
-			System.out.println(m[0]);
 		}
+		System.out.println("Balance" + test.getAvailCredit());
 	}
 }
