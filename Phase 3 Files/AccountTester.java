@@ -22,10 +22,16 @@ public class AccountTester {
 		test.deposit(trans1);
 		test.withdraw(trans2);
 		test.withdraw(trans2);
-		List<Transaction> transactions = test.getTrans();
+		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
+		List<Transaction> transactions = msg.getTrans();
+		test.deposit(trans1);
+		test.deposit(trans1);
+		test.deposit(trans1);
 		for (Transaction transaction : transactions) {
 			System.out.println(transaction);
 		}
-		System.out.println("Balance" + test.getAvailCredit());
+		System.out.println("Msg Balance: " + msg.getBalance());
+
+		System.out.println("Acct Actual Balance: " + test.getBalance());
 	}
 }

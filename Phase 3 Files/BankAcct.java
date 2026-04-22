@@ -115,7 +115,22 @@ public class BankAcct {
     public List<User> getAuths() {
         return authUser;
     }
-
+    
+    public boolean addAuth(User user) {
+    	for (User users : authUser) { // If the user is already added 
+    		if(users.getUsername() == user.getUsername() && users.getPassword() == user.getPassword()) {
+    			return false;  // We'll return false (user was not added)
+    		}
+    	}
+    	// If we get here, we know the user is a new user to be added
+    	authUser.add(user);
+    	return true;
+    }
+    
+    public void removeAuth(User user) {
+    	authUser.removeIf(item -> item.getUsername() == user.getUsername() && item.getPassword() == user.getPassword());
+    }
+    
     public int getAcctID() {
         return acctID;
     }
@@ -152,4 +167,5 @@ public class BankAcct {
     	return closed;
     }
     
+
 }
