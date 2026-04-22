@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 enum TranType{
 	WITHDRAWAL,
@@ -41,7 +42,7 @@ public class Transaction implements Serializable {
 
 	
 	public String toString() {
-		String temp = "" + date + "%"+ user + "%" + amount + "%" + tranType;
+		String temp = "" + date.format(DateTimeFormatter.ofPattern("MM/dd/yy HH:MM")) + "%"+ user + "%" + amount + "%" + tranType;
 		return temp;
 	}
 	
