@@ -35,6 +35,9 @@ public class BankAcct {
     	this.type = type;
     	if (type != AcctType.Checking) {
     		dueDate = LocalDate.now().plusDays(30);
+    		// Since these are primitive types, we need to set them to something
+    		creditLine = 0;
+    		availCredit = 0;
     	}
     	balance = 0;
     	if(type == AcctType.Credit) {
@@ -102,11 +105,6 @@ public class BankAcct {
         this.closed = closed;
     }
 
-    public void addAuthUser(User user) {
-        if (user != null) {
-            this.authUser.add(user);
-        }
-    }
 
     public User getOwner() {
         return owner;
@@ -116,7 +114,7 @@ public class BankAcct {
         return authUser;
     }
     
-    public boolean addAuth(User user) {
+    public boolean addAuthUser(User user) {
     	for (User users : authUser) { // If the user is already added 
     		if(users.getUsername() == user.getUsername() && users.getPassword() == user.getPassword()) {
     			return false;  // We'll return false (user was not added)

@@ -41,11 +41,12 @@ public class Client {
         // Connect to the ServerSocket at host:port
         Socket socket = new Socket(host, port);
         System.out.println("Connected to " + host + ":" + port);
- 
+      
         Client clientRef = new Client(socket, latch);
         ClientController clientController = new ClientController(clientRef);
         latch.await();
         // Output stream socket.
+     
         //OutputStream outputStream = socket.getOutputStream();
 
         // Create object output stream from the output stream to send an object through it
@@ -189,6 +190,13 @@ public class Client {
 			return true;
 		}
 		return false;
+	}
+	
+	public AccountMessage getAccount(String acctID) throws ClassNotFoundException, IOException{
+		out.writeObject(new AccountsRequestMessage(msgType.ACCOUNT_REQUEST,Status.IN_PROGRESS,acctID));
+		out.flush();
+		AccountMessage msg = (AccountMessage) in.readObject();
+		return msg;
 	}
 }
 

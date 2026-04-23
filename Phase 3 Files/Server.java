@@ -135,6 +135,13 @@ class Server {
 						}
 						out.flush();// send msg to server
 					}
+					if (type == msgType.ACCOUNT_REQUEST) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						AccountMessage returningMsg = server.getAcct(aMsg.getID());
+						out.writeObject(returningMsg);
+						out.flush();
+						
+					}
 					if (type == msgType.ACCOUNTS_REQUEST) { 
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
 						ArrayList<Message> msgs = server.getSkelAccts(aMsg.getUser());
@@ -296,11 +303,6 @@ class Server {
 
 	}
 	
-	public void getAcct(String user, int acctID) { 
-		// TODO: This returns an account, which is used to give to the teller when the user wants to make a transaction
-		// This.... will not return anything for now!!
-		
-	}
 	
 	public SkeletonAccountMessage createAcct(String user, String acctType) { // This will return a skeleton acct back to user
 		// TODO: This will call accounts to create an account with these details, also automatically assinging the account to the user
@@ -333,5 +335,17 @@ class Server {
 		// Add to array
 		// We assume that this process is succesful (error would be if user already exists
 		return true;
+	}
+	
+	public AccountMessage getAcct(int acctID) {
+		// TODO: This is where we'll get a singular account using Accounts
+		// For now, we'll send back a static manual account message
+		List<Integer> authAccts = new ArrayList<>();
+		authAccts.add(1);
+		authAccts.add(2);
+		User user = new User("jerrick", "pass", false,authAccts, true);
+		BankAcct test = new BankAcct(AcctType.Checking,user);
+		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
+		return msg;
 	}
 }
