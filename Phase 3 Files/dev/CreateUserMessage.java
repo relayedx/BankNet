@@ -1,3 +1,4 @@
+package dev;
 
 public class CreateUserMessage extends Message{
 	private final String info;

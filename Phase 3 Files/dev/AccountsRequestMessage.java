@@ -1,3 +1,4 @@
+package dev;
 
 public class AccountsRequestMessage extends Message {
 	private final String user;

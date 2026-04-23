@@ -1,3 +1,4 @@
+package dev;
 public class SkeletonAccountMessage extends Message{
 	private final int acctID;
 	private final float balance;

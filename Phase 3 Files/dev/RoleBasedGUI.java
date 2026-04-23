@@ -1,3 +1,4 @@
+package dev;
 
 public interface RoleBasedGUI {
 	

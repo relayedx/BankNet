@@ -1,3 +1,4 @@
+package dev;
 
 public class TransactionMessage extends Message{
 	private final Transaction transaction;

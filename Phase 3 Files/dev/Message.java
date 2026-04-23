@@ -1,3 +1,4 @@
+package dev;
 import java.io.Serializable;
 
 enum Status{

@@ -1,3 +1,4 @@
+package dev;
 
 public class LoginMessage extends Message {
 	private final String username;
