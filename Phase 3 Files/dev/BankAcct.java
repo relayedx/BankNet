@@ -12,10 +12,10 @@ enum AcctType{
 }
 
 public class BankAcct {
-
+	private static int count = 0;
     private User owner;
     private List<User> authUser;
-    private int acctID;
+    private final int acctID;
     private float balance;
     private float availCredit;
     private AcctType type;
@@ -28,10 +28,11 @@ public class BankAcct {
     public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
         this.authUser = new ArrayList<>(); // TODO: will need to instatiate below from parsed
         this.transactions = new ArrayList<Transaction>(trans);
+        this.acctID = ++count;
     }
     
     public BankAcct(AcctType type, User owner) { // When a user opens an account
-
+    	this.acctID = ++count;
     	this.owner = owner;
     	this.type = type;
     	if (type != AcctType.Checking) {
