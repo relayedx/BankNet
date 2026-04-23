@@ -140,5 +140,9 @@ public class ClientController {
 		boolean created = client.createUser(userInfo, user, pass);
 	}
 	
+	public void transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
+		TransactionMessage msg = client.transfer(outgoingAcctID, incomingAcctID, amt, user);
+	}
+	
 	
 }
