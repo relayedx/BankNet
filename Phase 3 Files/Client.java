@@ -35,6 +35,7 @@ public class Client {
         Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
         System.out.println("Enter the port number to connect to: <1234>");
         int port = sc.nextInt();
+        sc.nextLine(); // Flushes out the stream to get ready for asking for host address
         System.out.println("Enter the host address to connect to: <localhost> ");
         String host = sc.nextLine();
         
