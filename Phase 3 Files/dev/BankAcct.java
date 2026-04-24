@@ -25,10 +25,33 @@ public class BankAcct {
     private float creditLine;
     private LocalDate dueDate;
 
+    /*
     public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
         this.authUser = new ArrayList<>(); // TODO: will need to instatiate below from parsed
         this.transactions = new ArrayList<Transaction>(trans);
         this.acctID = ++count;
+    }
+    */
+    
+    public BankAcct(int acctID, AcctType type, User owner, float balance, List<Transaction> transactions) { // from server loadAccounts
+    	this.acctID = acctID;
+    	this.owner = owner;
+    	this.type = type;
+    	if (type != AcctType.Checking) {
+    		dueDate = LocalDate.now().plusDays(30);
+    		// Since these are primitive types, we need to set them to something
+    		creditLine = 0;
+    		availCredit = 0;
+    	}
+    	this.balance = balance;
+    	if(type == AcctType.Credit) {
+    		creditLine = 40;
+    		availCredit = creditLine;
+    	}
+    	frozen = false;
+    	closed = false;
+        this.transactions = new ArrayList<Transaction>(transactions);
+        this.authUser = new ArrayList<>();
     }
     
     public BankAcct(AcctType type, User owner) { // When a user opens an account
