@@ -1,0 +1,26 @@
+package dev;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Accounts {
+	private List<BankAcct> bankAccts;
+	
+	Accounts(List<BankAcct> bankAccts) {
+		this.bankAccts = bankAccts;
+	}
+	
+	public List<BankAcct> getAccts(List<Integer> acctIDs) {
+		List<BankAcct> acctsRequested = new ArrayList<>();
+		for (BankAcct currBankAcct : bankAccts) {
+			int currentID = currBankAcct.getAcctID();
+			for (int acctID : acctIDs) {
+				if (currentID == acctID) {
+					acctsRequested.add(currBankAcct);
+				}
+			}
+		}
+		return acctsRequested;
+	}
+	
+	
+}
