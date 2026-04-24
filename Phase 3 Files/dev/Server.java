@@ -10,13 +10,15 @@ import java.util.Scanner;
 class Server {
 	private File UsersFile;
 	private File BankAccountsFile;
-	private List<User> Users;
+	private List<User> usersDB;
+	private Accounts accountsDB;
 	
 	Server() {
 		this.UsersFile = new File("Users.txt");
 		this.BankAccountsFile = new File("BankAccounts.txt");
-		this.Users = new ArrayList<>();
-		loadData();
+		this.usersDB = new ArrayList<>();
+		loadUsers();
+		loadAccounts();
 	}
 	
 	public static void main(String[] args)
@@ -227,12 +229,12 @@ class Server {
 	
 	}
 	
-	public void loadData() {
+	public void loadUsers() {
 		try {
 			Scanner scanner = new Scanner(UsersFile);
 			while(scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				String[] data = line.split(":");
+				String[] data = line.split("\\|");
 				// 0 -> username, 1 -> password, 2 -> acctType
 				// 3 -> authAccts, 4 -> isLoggedIn
 				String username = data[0];
@@ -244,8 +246,23 @@ class Server {
 					authAcctIDs.add(Integer.parseInt(id));
 				}
 				Boolean isLoggedIn = Boolean.parseBoolean(data[4]);
-				Users.add(new User(username, password,
+				usersDB.add(new User(username, password,
 					isTeller, authAcctIDs, isLoggedIn));
+			}
+			
+			
+		} catch (Exception e) {
+			System.out.println("Error: " + e);
+		}
+	}
+	
+	public void loadAccounts() {
+		try {
+			Scanner scanner = new Scanner(BankAccountsFile);
+			while (scanner.hasNextLine() ) {
+				String line = scanner.nextLine();
+				String[] data = line.split("\\|");
+				
 			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
@@ -255,7 +272,7 @@ class Server {
 	public Message isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
 		// I ended up doing the implementaion, so i can test for role based GUI - fosa
-		for (User user : Users) {
+		for (User user : usersDB) {
 			if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
 				String role = "";
 				if (user.getRole()) {
@@ -341,6 +358,8 @@ class Server {
 	public AccountMessage getAcct(int acctID) {
 		// TODO: This is where we'll get a singular account using Accounts
 		// For now, we'll send back a static manual account message
+		
+		
 		List<Integer> authAccts = new ArrayList<>();
 		authAccts.add(1);
 		authAccts.add(2);
