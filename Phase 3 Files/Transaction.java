@@ -49,6 +49,10 @@ public class Transaction implements Serializable {
 	}
 	
 	/// GETTERS / SETTERS
+	public LocalDateTime getDate() {
+		return date;
+	}
+	
 	public float getAmount() {
 		return amount;
 	}

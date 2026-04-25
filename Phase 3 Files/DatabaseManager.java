@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,14 +12,22 @@ public class DatabaseManager {
 	private List<BankAcct> accountsDB;
 	private String usersFile; // = "db/AllUsers.txt";
 	private String accountsFile; // = "db/AllAccounts.txt";
+	private String userInfoFolder;
+	private String transactionFolder;
 	private static int counting;
-	String defaultDelimiter = "\\|";		// using String for delimiter
+	String defaultDelimiter = "|";		// using String for delimiter
 	String secondaryDelimiter = ",";	// so I can use .split() to parse data
 	
 	
-	public DatabaseManager() {
-		usersDB = new ArrayList<User>();
-		accountsDB = new ArrayList<BankAcct>();
+	public DatabaseManager(String allUsersFileName, String allAccountsFileName,
+			 			   String userInfoDirectory, String transactionDirectory) {
+		this.usersDB = new ArrayList<User>();
+		this.accountsDB = new ArrayList<BankAcct>();
+		
+		this.usersFile = allUsersFileName;
+		this.accountsFile = allAccountsFileName;
+		this.userInfoFolder = userInfoDirectory;
+		this.transactionFolder = transactionDirectory;
 	}
 	
 	public List<BankAcct> getAccountDB() {
@@ -29,8 +38,7 @@ public class DatabaseManager {
 		return usersDB;
 	}
 	
-	public void loadData(String allUsersFileName, String allAccountsFileName,
-						 String userInfoDirectory, String transactionDirectory) {
+	public void loadData() {
 		/* in these examples, the default delimiter is “|” and the
 		 * secondary delimiter is “,”. [variable_name] refers to a
 		 * parameter within one of the other text files */
@@ -40,9 +48,6 @@ public class DatabaseManager {
 		
 		// AllUsers.txt format: username|password|isTeller|authorizedAcctIDs (id_1,id_2)
 			// ex. fwaffycafecat|balls123|false|1,3,4,20
-		
-		usersFile = allUsersFileName;
-		accountsFile = allAccountsFileName;
 		
 		/* LOADS ALL USERS FROM A FILE */
 		File allUsersFile = new File(usersFile);	// open allUsers file
@@ -64,7 +69,13 @@ public class DatabaseManager {
 			System.out.println("Password: " + password);
 			boolean isTeller = Boolean.parseBoolean(userArrayList.get(2));
 			System.out.println("isTeller: " + isTeller);
-			String acctIDs = userArrayList.get(3);
+			String acctIDs = "";
+			
+			// if user has no accounts
+			if (userArrayList.size() >= 4) {
+				acctIDs = userArrayList.get(3);
+			}
+			
 			System.out.println("acctIDs: " + acctIDs);
 			
 			// turns the String of AcctIDs into a List of Integers
@@ -78,7 +89,7 @@ public class DatabaseManager {
 			}
 			
 			// extracts the user's User Info from a different file
-			String userInfoFileName = userInfoDirectory + username + "_info.txt";
+			String userInfoFileName = userInfoFolder + username + "_info.txt";
 			System.out.println("User Info File Name: " + userInfoFileName);
 			File userInfoFile = new File(userInfoFileName);
 			ArrayList<ArrayList<String>> userData =
@@ -134,8 +145,8 @@ public class DatabaseManager {
 			AcctType type = AcctType.parseAcctType(accountArrayList.get(2));
 			
 			List<User> authUsers = new ArrayList<User>();
-			// if user has no authUsers
 			
+			// if user has no authUsers
 			// System.out.println("Field Size: " + accountArrayList.size());
 			if (accountArrayList.size() >= 10) {
 				ArrayList<String> authUsernames = loadList(accountArrayList.get(9), secondaryDelimiter);
@@ -161,10 +172,15 @@ public class DatabaseManager {
 			List<Transaction> transactions = new ArrayList<>();
 			
 			// extracts the account's Transaction data from a different file
-			String transactionFileName = transactionDirectory + acctID + "_transactions.txt";
+			String transactionFileName = transactionFolder + acctID + "_transactions.txt";
 			System.out.println("Transaction File Name: " + transactionFileName);
 			File transactionFile = new File(transactionFileName);
-			ArrayList<ArrayList<String>> transactionData = loadFile(transactionFile, defaultDelimiter);
+			ArrayList<ArrayList<String>> transactionData = new ArrayList<ArrayList<String>>();
+			
+			// if account has transactions
+			if (transactionFile.exists()) {
+				transactionData = loadFile(transactionFile, defaultDelimiter);
+			}
 			
 			// [id]_transactions.txt format: date|user|amt|tranType
 			for (int j = 0; j < transactionData.size(); j++) {
@@ -213,6 +229,9 @@ public class DatabaseManager {
 				// if the content isn't just whitespace
 				if (!data.trim().isEmpty()) {
 					// split the line by the delimiters
+					if (delimiter.equals("|")) {
+						delimiter = "\\" + delimiter;
+					}
 					String[] dataArray = data.split(delimiter);
 					ArrayList<String> dataFields = new ArrayList<String>();
 					for (int i = 0; i < dataArray.length; i++) {
@@ -246,6 +265,9 @@ public class DatabaseManager {
 		// if the content isn't just whitespace
 		if (!list.trim().isEmpty()) {
 			// split the line by the delimiter
+			if (delimiter.equals("|")) {
+				delimiter = "\\" + delimiter;
+			}
 			String[] array = list.split(delimiter);
 			ArrayList<String> dataList = new ArrayList<String>();
 			// put it into an array list
@@ -296,48 +318,42 @@ public class DatabaseManager {
 	// idk if we need this, which is why it hasn't been implemented yet
 	// + getAccounts(ArrayList<int>) : ArrayList<bankAcct>
 	
-	public ArrayList<BankAcct> getUserAllAccounts(String user) {
+	public ArrayList<BankAcct> getUserAllAccts(String user) {
 		ArrayList<BankAcct> accounts = null;
 		return accounts;
 	}
 	
-	public void addUser(String user, String pass, UserInfo info, boolean isTeller) {
-		List<Integer> authUsers = new ArrayList<Integer>();
-		User newUser = new User(user, pass, info, isTeller, authUsers);
-		usersDB.add(newUser);
+	public void addUser(User user) {
+		usersDB.add(user);
+		// sort by username
+		usersDB.sort( (a, b) -> { return -1 * b.getUsername().compareTo(a.getUsername()); } );
 		
-		// update user file method
+		writeToAllUsers(); // update user file method
+		writeToUserInfo(user.getUsername()); // update user info file method
 	}
 	
-	public void addAccount(User user, AcctType type) {
-		BankAcct newAcct = new BankAcct(type, user);
-		accountsDB.add(newAcct);
+	public void addAccount(BankAcct account) {
+		accountsDB.add(account);
+		// sort by id number
+		accountsDB.sort( (a, b) -> { return -1 * Integer.compare(b.getAcctID(), a.getAcctID()); } );
 		
-		// update account file method
+		writeToAllAccounts(); // update account file method
 	}
 	
 	public void addAuthUser(String user, int acctID) {
 		getAccount(acctID).addAuthUser(getUser(user));
 		
-		// update account file method
+		writeToAllAccounts(); // update account file method
 	}
 	
 	public void removeAuthUser(String user, int acctID) {
 		getAccount(acctID).removeAuth(getUser(user));
 		
-		// update account file method
+		writeToAllAccounts(); // update account file method
 	}
 	
-	public void addDeposit(int acctID, Transaction trans) {
-		getAccount(acctID).deposit(trans);
-		
-		// update transaction file method
-	}
-	
-	public void addWithdraw(int acctID, Transaction trans) {
-		getAccount(acctID).withdraw(trans);
-		
-		// update transaction file method
+	public void addTransaction(int acctID, Transaction trans) {
+		writeToTransactions(acctID, trans); // update transaction file method
 	}
 	
 	// + assignAcc(String acctID, String user) : boolean
@@ -347,54 +363,170 @@ public class DatabaseManager {
 		user.getUserInfo().setFirstName(firstName);
 		user.getUserInfo().setFirstName(lastName);
 		
-		// update user info file method
+		writeToUserInfo(username); // update user info file method
 	}
 	
 	public void updateAddress(String username, String address) {
 		User user = getUser(username);
 		user.getUserInfo().setAddress(address);
 		
-		// update user info file method
+		writeToUserInfo(username); // update user info file method
 	}
 	
 	public void updateDOB(String username, LocalDate dob) {
 		User user = getUser(username);
 		user.getUserInfo().setDOB(dob);
 		
-		// update user info file method
+		writeToUserInfo(username); // update user info file method
 	}
 	
 	public void updatePhone(String username, String phone) {
 		User user = getUser(username);
 		user.getUserInfo().setPhone(phone);
 		
-		// update user info file method
+		writeToUserInfo(username); // update user info file method
 	}
 	
 	public void updatePassword(String username, String pass) {
 		User user = getUser(username);
 		user.setPassword(pass);
 		
-		// update user file method
+		writeToAllUsers(); // update user file method
 	}
 	
 	// update user file method
 	private void writeToAllUsers() {
+		String fileName = usersFile;
+		File file = new File(fileName);		// open the file / creates a new file
+		String newData = "";
 		
+		// AllUsers.txt format: username|password|isTeller|authorizedAcctIDs (id_1,id_2)
+			// ex. fwaffycafecat|balls123|false|1,3,4,20
+		for (int i = 0; i < usersDB.size(); i++) {
+			newData += usersDB.get(i).getUsername() + defaultDelimiter;
+			newData += usersDB.get(i).getPassword() + defaultDelimiter;
+			newData += usersDB.get(i).getRole() + defaultDelimiter;
+			
+			List<Integer> authAcctIDs = usersDB.get(i).getAuthAccts();
+			for (int j = 0; j < authAcctIDs.size(); j++) {
+				if (j == authAcctIDs.size() - 1) {
+					newData += authAcctIDs.get(j);
+				} else {
+					newData += authAcctIDs.get(j) + secondaryDelimiter;
+				}
+			}
+			
+			newData += "\n";
+		}
+		
+		// overwrites the previous file
+		try {
+			// makes a file writer
+			FileWriter myWriter = new FileWriter(file, false); // <-- this boolean means don't append; just overwrite
+			// writes the new content into the file
+			myWriter.write(newData);
+			myWriter.close();	// close the writer
+		// if file operations go wrong for some reason
+		} catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 	
 	// update account file method
 	private void writeToAllAccounts() {
+		String fileName = accountsFile;
+		File file = new File(fileName);		// open the file / creates a new file
+		String newData = "";
+		
+		// AllAccounts.txt format: id|owner|type|balance|credit|availCredit|frozen|closed|dueDate|AuthUsers (authUser1,authUser2)
+			// ex. 0|user0|Checking|10.00|0.00|0.00|false|false|2026-04-22|user1,user2
+		for (int i = 0; i < accountsDB.size(); i++) {
+			newData += accountsDB.get(i).getAcctID() + defaultDelimiter;
+			newData += accountsDB.get(i).getOwner().getUsername() + defaultDelimiter;
+			newData += accountsDB.get(i).getType() + defaultDelimiter;
+			newData += accountsDB.get(i).getBalance() + defaultDelimiter;
+			newData += accountsDB.get(i).getCredit() + defaultDelimiter;
+			newData += accountsDB.get(i).getAvailCredit() + defaultDelimiter;
+			newData += accountsDB.get(i).getFrozen() + defaultDelimiter;
+			newData += accountsDB.get(i).getClosed() + defaultDelimiter;
+			newData += accountsDB.get(i).getDueDate() + defaultDelimiter;
 			
+			List<User> authUsers = accountsDB.get(i).getAuths();
+			for (int j = 0; j < authUsers.size(); j++) {
+				if (j == authUsers.size() - 1) {
+					newData += authUsers.get(j).getUsername();
+				} else {
+					newData += authUsers.get(j).getUsername() + secondaryDelimiter;
+				}
+			}
+			
+			newData += "\n";
+		}
+		
+		// overwrites the previous file
+		try {
+			// makes a file writer
+			FileWriter myWriter = new FileWriter(file, false); // <-- this boolean means don't append; just overwrite
+			// writes the new content into the file
+			myWriter.write(newData);
+			myWriter.close();	// close the writer
+		// if file operations go wrong for some reason
+		} catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 	
 	// update user info file method
 	private void writeToUserInfo(String username) {
+		String fileName = userInfoFolder + username + "_info.txt";
+		File file = new File(fileName);		// open the file / creates a new file
+		String newData = "";
 		
+		UserInfo info = getUser(username).getUserInfo();
+		
+		// [username]_info.txt format: firstName|lastName|address|dob|phoneNum
+		newData += info.getFirstName() + defaultDelimiter;
+		newData += info.getLastName() + defaultDelimiter;
+		newData += info.getAddress() + defaultDelimiter;
+		newData += info.getDOB() + defaultDelimiter;
+		newData += info.getPhone() + "\n";
+		
+		
+		// overwrites the previous file
+		try {
+			// makes a file writer
+			FileWriter myWriter = new FileWriter(file, false); // <-- this boolean means don't append; just overwrite
+			// writes the new content into the file
+			myWriter.write(newData);
+			myWriter.close();	// close the writer
+		// if file operations go wrong for some reason
+		} catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 	
 	// update transaction file method
-	private void writeToTransactions(int acctID) {
-		//  append only for these
+	private void writeToTransactions(int acctID, Transaction trans) {
+		String fileName = transactionFolder + acctID + "_transactions.txt";
+		File file = new File(fileName);		// open the file / creates a new file
+		String newData = "";
+		
+		// [id]_transactions.txt format: date|user|amt|tranType
+		newData += trans.getDate() + defaultDelimiter;
+		newData += trans.getUser() + defaultDelimiter;
+		newData += trans.getAmount() + defaultDelimiter;
+		newData += trans.getType() + "\n";
+		
+		// overwrites the previous file
+		try {
+			// makes a file writer
+			FileWriter myWriter = new FileWriter(file, true); // <-- this boolean means append; append only for these
+			// writes the new content into the file
+			myWriter.write(newData);
+			myWriter.close();	// close the writer
+		// if file operations go wrong for some reason
+		} catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 }

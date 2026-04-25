@@ -3,13 +3,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 // make sure the test files are in tact and formatted correctly
-// if not, run the save tests first
+// if not, run the test database builder first
 public class DatabaseManagerLoadTester {
 	DatabaseManager database;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
-		database = new DatabaseManager();
+		TestDatabaseBuilder.main(new String[0]);
+		database = new DatabaseManager("db\\TestAllUsers.txt", "db\\TestAllAccounts.txt",
+									   "db\\TestUsers\\", "db\\TestAccounts\\");
 	}
 	
 	@Test
@@ -19,8 +21,7 @@ public class DatabaseManagerLoadTester {
 	
 	@Test
 	public void testLoadData() {
-		database.loadData("db\\TestAllUsers.txt", "db\\TestAllAccounts.txt",
-				"db\\TestUsers\\", "db\\TestAccounts\\");
+		database.loadData();
 		
 		fail("Not yet implemented");
 	}
