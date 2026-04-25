@@ -2,7 +2,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DatabaseManagerTester {
+// make sure the test files are in tact and formatted correctly
+// if not, run the save tests first
+public class DatabaseManagerLoadTester {
 	DatabaseManager database;
 	
 	@BeforeEach

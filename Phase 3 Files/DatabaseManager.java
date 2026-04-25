@@ -12,8 +12,14 @@ public class DatabaseManager {
 	private String usersFile; // = "db/AllUsers.txt";
 	private String accountsFile; // = "db/AllAccounts.txt";
 	private static int counting;
-	String defaultDelimiter = "[|]";		// using String for delimiter
+	String defaultDelimiter = "\\|";		// using String for delimiter
 	String secondaryDelimiter = ",";	// so I can use .split() to parse data
+	
+	
+	public DatabaseManager() {
+		usersDB = new ArrayList<User>();
+		accountsDB = new ArrayList<BankAcct>();
+	}
 	
 	public List<BankAcct> getAccountDB() {
 		return accountsDB;
@@ -34,9 +40,6 @@ public class DatabaseManager {
 		
 		// AllUsers.txt format: username|password|isTeller|authorizedAcctIDs (id_1,id_2)
 			// ex. fwaffycafecat|balls123|false|1,3,4,20
-		
-		usersDB = new ArrayList<User>();
-		accountsDB = new ArrayList<BankAcct>();
 		
 		usersFile = allUsersFileName;
 		accountsFile = allAccountsFileName;
@@ -303,51 +306,95 @@ public class DatabaseManager {
 		User newUser = new User(user, pass, info, isTeller, authUsers);
 		usersDB.add(newUser);
 		
-		// update file method
+		// update user file method
 	}
 	
-	public void addAccount(UserInfo user, AcctType type) {
+	public void addAccount(User user, AcctType type) {
+		BankAcct newAcct = new BankAcct(type, user);
+		accountsDB.add(newAcct);
 		
+		// update account file method
 	}
 	
-	public void addAuthUser(UserInfo info, String user, String pass, int acctID) {
+	public void addAuthUser(String user, int acctID) {
+		getAccount(acctID).addAuthUser(getUser(user));
 		
+		// update account file method
+	}
+	
+	public void removeAuthUser(String user, int acctID) {
+		getAccount(acctID).removeAuth(getUser(user));
+		
+		// update account file method
+	}
+	
+	public void addDeposit(int acctID, Transaction trans) {
+		getAccount(acctID).deposit(trans);
+		
+		// update transaction file method
+	}
+	
+	public void addWithdraw(int acctID, Transaction trans) {
+		getAccount(acctID).withdraw(trans);
+		
+		// update transaction file method
 	}
 	
 	// + assignAcc(String acctID, String user) : boolean
 	
-	public void updateName(String user, String firstName, String lastName) {
+	public void updateName(String username, String firstName, String lastName) {
+		User user = getUser(username);
+		user.getUserInfo().setFirstName(firstName);
+		user.getUserInfo().setFirstName(lastName);
+		
+		// update user info file method
+	}
+	
+	public void updateAddress(String username, String address) {
+		User user = getUser(username);
+		user.getUserInfo().setAddress(address);
+		
+		// update user info file method
+	}
+	
+	public void updateDOB(String username, LocalDate dob) {
+		User user = getUser(username);
+		user.getUserInfo().setDOB(dob);
+		
+		// update user info file method
+	}
+	
+	public void updatePhone(String username, String phone) {
+		User user = getUser(username);
+		user.getUserInfo().setPhone(phone);
+		
+		// update user info file method
+	}
+	
+	public void updatePassword(String username, String pass) {
+		User user = getUser(username);
+		user.setPassword(pass);
+		
+		// update user file method
+	}
+	
+	// update user file method
+	private void writeToAllUsers() {
 		
 	}
 	
-	public void updateAddress(String user, String address) {
+	// update account file method
+	private void writeToAllAccounts() {
+			
+	}
+	
+	// update user info file method
+	private void writeToUserInfo(String username) {
 		
 	}
 	
-	public void updateDOB(String user, String dob) {
-		
-	}
-	
-	public void updatePhone(String user, String phone) {
-		
-	}
-	
-	public void updatePassword(String user, String pass) {
-		
-	}
-	
-	public void updateBalance(int acctID, double balance) {
-		
-	}
-	
-	public void updateAuthUsers(int acctID, ArrayList<String> authUser) {
-		
-	}
-	
-	// do i really need this / is there repeating write code
-	// - writeToAllAccounts(boolean modifying) : void
-	// - writeToAllUsers() : void
-	// - writeToUserInfo() : void
-	// - writeToTransactions() : void
+	// update transaction file method
+	private void writeToTransactions(int acctID) {
 		//  append only for these
+	}
 }
