@@ -23,7 +23,7 @@ public class BankAcct {
     private boolean closed;
     private List<Transaction> transactions;
     private float creditLine;
-    private LocalDate dueDate;
+    private LocalDate dueDate = null;
 
     /*
     public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
@@ -33,7 +33,8 @@ public class BankAcct {
     }
     */
     
-    public BankAcct(int acctID, AcctType type, User owner, float balance, List<Transaction> transactions) { // from server loadAccounts
+    public BankAcct(int acctID, AcctType type, User owner, float balance,
+    		boolean frozen, boolean closed, List<User> authUser, List<Transaction> transactions) { // from server loadAccounts
     	this.acctID = acctID;
     	this.owner = owner;
     	this.type = type;
@@ -48,10 +49,10 @@ public class BankAcct {
     		creditLine = 40;
     		availCredit = creditLine;
     	}
-    	frozen = false;
-    	closed = false;
+    	this.frozen = frozen;
+    	this.closed = closed;
         this.transactions = new ArrayList<Transaction>(transactions);
-        this.authUser = new ArrayList<>();
+        this.authUser = new ArrayList<>(authUser);
     }
     
     public BankAcct(AcctType type, User owner) { // When a user opens an account
@@ -73,11 +74,44 @@ public class BankAcct {
     	closed = false;
         this.transactions = new ArrayList<Transaction>();
         this.authUser = new ArrayList<>();
-
+        authUser.add(owner);
     	
 
     }
     
+    public String toString() {
+    	String str = "";
+    	str += String.valueOf(acctID) + "|";
+    	if (type == AcctType.Checking) {
+    		str += "checking|";
+    	} else if (type == AcctType.Savings) {
+    		str += "savings|";
+    	} else {
+    		str += "credit|";
+    	}
+    	str += "$" + String.valueOf(balance) + "|";
+    	if (frozen) {str += "true|";} else {str += "false|";}
+    	if (closed) {str += "true|";} else {str += "false|";}
+    	if (dueDate != null) {str += dueDate.toString() + "|";} else {
+    		str += "null|";
+    	}
+    	str += owner.getUsername() + "|";
+    	if (authUser.size() > 1) {
+    		int size = 1;
+	    	for (User authUser: authUser) {
+	    		if (size == this.authUser.size()) {
+	    			str += authUser.getUsername() + "\n";
+	    		} else {
+	    			str += authUser.getUsername() + ",";
+	    		}
+	    		size += 1;
+	    	}
+	    	
+    	} else {
+    		str += owner.getUsername() + "|\n";
+    	}
+    	return str;
+    }
 
     public boolean withdraw(Transaction trans) {
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
@@ -141,7 +175,7 @@ public class BankAcct {
     
     public boolean addAuthUser(User user) {
     	for (User users : authUser) { // If the user is already added 
-    		if(users.getUsername() == user.getUsername() && users.getPassword() == user.getPassword()) {
+    		if(users.getUsername().equals(user.getUsername()) && users.getPassword().equals(user.getPassword())) {
     			return false;  // We'll return false (user was not added)
     		}
     	}
