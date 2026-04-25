@@ -6,7 +6,21 @@ import java.time.format.DateTimeFormatter;
 enum TranType{
 	WITHDRAWAL,
 	DEPOSIT,
-	SYSTEM
+	SYSTEM;
+	
+	// added parsing method to translate from our files
+	public static TranType parseTranType(String type) {
+		switch(type) {
+			case "WITHDRAWAL":
+				return TranType.WITHDRAWAL;
+			case "DEPOSIT":
+				return TranType.DEPOSIT;
+			case "SYSTEM":
+				return TranType.SYSTEM;
+			default:
+		    	return null;
+		}
+	}
 }
 
 public class Transaction implements Serializable {
@@ -16,6 +30,16 @@ public class Transaction implements Serializable {
 	private final String user;
 	private final float amount;
 	private final TranType tranType;
+	
+	// added constructor to build Transaction objects during start up
+	public Transaction(LocalDateTime date, String user, float amt, TranType type) {
+		this.id = ++count;
+		this.date = date;
+		this.user = user;
+		amount = amt;
+		tranType = type;
+	}
+	
 	public Transaction(String user, float amt, TranType type) {
 		this.id = ++count;
 		date = LocalDateTime.now();

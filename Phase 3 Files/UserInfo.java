@@ -1,15 +1,18 @@
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class UserInfo {
 	private String firstName;
 	private String lastName;
 	private String address;
-	private LocalDateTime dob;
+	private LocalDate dob;
 	private String phoneNum;
 	
-	UserInfo(String first, String last, String add, String dob, String num) {
-		// format established in transaction MM/dd/yy HH:mm
-		
+	UserInfo(String first, String last, String add, LocalDate dob, String num) {
+		this.firstName = first;
+		this.lastName = last;
+		this.address = add;
+		this.dob = dob;
+		this.phoneNum = num;
 	}
 	
 	public void setFirstName(String newFirst) {
@@ -24,7 +27,7 @@ public class UserInfo {
 		this.address = newAddress;
 	}
 	
-	public void setDOB(LocalDateTime newDOB) {
+	public void setDOB(LocalDate newDOB) {
 		this.dob = newDOB;
 	}
 	
@@ -44,7 +47,7 @@ public class UserInfo {
 		return address;
 	}
 	
-	public LocalDateTime getDOB() {
+	public LocalDate getDOB() {
 		return dob;
 	}
 	

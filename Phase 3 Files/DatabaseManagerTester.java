@@ -1,23 +1,25 @@
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 public class DatabaseManagerTester {
+	DatabaseManager database;
+	
+	@BeforeEach
+	public void setUp() throws Exception {
+		database = new DatabaseManager();
+	}
+	
 	@Test
 	public void test() {
 		fail("Not yet implemented");
 	}
 	
 	@Test
-	public void testAvgRoll() {
-		int sides = 17;
-		//Die die1 = new Die(sides);
-		int total = 0;
-		for (int i=0;i<500;i++) {
-			//total += die1.roll();
-		}
-		int average = total/500;
+	public void testLoadData() {
+		database.loadData("db\\TestAllUsers.txt", "db\\TestAllAccounts.txt",
+				"db\\TestUsers\\", "db\\TestAccounts\\");
 		
-		System.out.println("Average: " + average);
-		
-		assertTrue(average > (sides/2)-1 && average < (sides/2)+1);
+		fail("Not yet implemented");
 	}
 }

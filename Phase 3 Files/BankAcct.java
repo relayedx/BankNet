@@ -8,26 +8,52 @@ import java.util.List;
 enum AcctType{
 	Credit,
 	Checking,
-	Savings
+	Savings;
+	
+	// added parsing method to translate from our files
+	public static AcctType parseAcctType(String type) {
+		switch(type) {
+			case "Credit":
+				return AcctType.Credit;
+			case "Checking":
+				return AcctType.Checking;
+			case "Savings":
+				return AcctType.Savings;
+			default:
+		    	return null;
+		}
+	}
 }
 
 public class BankAcct {
 
+	private int acctID;
     private User owner;
-    private List<User> authUser;
-    private int acctID;
-    private float balance;
-    private float availCredit;
     private AcctType type;
+    private List<User> authUser;
+    private float balance;
+    private float creditLine;
+    private float availCredit;
+    private LocalDate dueDate;
     private boolean frozen;
     private boolean closed;
     private List<Transaction> transactions;
-    private float creditLine;
-    private LocalDate dueDate;
-
-    public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
-        this.authUser = new ArrayList<>(); // TODO: will need to instatiate below from parsed
-        this.transactions = new ArrayList<Transaction>(trans);
+    
+    // When account is instantiated during server start up (altered the constructor from client server dev branch)
+    public BankAcct(int id, User owner, AcctType type, List<User> authUsers,
+    		float balance, float credit, float availCredit, LocalDate due,
+    		boolean frozen, boolean closed, List<Transaction> trans) {
+    	this.acctID = id;
+    	this.owner = owner;
+    	this.type = type;
+        this.authUser = authUsers;
+    	this.balance = balance;
+    	this.creditLine = credit;
+    	this.availCredit = availCredit;
+    	this.dueDate = due;
+    	this.frozen = frozen;
+    	this.closed = closed;
+        this.transactions = trans;
     }
     
     public BankAcct(AcctType type, User owner) { // When a user opens an account
