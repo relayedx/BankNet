@@ -15,8 +15,9 @@ public class AccountMessage extends Message {
     private final List<Transaction> transactions;
     private final float creditLine;
     private final LocalDate dueDate;
+    private final Boolean isTeller;
     
-    AccountMessage(msgType type, Status status,BankAcct acct){
+    AccountMessage(msgType type, Status status, BankAcct acct) {
     	super(type,status);
     	owner = acct.getOwner().getUsername();
     	List<String> temp = new ArrayList<String>();
@@ -33,6 +34,7 @@ public class AccountMessage extends Message {
     	transactions = new ArrayList<Transaction>(acct.getTrans());
     	creditLine = acct.getCredit();
     	dueDate = acct.getDueDate();
+    	isTeller = acct.getOwner().getRole();
     }
     
     public String getOwner() {
@@ -77,5 +79,9 @@ public class AccountMessage extends Message {
     
     public boolean getClosed() {
     	return closed;
+    }
+    
+    public boolean getRole() {
+    	return isTeller;
     }
 }

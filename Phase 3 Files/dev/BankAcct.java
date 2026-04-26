@@ -34,17 +34,14 @@ public class BankAcct {
     */
     
     public BankAcct(int acctID, AcctType type, User owner, float balance,
-    		boolean frozen, boolean closed, List<User> authUser, List<Transaction> transactions) { // from server loadAccounts
+    		boolean frozen, boolean closed, String dueDate, List<User> authUsers, List<Transaction> transactions) { // from server loadAccounts
     	this.acctID = acctID;
     	this.owner = owner;
     	this.type = type;
-    	if (type != AcctType.Checking) {
-    		dueDate = LocalDate.now().plusDays(30);
-    		// Since these are primitive types, we need to set them to something
-    		creditLine = 0;
-    		availCredit = 0;
-    	}
     	this.balance = balance;
+    	if (!dueDate.equals("null")) {
+    		this.dueDate = LocalDate.parse(dueDate);
+    	}
     	if(type == AcctType.Credit) {
     		creditLine = 40;
     		availCredit = creditLine;
@@ -52,14 +49,14 @@ public class BankAcct {
     	this.frozen = frozen;
     	this.closed = closed;
         this.transactions = new ArrayList<Transaction>(transactions);
-        this.authUser = new ArrayList<>(authUser);
+        this.authUser = new ArrayList<>(authUsers);
     }
     
     public BankAcct(AcctType type, User owner) { // When a user opens an account
     	this.acctID = ++count;
     	this.owner = owner;
     	this.type = type;
-    	if (type != AcctType.Checking) {
+    	if (type != AcctType.Checking && type != AcctType.Savings) {
     		dueDate = LocalDate.now().plusDays(30);
     		// Since these are primitive types, we need to set them to something
     		creditLine = 0;

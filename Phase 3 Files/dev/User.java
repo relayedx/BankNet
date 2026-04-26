@@ -31,4 +31,7 @@ public class User {
 		return isTeller;
 	}
 	
+	public List<Integer> getAuthAcctIDs() {
+		return authAcctIDs;
+	}
 }

@@ -95,11 +95,11 @@ public class Client {
 		*/
     }
     
-    public ArrayList<Message> getSkelAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
-    	System.out.println("Sending Skeleton Accts Msgs");
-    	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,user));
+    public List<Message> getAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
+    	// System.out.println("Sending Skeleton Accts Msgs");
+    	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST, Status.SUCCESS, user));
     	out.flush();
-    	ArrayList<Message> msgs = (ArrayList<Message>) in.readObject(); // We are expecting the list of their accts
+    	List<Message> msgs = (List<Message>) in.readObject(); // We are expecting the list of their accts
     	return msgs;
     }
     

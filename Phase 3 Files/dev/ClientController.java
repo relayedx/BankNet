@@ -1,6 +1,7 @@
 package dev;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class ClientController {
@@ -22,15 +23,45 @@ public class ClientController {
 			return;
 		}
 		
-		if (res.getStatus() == Status.SUCCESS && res.getText().equals("customer") ) {
-			currentGUI.closeUI();
-			currentGUI = new AtmGUI(this);
-			currentGUI.launchUI();
-		} else {
+		if (res.getStatus() == Status.SUCCESS) {
+			String role = res.getText();
+			if (role.equals("teller")) {
+				// this is a teller so we can open their portal
+				currentGUI.closeUI();
+				currentGUI = new TellerGUI(this);
+				currentGUI.launchUI();
+				return;
+			} else {
+				// this is a customer so we can req for their accounts
+				List<Message> listOfAccts = client.getAccts(username);
+				currentGUI.closeUI();
+				currentGUI = new AtmGUI(this, listOfAccts);
+				currentGUI.launchUI();
+			}
+			
+		}
+		
+		/*
+		if (res.getStatus() == Status.ERROR) {
+			JOptionPane.showMessageDialog(null, "Could not successfully login");
+			return;
+		}
+		
+		// if we are not getting a request for a BankAcct then this is a teller
+		if (res.getType() != msgType.ACCOUNT_REQUEST) {
 			currentGUI.closeUI();
 			currentGUI = new TellerGUI(this);
 			currentGUI.launchUI();
+			return;
 		}
+		
+		// if this point is reached then it has to be a customer
+		
+		AccountMessage returnedAcct = (AccountMessage) res;
+		currentGUI.closeUI();
+		currentGUI = new AtmGUI(this);
+		currentGUI.launchUI();
+		*/
 	}
 	
 	public void logout() throws ClassNotFoundException, IOException {
@@ -87,8 +118,8 @@ public class ClientController {
 	
 	
 	// Getting skeleton accounts can be used when user is looked up by teller, AND when user logs in through ATM GUI.
-	public ArrayList<Message> getSkelAccts(String user) throws ClassNotFoundException, IOException{
-		ArrayList<Message> accts = client.getSkelAccts(user);
+	public List<Message> getSkelAccts(String user) throws ClassNotFoundException, IOException{
+		List<Message> accts = client.getAccts(user);
 		String temp = "";
 		for (Message msg : accts) {
 			temp += msg + "\n";

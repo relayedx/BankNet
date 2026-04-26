@@ -98,10 +98,9 @@ class Server {
 						Message res = server.isUser(loginMsg.getUsername(),loginMsg.getPassword()); // Is the user an actual user?
 						if (res.getStatus() == Status.SUCCESS) { // if so,
 							loggedIn = true; // Mark user as logged in.
-							out.writeObject(res); // Send a success msg
-							System.out.println("a " + res.getText() + " has logged in");
+							out.writeObject(res); // Send respose
 						} else {
-							out.writeObject(res); // Otherwise send error
+							out.writeObject(res); // send response without setting loggedIn to true
 						}
 						out.flush();// send msg to server
 					}
@@ -147,7 +146,7 @@ class Server {
 					}
 					if (type == msgType.ACCOUNTS_REQUEST) { 
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
-						ArrayList<Message> msgs = server.getSkelAccts(aMsg.getUser());
+						List<Message> msgs = server.getAccts(aMsg.getUser());
 						out.writeObject(msgs);
 						out.flush();
 						 
@@ -258,15 +257,59 @@ class Server {
 	
 	public void loadAccounts() {
 		try {
+			// List of BankAccts that will be used to initialize accountsDB
+			List<BankAcct> BankAccts = new ArrayList<>();
 			Scanner scanner = new Scanner(BankAccountsFile);
 			while (scanner.hasNextLine() ) {
+				// parsing each line by '|'
 				String line = scanner.nextLine();
 				String[] data = line.split("\\|");
-				
+				// getting acctID
+				int acctID = Integer.parseInt(data[0]);
+				// getting account type
+				AcctType type = AcctType.Credit;
+				if (data[1].equals("checking")) {type = AcctType.Checking;}
+				else if (data[1].equals("savings")) {type = AcctType.Savings;}
+				else if (data[1].equals("credit")) {type = AcctType.Credit;}
+				// getting acct balance
+				String bal = data[2].replace("$", "");
+				float balance = Float.parseFloat(bal);
+				// getting acct status (frozen & closed)
+				boolean frozen = Boolean.parseBoolean(data[3]);
+				boolean closed = Boolean.parseBoolean(data[4]);
+				String dueDate = data[5];
+				// getting owner of acct
+				String ownerUsername = data[6];
+				// finding account owner obj from usersDB
+				User owner = findUser(ownerUsername);
+				// parsing authUsers in file to add to List for authUsers
+				List<User> authUsers = new ArrayList<>(); // creating new authUsers array so i can just pass in as param
+				String[] authUsersInFile = data[7].split(",");
+				for (String username : authUsersInFile) {
+					User authUser = findUser(username);
+					authUsers.add(authUser);
+				}
+				// manually creating temporary transactions list
+				List<Transaction> transactions = new ArrayList<>();
+				transactions.add(new Transaction("johndoe", 350.22f, TranType.WITHDRAWAL));
+				// creating BankAccts with parsed info and adding to list
+				BankAccts.add(new BankAcct(acctID, type, owner, balance, frozen,
+					closed, dueDate, authUsers, transactions));
 			}
+			// initializing accountsDB with all list of all BankAccts we parsed
+			accountsDB = new Accounts(BankAccts);
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}
+	}
+	
+	public User findUser(String username) {
+		 for (User user : usersDB) {
+		        if (user.getUsername().equals(username)) {
+		            return user;
+		        }
+		    }
+		    return null;
 	}
 	
 	public Message isUser(String username, String password) {
@@ -277,10 +320,16 @@ class Server {
 				String role = "";
 				if (user.getRole()) {
 					role = "teller";
+					return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
 				} else {
 					role = "customer";
+					return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
+					
+					// List<Integer> authAcctIDs = user.getAuthAcctIDs();
+					// List<BankAcct> customerBankAccts = accountsDB.getAccts(authAcctIDs);
+					// return new AccountMessage(msgType.ACCOUNT_REQUEST, Status.SUCCESS,
+					//	customerBankAccts.get(0));
 				}
-				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
 			}
 		}
 		
@@ -309,15 +358,25 @@ class Server {
 		return true;
 	}
 	
-	public ArrayList<Message> getSkelAccts(String user){
+	public List<Message> getAccts(String user){
 		// TODO: This gets an arraylist of skeleton accounts that will be sent back to user/teller from accounts
 		// There should be and if else statement if the array is empty, which will then send an error message of empty skeleton account.
+		User acctOwner = findUser(user); // getting the user whos requesting their accts
+		List<Integer> authAcctIDs = acctOwner.getAuthAcctIDs(); // getting the acctIDs that belong to them
+		List<BankAcct> userBankAccts = accountsDB.getAccts(authAcctIDs); // extracting all of the bankAccts with previous IDs
+		List<Message> acctsRequested = new ArrayList<>();
+		for (BankAcct currBankAcct : userBankAccts) {
+			acctsRequested.add(new AccountMessage(msgType.ACCOUNTS_REQUEST, Status.SUCCESS, currBankAcct));
+		}
+		return acctsRequested;
+		
+		/*
 		ArrayList<Message> msgs = new ArrayList<Message>();
 		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,1,100,"credit"));
 		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,2,200,"savings"));
 		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings"));
 		return msgs;
-
+		*/
 
 	}
 	
