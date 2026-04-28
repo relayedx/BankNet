@@ -1,3 +1,4 @@
+package dev;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -16,13 +17,18 @@ public class DatabaseManagerLoadTester {
 		// runs a test database builder first to make sure
 		// the test files are in tact and formatted correctly
 		TestDatabaseBuilder.main(new String[0]);
-		database = new DatabaseManager("db\\TestAllUsers.txt", "db\\TestAllAccounts.txt",
-									   "db\\TestUsers\\", "db\\TestAccounts\\");
+		database = new DatabaseManager(System.getProperty("user.dir") + "\\db\\TestAllUsers.txt",
+									   System.getProperty("user.dir") + "\\db\\TestAllAccounts.txt",
+									   System.getProperty("user.dir") + "\\db\\TestUsers\\",
+									   System.getProperty("user.dir") + "\\db\\TestAccounts\\");
 	}
 	
 	@Test
 	public void testLoadData() {
 		database.loadData();
+		
+		// if you want to change the fields, please change them in the TestDatabaseBuilder too
+		// that way, the test won't fail when you run it
 		
 		// user 1 fields
 		String username1 = "shar";
@@ -104,7 +110,7 @@ public class DatabaseManagerLoadTester {
 			() -> assertEquals(username1, database.getUser(username1).getUsername()),
 			() -> assertEquals(password1, database.getUser(username1).getPassword()),
 			() -> assertEquals(isTeller1, database.getUser(username1).getRole()),
-			() -> assertEquals(authAcctIDs1, database.getUser(username1).getAuthAccts()),
+			() -> assertEquals(authAcctIDs1, database.getUser(username1).getAuthAcctIDs()),
 			// does user info 1 match with user info 1 in the database
 			() -> assertEquals(firstName1, database.getUser(username1).getUserInfo().getFirstName()),
 			() -> assertEquals(lastName1, database.getUser(username1).getUserInfo().getLastName()),
@@ -116,7 +122,7 @@ public class DatabaseManagerLoadTester {
 			() -> assertEquals(username2, database.getUser(username2).getUsername()),
 			() -> assertEquals(password2, database.getUser(username2).getPassword()),
 			() -> assertEquals(isTeller2, database.getUser(username2).getRole()),
-			() -> assertEquals(authAcctIDs2, database.getUser(username2).getAuthAccts()),
+			() -> assertEquals(authAcctIDs2, database.getUser(username2).getAuthAcctIDs()),
 			// does user info 2 match with user info 2 in the database
 			() -> assertEquals(firstName2, database.getUser(username2).getUserInfo().getFirstName()),
 			() -> assertEquals(lastName2, database.getUser(username2).getUserInfo().getLastName()),

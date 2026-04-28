@@ -1,4 +1,5 @@
 package testing;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import dev.BankAcct;
 import dev.TranType;
 import dev.Transaction;
 import dev.User;
+import dev.UserInfo;
 import dev.AcctType;
 
 
@@ -22,7 +24,8 @@ public class CheckingAccountTests {
 		List<Integer> authAccts = new ArrayList<>();
 		authAccts.add(1);
 		authAccts.add(2);
-		User user = new User("jerrick", "pass", false,authAccts, true);
+		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
+		User user = new User("jerrick", "pass", info, false, authAccts, true);
 		testAcct = new BankAcct(AcctType.Checking,user);
 		Transaction trans1 = new Transaction("User", 100, TranType.DEPOSIT);
 		testAcct.deposit(trans1);

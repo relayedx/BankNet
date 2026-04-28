@@ -1,3 +1,4 @@
+package dev;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,13 +8,15 @@ import java.util.List;
 public class TestDatabaseBuilder {
 	public static void main(String[] args) {
 		DatabaseManager database = new DatabaseManager
-				("db\\TestAllUsers.txt", "db\\TestAllAccounts.txt",
-				 "db\\TestUsers\\", "db\\TestAccounts\\");
+				(System.getProperty("user.dir") + "\\db\\TestAllUsers.txt",
+				 System.getProperty("user.dir") + "\\db\\TestAllAccounts.txt",
+				 System.getProperty("user.dir") + "\\db\\TestUsers\\",
+				 System.getProperty("user.dir") + "\\db\\TestAccounts\\");
 		
-		File file1 = new File("db\\TestAllUsers.txt"); 
-		File file2 = new File("db\\TestAllAccounts.txt"); 
-		File folder1 = new File("db\\TestUsers\\"); 
-		File folder2 = new File("db\\TestAccounts\\"); 
+		File file1 = new File(System.getProperty("user.dir") + "\\db\\TestAllUsers.txt"); 
+		File file2 = new File(System.getProperty("user.dir") + "\\db\\TestAllAccounts.txt"); 
+		File folder1 = new File(System.getProperty("user.dir") + "\\db\\TestUsers\\"); 
+		File folder2 = new File(System.getProperty("user.dir") + "\\db\\TestAccounts\\"); 
 		
 		file1.delete();
 		file2.delete();
@@ -44,10 +47,10 @@ public class TestDatabaseBuilder {
 		String password2 = "ultra";
 		
 		UserInfo info1 = new UserInfo("Sharlene", "Yaps", "979 Story Rd, San Jose, CA 95122", LocalDate.of(2007, 4, 9), "(123)456-7890");
-		User user1 = new User(username1, password1, info1, false, new ArrayList<Integer>() { { add(1); add(3); add(4); add(20); } });
+		User user1 = new User(username1, password1, info1, false, new ArrayList<Integer>() { { add(1); add(3); add(4); add(20); } }, true);
 		
 		UserInfo info2 = new UserInfo("Tayce", "T.", "1071 B St, Hayward, CA 94541", LocalDate.of(2000, 8, 11), "(098)765-4321");
-		User user2 = new User(username2, password2, info2, true, new ArrayList<Integer>());
+		User user2 = new User(username2, password2, info2, true, new ArrayList<Integer>(), true);
 		
 		List<Transaction> trans1 = new ArrayList<Transaction>() {
 			{

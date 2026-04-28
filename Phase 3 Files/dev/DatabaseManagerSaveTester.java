@@ -1,3 +1,4 @@
+package dev;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ DatabaseManager database;
 		
 		
 		UserInfo info = new UserInfo(firstName, lastName, address, dob, phone);
-		User user = new User(username, password, info, isTeller, authAcctIDs);
+		User user = new User(username, password, info, isTeller, authAcctIDs, true);
 		
 		database.addUser(user);
 		database.loadData();
@@ -48,7 +49,7 @@ DatabaseManager database;
 			() -> assertEquals(username, database.getUser(username).getUsername()),
 			() -> assertEquals(password, database.getUser(username).getPassword()),
 			() -> assertEquals(isTeller, database.getUser(username).getRole()),
-			() -> assertEquals(authAcctIDs, database.getUser(username).getAuthAccts()),
+			() -> assertEquals(authAcctIDs, database.getUser(username).getAuthAcctIDs()),
 			// does user info match with user info added in the database
 			() -> assertEquals(firstName, database.getUser(username).getUserInfo().getFirstName()),
 			() -> assertEquals(lastName, database.getUser(username).getUserInfo().getLastName()),
