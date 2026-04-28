@@ -116,7 +116,8 @@ public class BankAcct {
     		return false; // Return error
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
-        	float tempBal = balance - trans.getAmount();
+        	float tempBal = Math.round((balance - trans.getAmount()) * 100.0) / 100.0f;
+        	
         	if (tempBal < 0) { // If they try and withdraw
         		System.out.println("Balance would overdraft acct, error!");
         		return false;
@@ -124,28 +125,29 @@ public class BankAcct {
         	balance = tempBal;
         	transactions.add(trans);
         }else {
-        	float tempAvailCredit = availCredit - trans.getAmount();
+        	float tempAvailCredit = Math.round((availCredit - trans.getAmount()) * 100.0) / 100.0f;
         	if (tempAvailCredit < 0) {
         		System.out.println("Withdrawal goes below availbile credit, error!");
         		return false;
         	}
         	balance += trans.getAmount(); // We'll just add onto the balance.
         	System.out.println("New Balance: " + balance);
-        	availCredit -= trans.getAmount();
+        	availCredit = tempAvailCredit;
         	System.out.println("New Availible Credit: " + availCredit);
         }
         return false;
     }
 
     public boolean deposit(Transaction trans) {
-    	if (trans.getType() == TranType.DEPOSIT) { // Is the transaction a deposit but trying to make a withdrawal
+    	if (trans.getType() == TranType.WITHDRAWAL) { // Is the transaction a withdrawal but trying to make a deposit?
     		return false; // Return error
     	}
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
     		return false; // Return error
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
-        	balance += trans.getAmount(); // We'll just add onto the balance.
+        	float tempBalance = Math.round((balance + trans.getAmount()) * 100) / 100.0f;
+        	balance += tempBalance; // We'll just add onto the balance.
         }else {
         	balance -= trans.getAmount();
         	availCredit += trans.getAmount();
@@ -157,9 +159,17 @@ public class BankAcct {
         return true;
     }
     
-    public long calculateMonths(LocalDate date) {
+    public void calculateMonths(LocalDate date) {
     	long monthsLate = Math.max(0,ChronoUnit.MONTHS.between(dueDate, date));
-    	return monthsLate;
+    	if (monthsLate == 0 || type == AcctType.Checking) { // If there is no due date or the account is checkings 
+    		return; // We can return
+    	}
+    	// If we get here, we know we need to either add to the balance (Savings), or add what they owe (Credit)
+    	if (type == AcctType.Savings) { // If we have a savings account
+    		float toAdd = (float) (balance * 0.0125);
+    		System.out.println(toAdd);
+    	}
+    	
     }
 
     public void freezeAcc(boolean frozen) {
