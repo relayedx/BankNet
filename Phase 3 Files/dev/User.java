@@ -11,7 +11,7 @@ public class User {
 	private Boolean isLoggedIn; // probably dont need this attribute since...
 	// ...we handle and track loggedIn users from clientHandler
 	
-	User(String username, String password, Boolean isTeller, List<Integer> authAcctIDs, Boolean isLoggedIn) {
+	public User(String username, String password, Boolean isTeller, List<Integer> authAcctIDs, Boolean isLoggedIn) {
 		this.username = username;
 		this.password = password;
 		this.isTeller = isTeller;
