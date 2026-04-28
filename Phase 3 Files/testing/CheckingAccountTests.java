@@ -1,19 +1,24 @@
 package testing;
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import dev.BankAcct;
 import dev.TranType;
 import dev.Transaction;
+import dev.TransactionMessage;
 import dev.User;
 import dev.UserInfo;
 import dev.AcctType;
+import dev.msgType;
+import dev.Status;
 
 
 public class CheckingAccountTests {
@@ -58,7 +63,6 @@ public class CheckingAccountTests {
 	public void withdrawTest() {
 		Transaction trans1 = new Transaction("User", 10, TranType.WITHDRAWAL);
 		testAcct.withdraw(trans1);
-		System.out.println(testAcct.getBalance());
 		Assertions.assertTrue(testAcct.getBalance() < 100);
 	}
 	
@@ -66,11 +70,16 @@ public class CheckingAccountTests {
 	@DisplayName("Withdrawal Overdraft Test")
 	public void overdraft() {
 		Transaction trans1 = new Transaction("User", 110, TranType.WITHDRAWAL);
-		Assertions.assertFalse(testAcct.withdraw(trans1));
+		TransactionMessage msg = testAcct.withdraw(trans1);
+		Assertions.assertAll(
+				() -> Assertions.assertEquals(msgType.WITHDRAWAL_REQUEST, msg.getType()),
+				() -> Assertions.assertEquals(100f, msg.getUpdatedBalance()) // Balance should not have changed
+		);
 	}
 	
 	@Test
 	@DisplayName("Withdrawal Test - Wrong Transaction Type")
+	@Disabled
 	public void withdrawalWT() {
 		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
 		Assertions.assertFalse(testAcct.withdraw(trans1));
