@@ -60,17 +60,20 @@ public class BankAcct {
     	this.acctID = ++count;
     	this.owner = owner;
     	this.type = type;
-    	if (type != AcctType.Checking && type != AcctType.Savings) {
-    		dueDate = LocalDate.now().plusDays(30);
+    	if (type != AcctType.Credit) {
     		// Since these are primitive types, we need to set them to something
     		creditLine = 0;
     		availCredit = 0;
     	}
-    	balance = 0;
     	if(type == AcctType.Credit) {
+    		
     		creditLine = 40;
     		availCredit = creditLine;
     	}
+    	if(type != AcctType.Checking) {
+    		dueDate = LocalDate.now().plusDays(30);
+    	}
+    	balance = 0;
     	frozen = false;
     	closed = false;
         this.transactions = new ArrayList<Transaction>();
@@ -116,34 +119,34 @@ public class BankAcct {
 
     
     // TODO: Remove all print statements, using it cause my brain hurts LOL
-    public boolean withdraw(Transaction trans) {
+    public TransactionMessage withdraw(Transaction trans) {
     	if (trans.getType() == TranType.DEPOSIT) { // Is the transaction a deposit but trying to make a withdrawal
-    		return false; // Return error
+    		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance); // Return error
     	}
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
-    		return false; // Return error
+    		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance); // Return error
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
         	float tempBal = Math.round((balance - trans.getAmount()) * 100.0) / 100.0f;
         	
         	if (tempBal < 0) { // If they try and withdraw
         		System.out.println("Balance would overdraft acct, error!");
-        		return false;
+        		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance);
         	}
         	balance = tempBal;
         	transactions.add(trans);
+        	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
         }else {
         	float tempAvailCredit = Math.round((availCredit - trans.getAmount()) * 100.0) / 100.0f;
         	if (tempAvailCredit < 0) {
         		System.out.println("Withdrawal goes below availbile credit, error!");
-        		return false;
+        		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance);
         	}
         	balance += trans.getAmount(); // We'll just add onto the balance.
         	System.out.println("New Balance: " + balance);
         	availCredit = tempAvailCredit;
-        	System.out.println("New Availible Credit: " + availCredit);
+        	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
         }
-        return false;
     }
 
     public boolean deposit(Transaction trans) {
@@ -157,8 +160,8 @@ public class BankAcct {
         	float tempBalance = Math.round((balance + trans.getAmount()) * 100) / 100.0f;
         	balance += tempBalance; // We'll just add onto the balance.
         }else {
-        	balance -= trans.getAmount();
-        	availCredit += trans.getAmount();
+        	balance = Math.round((balance - trans.getAmount()) * 100) / 100.0f;
+        	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
         	System.out.println("New Availible Credit: " + availCredit);
         	
         }
@@ -167,15 +170,29 @@ public class BankAcct {
         return true;
     }
     
-    public void calculateMonths(LocalDate date) {
+    public void calculateMonths(LocalDate date) { // Used for credit/savings, calculating accured interest
+
     	long monthsLate = Math.max(0,ChronoUnit.MONTHS.between(dueDate, date));
     	if (monthsLate == 0 || type == AcctType.Checking) { // If there is no due date or the account is checkings 
     		return; // We can return
     	}
     	// If we get here, we know we need to either add to the balance (Savings), or add what they owe (Credit)
     	if (type == AcctType.Savings) { // If we have a savings account
-    		float toAdd = (float) (balance * 0.0125);
+    		float toAdd = Math.round((balance * 0.0125f * monthsLate ) * 100) / 100.0f;
+    		Transaction sys = new Transaction("System/Interest", toAdd, TranType.DEPOSIT);
+    		balance += toAdd;
+    		transactions.add(sys);
+   
     		System.out.println(toAdd);
+    	}else { // Else, the account is a credit (they owe to the bank
+    		// Withdraw only allows credit is below 0, so we would need to override withdraw
+    		float interest = Math.round((balance * 0.10f * monthsLate) * 100.0) / 100.0f;
+    		balance += interest; // The amount owed would go into your balance
+    		availCredit -= interest;  
+    		Transaction sys = new Transaction("System/Interest", interest, TranType.SYSTEM);
+    		transactions.add(sys);
+    		
+    		
     	}
     	
     }
