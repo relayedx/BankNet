@@ -39,7 +39,15 @@ public class CheckingAccountTests {
 	public void depositTest() {
 		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
 		testAcct.deposit(trans1);
+		System.out.println("testBal: " + testAcct.getBalance());
 		Assertions.assertTrue(testAcct.getBalance() > 100);
+	}
+	
+	@Test
+	@DisplayName("Deposit Test - Wrong Transaction Type")
+	public void depositWT() {
+		Transaction trans1 = new Transaction("User", 10, TranType.WITHDRAWAL);
+		Assertions.assertFalse(testAcct.deposit(trans1));
 	}
 	
 	@Test
@@ -47,6 +55,7 @@ public class CheckingAccountTests {
 	public void withdrawTest() {
 		Transaction trans1 = new Transaction("User", 10, TranType.WITHDRAWAL);
 		testAcct.withdraw(trans1);
+		System.out.println(testAcct.getBalance());
 		Assertions.assertTrue(testAcct.getBalance() < 100);
 	}
 	
@@ -56,5 +65,14 @@ public class CheckingAccountTests {
 		Transaction trans1 = new Transaction("User", 110, TranType.WITHDRAWAL);
 		Assertions.assertFalse(testAcct.withdraw(trans1));
 	}
+	
+	@Test
+	@DisplayName("Withdrawal Test - Wrong Transaction Type")
+	public void withdrawalWT() {
+		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
+		Assertions.assertFalse(testAcct.withdraw(trans1));
+	}
+	
+	
 
 }
