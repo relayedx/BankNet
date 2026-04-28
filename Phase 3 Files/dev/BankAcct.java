@@ -4,12 +4,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.time.temporal.ChronoUnit;
 
-enum AcctType{
-	Credit,
-	Checking,
-	Savings
-}
 
 public class BankAcct {
 	private static int count = 0;
@@ -110,7 +106,12 @@ public class BankAcct {
     	return str;
     }
 
+    
+    // TODO: Remove all print statements, using it cause my brain hurts LOL
     public boolean withdraw(Transaction trans) {
+    	if (trans.getType() == TranType.DEPOSIT) { // Is the transaction a deposit but trying to make a withdrawal
+    		return false; // Return error
+    	}
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
     		return false; // Return error
     	}
@@ -128,7 +129,7 @@ public class BankAcct {
         		System.out.println("Withdrawal goes below availbile credit, error!");
         		return false;
         	}
-        	balance -= trans.getAmount(); // We'll just add onto the balance.
+        	balance += trans.getAmount(); // We'll just add onto the balance.
         	System.out.println("New Balance: " + balance);
         	availCredit -= trans.getAmount();
         	System.out.println("New Availible Credit: " + availCredit);
@@ -137,6 +138,9 @@ public class BankAcct {
     }
 
     public boolean deposit(Transaction trans) {
+    	if (trans.getType() == TranType.DEPOSIT) { // Is the transaction a deposit but trying to make a withdrawal
+    		return false; // Return error
+    	}
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
     		return false; // Return error
     	}
@@ -151,6 +155,11 @@ public class BankAcct {
         System.out.println("New Balance: " + balance);
         transactions.add(trans);
         return true;
+    }
+    
+    public long calculateMonths(LocalDate date) {
+    	long monthsLate = Math.max(0,ChronoUnit.MONTHS.between(dueDate, date));
+    	return monthsLate;
     }
 
     public void freezeAcc(boolean frozen) {
