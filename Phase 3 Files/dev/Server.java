@@ -2,23 +2,31 @@ package dev;
 import java.io.*;
 import java.util.List;
 import java.net.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.Scanner;
 
 // Server class
 class Server {
-	private File UsersFile;
+	/* private File UsersFile;
 	private File BankAccountsFile;
 	private List<User> usersDB;
-	private Accounts accountsDB;
+	private Accounts accountsDB; */
+	DatabaseManager db;
 	
 	Server() {
-		this.UsersFile = new File("Users.txt");
+		/*this.UsersFile = new File("Users.txt");
 		this.BankAccountsFile = new File("BankAccounts.txt");
 		this.usersDB = new ArrayList<>();
 		loadUsers();
-		loadAccounts();
+		loadAccounts();*/
+		db = new DatabaseManager
+				(System.getProperty("user.dir") + "\\db\\AllUsers.txt",
+				 System.getProperty("user.dir") + "\\db\\AllAccounts.txt",
+				 System.getProperty("user.dir") + "\\db\\Users\\",
+				 System.getProperty("user.dir") + "\\db\\Accounts\\");
+		db.loadData();
 	}
 	
 	public static void main(String[] args)
@@ -228,7 +236,9 @@ class Server {
 	
 	}
 	
-	public void loadUsers() {
+	/* public void loadUsers() {
+		
+		
 		try {
 			Scanner scanner = new Scanner(UsersFile);
 			while(scanner.hasNextLine()) {
@@ -310,28 +320,30 @@ class Server {
 		        }
 		    }
 		    return null;
-	}
+	} */
 	
 	public Message isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
 		// I ended up doing the implementaion, so i can test for role based GUI - fosa
-		for (User user : usersDB) {
-			if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
-				String role = "";
-				if (user.getRole()) {
-					role = "teller";
-					return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
-				} else {
-					role = "customer";
-					return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
-					
-					// List<Integer> authAcctIDs = user.getAuthAcctIDs();
-					// List<BankAcct> customerBankAccts = accountsDB.getAccts(authAcctIDs);
-					// return new AccountMessage(msgType.ACCOUNT_REQUEST, Status.SUCCESS,
-					//	customerBankAccts.get(0));
-				}
+		
+		User user = db.getUser(username);
+		
+		if (user != null && password.equals(user.getPassword())) {
+			String role = "";
+			if (user.getRole()) {
+				role = "teller";
+				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
+			} else {
+				role = "customer";
+				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
+				
+				// List<Integer> authAcctIDs = user.getAuthAcctIDs();
+				// List<BankAcct> customerBankAccts = accountsDB.getAccts(authAcctIDs);
+				// return new AccountMessage(msgType.ACCOUNT_REQUEST, Status.SUCCESS,
+				//	customerBankAccts.get(0));
 			}
 		}
+		
 		
 		return new Message(msgType.LOGIN_REQUEST, Status.ERROR);
 	}
@@ -361,9 +373,9 @@ class Server {
 	public List<Message> getAccts(String user){
 		// TODO: This gets an arraylist of skeleton accounts that will be sent back to user/teller from accounts
 		// There should be and if else statement if the array is empty, which will then send an error message of empty skeleton account.
-		User acctOwner = findUser(user); // getting the user whos requesting their accts
-		List<Integer> authAcctIDs = acctOwner.getAuthAcctIDs(); // getting the acctIDs that belong to them
-		List<BankAcct> userBankAccts = accountsDB.getAccts(authAcctIDs); // extracting all of the bankAccts with previous IDs
+		User acctOwner = db.getUser(user); // getting the user whos requesting their accts
+		// List<Integer> authAcctIDs = acctOwner.getAuthAcctIDs(); // getting the acctIDs that belong to them
+		List<BankAcct> userBankAccts = db.getUserAllAccts(user); // extracting all of the bankAccts with previous IDs
 		List<Message> acctsRequested = new ArrayList<>();
 		for (BankAcct currBankAcct : userBankAccts) {
 			acctsRequested.add(new AccountMessage(msgType.ACCOUNTS_REQUEST, Status.SUCCESS, currBankAcct));
@@ -422,7 +434,8 @@ class Server {
 		List<Integer> authAccts = new ArrayList<>();
 		authAccts.add(1);
 		authAccts.add(2);
-		User user = new User("jerrick", "pass", false,authAccts, true);
+		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
+		User user = new User("jerrick", "pass", info, false, authAccts, true);
 		BankAcct test = new BankAcct(AcctType.Checking,user);
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
 		return msg;

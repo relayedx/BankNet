@@ -10,21 +10,20 @@ public class AccountTester {
 		List<Integer> authAccts = new ArrayList<>();
 		authAccts.add(1);
 		authAccts.add(2);
-		User user = new User("jerrick", "pass", false,authAccts, true);
-		User user1 = new User("crying", "pass", false,authAccts, true);
-		User user2 = new User("man", "pass", false,authAccts, true);
+		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
+		User user = new User("jerrick", "pass", info, false, authAccts, true);
+		User user1 = new User("crying", "pass", info, false, authAccts, true);
+		User user2 = new User("man", "pass", info, false, authAccts, true);
 		BankAcct test = new BankAcct(AcctType.Checking,user);
 		test.addAuthUser(user1);
 		test.addAuthUser(user2);
-		Transaction trans1 = new Transaction(user.getUsername(), (float) 10.35, TranType.DEPOSIT);
-		Transaction trans2 = new Transaction(user.getUsername(), (float) 10.20, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(user.getUsername(), 10, TranType.DEPOSIT);
+		Transaction trans2 = new Transaction(user.getUsername(), 10, TranType.WITHDRAWAL);
 
 	
 		test.deposit(trans1);
 		test.withdraw(trans2);
 		test.withdraw(trans2);
-		
-		System.out.println(test.getBalance());
 		
 		/*
 		test.withdraw(trans2);
@@ -46,6 +45,7 @@ public class AccountTester {
 
 		System.out.println("Acct Actual Balance: " + test.getBalance());
 		System.out.println(test.getAvailCredit() + " Expected Credit: " + test.getCredit());
+		System.out.println(test.calculateMonths(LocalDate.now().plusDays(92)));
 		
 		for (User use : test.getAuths()) {
 			System.out.println(use.getUsername());

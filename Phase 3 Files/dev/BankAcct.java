@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.time.temporal.ChronoUnit;
 
-
 public class BankAcct {
 	private static int count = 0;
     private User owner;
@@ -20,14 +19,23 @@ public class BankAcct {
     private List<Transaction> transactions;
     private float creditLine;
     private LocalDate dueDate = null;
-
-    /*
-    public BankAcct(String parse, ArrayList<Transaction> trans) { // When our account is instantiated when server starts
-        this.authUser = new ArrayList<>(); // TODO: will need to instatiate below from parsed
-        this.transactions = new ArrayList<Transaction>(trans);
-        this.acctID = ++count;
-    }
-    */
+    
+	// When account is instantiated during server start up (merged from file-management branch)
+	public BankAcct(int id, User owner, AcctType type, List<User> authUsers,
+			float balance, float credit, float availCredit, LocalDate due,
+			boolean frozen, boolean closed, List<Transaction> trans) {
+		this.acctID = id;
+		this.owner = owner;
+		this.type = type;
+		this.authUser = authUsers;
+		this.balance = balance;
+		this.creditLine = credit;
+		this.availCredit = availCredit;
+		this.dueDate = due;
+		this.frozen = frozen;
+		this.closed = closed;
+		this.transactions = trans;
+	}
     
     public BankAcct(int acctID, AcctType type, User owner, float balance,
     		boolean frozen, boolean closed, String dueDate, List<User> authUsers, List<Transaction> transactions) { // from server loadAccounts

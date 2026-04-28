@@ -1,3 +1,4 @@
+package dev;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,8 +11,8 @@ import java.util.Scanner;
 public class DatabaseManager {
 	private List<User> usersDB;
 	private List<BankAcct> accountsDB;
-	private String usersFile;		// = "db/AllUsers.txt";
-	private String accountsFile;	// = "db/AllAccounts.txt";
+	private String usersFile;		// = "..db/AllUsers.txt";
+	private String accountsFile;	// = "..db/AllAccounts.txt";
 	private String userInfoFolder;
 	private String transactionFolder;
 	private static int counting;
@@ -137,7 +138,7 @@ public class DatabaseManager {
 			
 			// turns all the parsed User data and the UserInfo object into a User object
 			User user = new User(username, password,
-					info, isTeller, dataAcctIDs);
+					info, isTeller, dataAcctIDs, true);	// dunno how to handle isLoggedIn boolean
 			
 			// adds the User to the active database
 			usersDB.add(user);
@@ -430,7 +431,7 @@ public class DatabaseManager {
 		// if the user is found
 		if (user != null) {
 			// tries to find all of their accounts
-			accounts = getAccounts(user.getAuthAccts());
+			accounts = getAccounts(user.getAuthAcctIDs());
 		}
 		
 		// return a List of the User's Account objects
@@ -668,7 +669,7 @@ public class DatabaseManager {
 			newData += usersDB.get(i).getRole() + defaultDelimiter;
 			
 			// separates the acctIDs with the secondaryDelimiter
-			List<Integer> authAcctIDs = usersDB.get(i).getAuthAccts();
+			List<Integer> authAcctIDs = usersDB.get(i).getAuthAcctIDs();
 			for (int j = 0; j < authAcctIDs.size(); j++) {
 				// if this id is the last id
 				if (j == authAcctIDs.size() - 1) {

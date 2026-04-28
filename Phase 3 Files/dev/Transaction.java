@@ -3,7 +3,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
 public class Transaction implements Serializable {
 	private static int count = 0;
 	private final int id;
@@ -11,6 +10,16 @@ public class Transaction implements Serializable {
 	private final String user;
 	private final float amount;
 	private final TranType tranType;
+	
+	// added constructor to build Transaction objects during start up
+	public Transaction(LocalDateTime date, String user, float amt, TranType type) {
+		this.id = ++count;
+		this.date = date;
+		this.user = user;
+		amount = amt;
+		tranType = type;
+	}
+	
 	public Transaction(String user, float amt, TranType type) {
 		this.id = ++count;
 		date = LocalDateTime.now();
@@ -20,6 +29,10 @@ public class Transaction implements Serializable {
 	}
 	
 	/// GETTERS / SETTERS
+	public LocalDateTime getDate() {
+		return date;
+	}
+	
 	public float getAmount() {
 		return amount;
 	}

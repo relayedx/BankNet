@@ -1,3 +1,4 @@
+package dev;
 import java.time.LocalDate;
 
 public class UserInfo {
@@ -7,7 +8,7 @@ public class UserInfo {
 	private LocalDate dob;
 	private String phoneNum;
 	
-	UserInfo(String first, String last, String add, LocalDate dob, String num) {
+	public UserInfo(String first, String last, String add, LocalDate dob, String num) {
 		this.firstName = first;
 		this.lastName = last;
 		this.address = add;
