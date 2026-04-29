@@ -195,12 +195,21 @@ public class BankAcct {
     	
     }
 
-    public void freezeAcc(boolean frozen) {
-        this.frozen = frozen;
+    public void freezeAcc() {
+        if (frozen) {
+        	frozen = false;
+        }else {
+        	frozen = true;
+        }
     }
 
-    public void closeAcc(boolean closed) {
-        this.closed = closed;
+    public boolean closeAcc() {
+        if (!closed) { // If we haven't closed the account
+        	closed = true; // Let's close it
+        	return true; // Return to true to know that it worked
+        } // Otherwise, account is already closed.
+        return false;
+        
     }
 
 

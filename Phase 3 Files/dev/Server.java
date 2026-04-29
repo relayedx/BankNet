@@ -420,20 +420,31 @@ class Server {
 	
 	public boolean closeAcct(int acctID) {
 		// TODO: This is where we will call Accounts to close an account 
-		// We'll assume for now the closing worked (would return false if acct does not exist or already closed
-		return true;
+		// Will return false if acct does not exist or already closed
+		BankAcct acct = db.getAccount(acctID);
+		if (acct == null) { // If account does not exist
+			return false; // Return false
+		}
+		Boolean closed = acct.closeAcc();
+		return closed;
 	}
 	
 	public boolean addAuthUser(String user, int acctID) {
 		// TODO: This is where we will call accounts and add an authorized user, and returning whether they worked or not.
 		// We'll assume for now the user was added.
+		
 		return true;
 	}
 	
 	public boolean freezeAcct(int acctID) {
 		// TODO: This is where we will call Accounts to freeze an account 
-		// We'll assume for now the freeze worked
-		return true;
+		BankAcct acct = db.getAccount(acctID);
+		if (acct == null) { // If account does not exist
+			return false; // Return false
+		}
+		// Otherwise, the account is either frozen or unfrozen
+		acct.freezeAcc();
+		return true; // Return true
 	}
 	
 	public boolean createUser(UserInfo userInfo, String username, String pass){
