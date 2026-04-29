@@ -139,7 +139,13 @@ public class AtmGUI implements RoleBasedGUI {
 		}
 		// initiate command via clientController
 		try {
-			clientController.deposit(acctID, amount, username);
+			Message msg = clientController.deposit(acctID, amount, username);
+			TransactionMessage res = (TransactionMessage) msg;
+			
+			String updatedBalance = String.valueOf(res.getUpdatedBalance());
+			JOptionPane.showMessageDialog(frame, updatedBalance);
+			balanceLabel.setText(updatedBalance);
+			
 			
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "error occured, see teller");
@@ -213,7 +219,7 @@ public class AtmGUI implements RoleBasedGUI {
 			}
 			
 			// converting withdrawl amount to float to return
-			return Float.parseFloat(strAmount);
+			return Float.parseFloat(input);
 		} catch (Exception e) {
 			return null;
 		}
