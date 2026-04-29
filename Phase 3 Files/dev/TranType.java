@@ -3,6 +3,7 @@ package dev;
 public enum TranType{
 	WITHDRAWAL,
 	DEPOSIT,
+	TRANSFER,
 	SYSTEM;
 	
 	// added parsing method to translate from our files
@@ -14,6 +15,8 @@ public enum TranType{
 				return TranType.DEPOSIT;
 			case "SYSTEM":
 				return TranType.SYSTEM;
+			case "TRANSFER":
+				return TranType.TRANSFER;
 			default:
 				return null;
 		}

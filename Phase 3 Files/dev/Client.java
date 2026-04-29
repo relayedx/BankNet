@@ -202,8 +202,8 @@ public class Client {
 	}
 	
 	public TransactionMessage transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
-		Transaction outgoing = new Transaction(user, amt, TranType.WITHDRAWAL);
-		Transaction incoming = new Transaction(user, amt, TranType.DEPOSIT);
+		Transaction outgoing = new Transaction(user, amt, TranType.TRANSFER);
+		Transaction incoming = new Transaction(user, amt, TranType.TRANSFER);
 		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
 		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
 		TransactionMessage d = deposit(incomingAcctID,incoming);
