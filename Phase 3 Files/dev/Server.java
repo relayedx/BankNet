@@ -83,6 +83,7 @@ class Server {
 		private ObjectOutputStream out = null;
 		private ObjectInputStream in = null;
 		private boolean loggedIn = false;
+		private String user;
 
 		// Constructor
 		public ClientHandler(Socket socket, Server server)
@@ -107,11 +108,13 @@ class Server {
 						Message res = server.isUser(loginMsg.getUsername(),loginMsg.getPassword()); // Is the user an actual user?
 						if (res.getStatus() == Status.SUCCESS) { // if so,
 							loggedIn = true; // Mark user as logged in.
+							user = loginMsg.getUsername();
 							out.writeObject(res); // Send respose
 						} else {
 							out.writeObject(res); // send response without setting loggedIn to true
 						}
 						out.flush();// send msg to server
+						continue;
 					}
 					// Here, we will never do a command as long as the user is not logged in
 					if (!loggedIn) { // if the user is not logged in
@@ -120,9 +123,18 @@ class Server {
 						continue;
 					}
 					msgType type = msg.getType();
+					if (type == msgType.LOGOUT_REQUEST) {
+						Boolean logout = server.logout(user);
+						if (logout) {
+							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.SUCCESS));
+						}else {
+							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.ERROR));
+						}
+						out.flush();
+					}
 					if (type == msgType.WITHDRAWAL_REQUEST) {
 						TransactionMessage tMsg = (TransactionMessage) msg;
-						TransactionMessage withdraw = server.withdraw(tMsg.getID(), tMsg.getTransaction());
+						TransactionMessage withdraw = server.withdraw(tMsg.getID(), tMsg.getTransaction(), user);
 						// We will send back a transaction message
 						out.writeObject(withdraw);
 						out.flush();
@@ -189,8 +201,8 @@ class Server {
 					}
 					if (type == msgType.ACCOUNTS_FREEZE) {
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
-						boolean close = server.closeAcct(aMsg.getID());
-						if (close) { // if so,
+						boolean froze = server.closeAcct(aMsg.getID());
+						if (froze) { // if so,
 							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.SUCCESS)); // Send a success msg
 						}else {
 							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.ERROR)); // Otherwise send error
@@ -216,6 +228,7 @@ class Server {
 			}
 			catch (IOException e) {
 				e.printStackTrace();
+				server.logout(user);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -329,7 +342,12 @@ class Server {
 		
 		User user = db.getUser(username);
 		if (user != null && password.equals(user.getPassword())) {
+			if (user.getIsLoggedIn()) {  // Is the user currently logged in?
+				System.out.println("User " + username + " is already logged in, returning fail");
+				return new Message(msgType.LOGIN_REQUEST, Status.ERROR); // If yes, then error (no user can be logged in twice)
+			}
 			String role = "";
+			user.setIsLoggedIn(true); // The user is now currently logged in
 			if (user.getRole()) {
 				role = "teller";
 				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
@@ -348,7 +366,16 @@ class Server {
 		return new Message(msgType.LOGIN_REQUEST, Status.ERROR);
 	}
 	
-	public TransactionMessage withdraw(int acctID, Transaction trans) {
+	public boolean logout(String username) { 
+		// I don't know what would cause the logout to return an error...
+		User user = db.getUser(username);
+		
+		user.setIsLoggedIn(false);
+		return true;
+		
+	}
+	
+	public TransactionMessage withdraw(int acctID, Transaction trans, String username) {
 		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
 		// For now, we will assume they have enough funds
@@ -357,7 +384,15 @@ class Server {
 			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
 		}
+		User user = db.getUser(username);
+		// If the user trying this transaction is not a teller or the owner/authorized user
+		if (user.getRole() == false || !acct.getAuths().contains(user)) { 
+			
+		}
+		
+		
 		TransactionMessage temp = acct.withdraw(trans);
+		db.addTransaction(acctID, trans);
 		return temp;
 	}
 	
@@ -371,6 +406,7 @@ class Server {
 			return msg; // Return an error message
 		}
 		TransactionMessage temp = acct.deposit(trans);
+		db.addTransaction(acctID, trans);
 		return temp;
 	}
 	
@@ -404,7 +440,7 @@ class Server {
 	}
 	
 	
-	public AccountMessage createAcct(String user, AcctType acctType) { // This will return a skeleton acct back to user
+	public AccountMessage createAcct(String user, AcctType acctType) { // This will return a  acct back to user
 		// TODO: This will call accounts to create an account with these details, also automatically assinging the account to the user
 		// Call create account, returned is a skeleton acct msg
 		User u = db.getUser(user);
@@ -449,21 +485,18 @@ class Server {
 	
 	public boolean createUser(UserInfo userInfo, String username, String pass){
 		// TODO: This is where we will have the ArrayList of users, check if they exist and then add.
-		User user = new User(username, pass, userInfo, false, null, false);
-		boolean updated = db.addUser(user);
-		// Create user object
-		// Add to array
-		// We assume that this process is succesful (error would be if user already exists
-		return updated;
+		List<Integer> temp = new ArrayList<Integer>(); // An empty list b/c they have no accounts assigned to them yet.
+		User user = new User(username, pass, userInfo, false, temp, false);
+		boolean added = db.addUser(user);
+		return added;
 	}
 	
 	public AccountMessage getAcct(int acctID) {
-		// TODO: This is where we'll get a singular account using Accounts
-		// For now, we'll send back a static manual account message
-		
 		
 		BankAcct acct = db.getAccount(acctID);
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,acct);
 		return msg;
 	}
+	
+
 }
