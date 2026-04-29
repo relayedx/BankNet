@@ -138,7 +138,7 @@ public class DatabaseManager {
 			
 			// turns all the parsed User data and the UserInfo object into a User object
 			User user = new User(username, password,
-					info, isTeller, dataAcctIDs, true);	// dunno how to handle isLoggedIn boolean
+					info, isTeller, dataAcctIDs, false);	// dunno how to handle isLoggedIn boolean
 			
 			// adds the User to the active database
 			usersDB.add(user);
