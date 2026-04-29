@@ -38,78 +38,47 @@ public class ClientController {
 				currentGUI = new AtmGUI(this, listOfAccts);
 				currentGUI.launchUI();
 			}
-			
 		}
-		
-		/*
-		if (res.getStatus() == Status.ERROR) {
-			JOptionPane.showMessageDialog(null, "Could not successfully login");
-			return;
-		}
-		
-		// if we are not getting a request for a BankAcct then this is a teller
-		if (res.getType() != msgType.ACCOUNT_REQUEST) {
-			currentGUI.closeUI();
-			currentGUI = new TellerGUI(this);
-			currentGUI.launchUI();
-			return;
-		}
-		
-		// if this point is reached then it has to be a customer
-		
-		AccountMessage returnedAcct = (AccountMessage) res;
-		currentGUI.closeUI();
-		currentGUI = new AtmGUI(this);
-		currentGUI.launchUI();
-		*/
 	}
 	
 	public void logout() throws ClassNotFoundException, IOException {
 		boolean logout = client.logout();
 		if (logout) { // If they were able to logout
-			// TODO: Return back to login (?)
+			currentGUI.closeUI();
+			currentGUI = new LoginGUI(this);
 		}
-		// TODO: What if they were not able to log out....
 	}
 	
-	public void withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
+	public Message withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
 		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
-		TransactionMessage msg = client.withdraw(acctID,temp); // We're going to get a transaction msg back so we can have the updated bal and whether it was an error
-		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deduct the balance from the account
-			// Update GUI
-			JOptionPane.showMessageDialog(null, msg.getUpdatedBalance());
-		}else {
-			JOptionPane.showMessageDialog(null, "You broke.");
-			// Else throw error
-		}
-	
+		TransactionMessage msg = client.withdraw(acctID, temp); // We're going to get a transaction msg back so we can have the updated bal and whether it was an error
+		return (Message) msg;
 	}
 	
-	public void deposit (int acctID, float amount, String user) throws ClassNotFoundException, IOException{
+	public Message deposit (int acctID, float amount, String user) throws ClassNotFoundException, IOException{
 		Transaction temp = new Transaction(user, amount, TranType.DEPOSIT); 
 		TransactionMessage msg  = client.deposit(acctID, temp);
-		if (msg.getStatus() == Status.SUCCESS) { // If we were able to deposit the balance to the account
-			// Update GUI
-			JOptionPane.showMessageDialog(null, msg.getUpdatedBalance());
-		}else {
-			JOptionPane.showMessageDialog(null, "You broke.");
-			// Else throw error
-		}
+		return (Message) msg;
 		
 	}
 	
-	/// These are TELLER OPERATIONS, called from the respective GUI
-	public void resetPassword(String user, String pass) throws ClassNotFoundException, IOException{ 
-		boolean reset = client.resetPass("he", "yeah");
-		if (reset) {
-			JOptionPane.showMessageDialog(null, "Password reset");
-
-		}else {
-			JOptionPane.showMessageDialog(null, "no.");
-
-		}
+	public TransactionMessage transfer(int outgoingAcctID, int incomingAcctID, float amount, String user) 
+			throws ClassNotFoundException, IOException {
+		TransactionMessage msg = client.transfer(outgoingAcctID, incomingAcctID, amount, user);
+		return msg;
 	}
 	
+	public List<Transaction> getTransactions(int acctID, String username) {
+		List<Transaction> transactions = client.getTransactions(acctID, username);
+		return transactions;
+	}
+	
+	public Boolean resetPassword(String username, String newPassword) throws ClassNotFoundException, IOException{ 
+		boolean reset = client.resetPass(username, newPassword);
+		return reset;
+	}
+	
+	/// These are TELLER OPERATIONS, called from the respective GUI
 	public SkeletonAccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException{ // TODO: Swap accType with the actual account type later
 		// Call create account
 		SkeletonAccountMessage acct = client.createAccount(user, accType);
@@ -161,20 +130,13 @@ public class ClientController {
 		boolean freeze = client.closeAccount(acctID);
 		if (freeze) {
 			JOptionPane.showMessageDialog(null,"Freezed/Unfrozen");
-
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(null, "Error in freezing");
-
 		}
 	}
 	
 	public void createUser(String userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		boolean created = client.createUser(userInfo, user, pass);
 	}
-	
-	public void transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
-		TransactionMessage msg = client.transfer(outgoingAcctID, incomingAcctID, amt, user);
-	}
-	
 	
 }
