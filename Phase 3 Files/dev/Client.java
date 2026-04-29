@@ -1,5 +1,6 @@
 package dev;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,16 @@ public class Client {
     	// creating latch counter to stop main from terminating 
     	CountDownLatch latch = new CountDownLatch(1);
     	
-        Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
+    	// automatically connects the client to the server
+    	int serverPort = 1234;
+    	String serverIP = "localhost"; // InetAddress.getLocalHost().getHostAddress();
+    	
+        Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
         System.out.println("Enter the port number to connect to: <1234>");
-        int port = sc.nextInt();
-        sc.nextLine(); // Flushes out the stream to get ready for asking for host address
+        int port = serverPort; // sc.nextInt();
+        // sc.nextLine(); // Flushes out the stream to get ready for asking for host address
         System.out.println("Enter the host address to connect to: <localhost> ");
-        String host = sc.nextLine();
+        String host = serverIP; // sc.nextLine();
         
         // Connect to the ServerSocket at host:port
         Socket socket = new Socket(host, port);
