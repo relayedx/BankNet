@@ -36,18 +36,25 @@ public class Client {
     	
     	// automatically connects the client to the server
     	int serverPort = 1234;
-    	String serverIP = "localhost"; // InetAddress.getLocalHost().getHostAddress();
+    	String serverIP = InetAddress.getLocalHost().getHostAddress();
     	
-        Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
-        System.out.println("Enter the port number to connect to: <1234>");
+        // Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
+        // System.out.println("Enter the port number to connect to: <1234>");
         int port = serverPort; // sc.nextInt();
         // sc.nextLine(); // Flushes out the stream to get ready for asking for host address
-        System.out.println("Enter the host address to connect to: <localhost> ");
+        // System.out.println("Enter the host address to connect to: <localhost> ");
         String host = serverIP; // sc.nextLine();
         
         // Connect to the ServerSocket at host:port
-        Socket socket = new Socket(host, port);
-        System.out.println("Connected to " + host + ":" + port);
+        Socket socket = null;
+        try {
+        	socket = new Socket(host, port);
+        	System.out.println("Connected to " + host + ":" + port);
+        } catch (IOException e) {
+            System.err.println("Failed to connect to " + host + ":" + port);
+            System.err.println("Is the server running?");
+            System.exit(1);
+        }
       
         Client clientRef = new Client(socket, latch);
         ClientController clientController = new ClientController(clientRef);
