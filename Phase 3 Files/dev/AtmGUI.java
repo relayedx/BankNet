@@ -213,7 +213,6 @@ public class AtmGUI implements RoleBasedGUI {
 			}
 			
 			// if user enterd value with comma, remove comma
-			String strAmount = "";
 			if (input.contains(",")) {
 				input = input.replace(",", "");
 			}
