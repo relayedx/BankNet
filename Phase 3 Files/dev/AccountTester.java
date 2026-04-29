@@ -14,16 +14,14 @@ public class AccountTester {
 		User user = new User("jerrick", "pass", info, false, authAccts, true);
 		User user1 = new User("crying", "pass", info, false, authAccts, true);
 		User user2 = new User("man", "pass", info, false, authAccts, true);
-		BankAcct test = new BankAcct(AcctType.Checking,user);
+		BankAcct test = new BankAcct(AcctType.Credit,user);
 		test.addAuthUser(user1);
 		test.addAuthUser(user2);
-		Transaction trans1 = new Transaction(user.getUsername(), 10, TranType.DEPOSIT);
+		Transaction trans1 = new Transaction(user.getUsername(), 100.23f, TranType.DEPOSIT);
 		Transaction trans2 = new Transaction(user.getUsername(), 10, TranType.WITHDRAWAL);
 
 	
 		test.deposit(trans1);
-		test.withdraw(trans2);
-		test.withdraw(trans2);
 		
 		/*
 		test.withdraw(trans2);
@@ -31,28 +29,19 @@ public class AccountTester {
 		test.withdraw(trans2);
 		test.withdraw(trans2);
 		*/
+		LocalDate tester = LocalDate.now().plusDays(1001);
+		test.calculateMonths(tester);
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
 		List<Transaction> transactions = msg.getTrans();
+		
+
+		for (Transaction trans : transactions) {
+			System.out.println(trans);
+		}
 		/*
 		test.deposit(trans1);
 		test.deposit(trans1);
 		test.deposit(trans1);
 		*/
-		for (Transaction transaction : transactions) {
-			System.out.println(transaction);
-		}
-		System.out.println("Msg Balance: " + msg.getBalance());
-
-		System.out.println("Acct Actual Balance: " + test.getBalance());
-		System.out.println(test.getAvailCredit() + " Expected Credit: " + test.getCredit());
-		System.out.println(test.calculateMonths(LocalDate.now().plusDays(92)));
-		
-		for (User use : test.getAuths()) {
-			System.out.println(use.getUsername());
-		}
-		test.removeAuth(user2);
-		for (User use : test.getAuths()) {
-			System.out.println(use.getUsername());
-		}
 	}
 }

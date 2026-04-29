@@ -51,7 +51,7 @@ public class Transaction implements Serializable {
 
 	
 	public String toString() {
-		String temp = "" + date.format(DateTimeFormatter.ofPattern("MM/dd/yy HH:mm")) + "%"+ user + "%" + amount + "%" + tranType;
+		String temp = "" + date + "|"+ user + "|" + amount + "|" + tranType;
 		return temp;
 	}
 	

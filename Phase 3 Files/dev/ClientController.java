@@ -78,10 +78,11 @@ public class ClientController {
 		return reset;
 	}
 	
-	/// These are TELLER OPERATIONS, called from the respective GUI
-	public SkeletonAccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException{ // TODO: Swap accType with the actual account type later
+	public AccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException { 
+		// TODO: Swap accType with the actual account type later
 		// Call create account
-		SkeletonAccountMessage acct = client.createAccount(user, accType);
+		AcctType type = AcctType.parseAcctType(accType);
+		AccountMessage acct = client.createAccount(user, type);
 		return acct; // We return this acct so the GUI knows to update w/ this skeleton acct, or display error.
 	}
 	
@@ -135,7 +136,7 @@ public class ClientController {
 		}
 	}
 	
-	public void createUser(String userInfo, String user, String pass) throws ClassNotFoundException, IOException {
+	public void createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		boolean created = client.createUser(userInfo, user, pass);
 	}
 	

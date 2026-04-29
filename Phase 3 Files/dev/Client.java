@@ -147,10 +147,10 @@ public class Client {
     	
     }
     
-	public SkeletonAccountMessage createAccount(String user, String acctType) throws ClassNotFoundException, IOException{ // TODO: swap this w/ actual account type
+	public AccountMessage createAccount(String user, AcctType acctType) throws ClassNotFoundException, IOException{ // TODO: swap this w/ actual account type
     	out.writeObject(new CreateAccountMessage(msgType.ACCOUNT_CREATE,Status.IN_PROGRESS,user,acctType));
     	out.flush();
-    	SkeletonAccountMessage msg = (SkeletonAccountMessage) in.readObject();
+    	AccountMessage msg = (AccountMessage) in.readObject();
     	return msg;
     }
 	
@@ -184,7 +184,7 @@ public class Client {
 		return false;
 	}
 	
-	public boolean createUser(String userInfo, String user, String pass) throws ClassNotFoundException, IOException {
+	public boolean createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		out.writeObject(new CreateUserMessage(msgType.USER_CREATE,Status.IN_PROGRESS,userInfo,user,pass));
 		out.flush();
 		Message msg = (Message) in.readObject();
@@ -202,8 +202,8 @@ public class Client {
 	}
 	
 	public TransactionMessage transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
-		Transaction outgoing = new Transaction(user, amt, TranType.WITHDRAWAL);
-		Transaction incoming = new Transaction(user, amt, TranType.DEPOSIT);
+		Transaction outgoing = new Transaction(user, amt, TranType.TRANSFER);
+		Transaction incoming = new Transaction(user, amt, TranType.TRANSFER);
 		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
 		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
 		TransactionMessage d = deposit(incomingAcctID,incoming);

@@ -46,4 +46,13 @@ public class User {
 	public void addAuthAcct(int id) {
 		authAcctIDs.add(id);
 	}
+	
+	public void setIsLoggedIn(boolean login) {
+		isLoggedIn = login;
+	}
+	
+	public boolean getIsLoggedIn() {
+		return isLoggedIn;
+	}
 }
+
