@@ -168,7 +168,7 @@ public class ClientController {
 		}
 	}
 	
-	public void createUser(String userInfo, String user, String pass) throws ClassNotFoundException, IOException {
+	public void createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		boolean created = client.createUser(userInfo, user, pass);
 	}
 	

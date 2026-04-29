@@ -184,7 +184,7 @@ public class Client {
 		return false;
 	}
 	
-	public boolean createUser(String userInfo, String user, String pass) throws ClassNotFoundException, IOException {
+	public boolean createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		out.writeObject(new CreateUserMessage(msgType.USER_CREATE,Status.IN_PROGRESS,userInfo,user,pass));
 		out.flush();
 		Message msg = (Message) in.readObject();

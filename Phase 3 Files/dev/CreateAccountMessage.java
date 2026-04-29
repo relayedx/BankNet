@@ -2,8 +2,8 @@ package dev;
 
 public class CreateAccountMessage extends Message {
 	private final String user;
-	private final String acctType; // TODO: replace
-	public CreateAccountMessage(msgType type, Status status, String user, String acctType) {
+	private final AcctType acctType; // TODO: replace
+	public CreateAccountMessage(msgType type, Status status, String user, AcctType acctType) {
 		super(type,status);
 		this.user = user;
 		this.acctType = acctType;
@@ -13,7 +13,7 @@ public class CreateAccountMessage extends Message {
 		return user;
 	}
 	
-	public String getAcctType() {
+	public AcctType getAcctType() {
 		return acctType;
 	}
 }
