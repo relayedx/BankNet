@@ -1,4 +1,4 @@
-package dev;
+package testing;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -8,6 +8,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import dev.DatabaseManager;
+import dev.AcctType;
+import dev.TranType;
+import dev.Transaction;
 
 public class DatabaseManagerLoadTester {
 	DatabaseManager database;
