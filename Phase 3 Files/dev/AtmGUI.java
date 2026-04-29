@@ -7,6 +7,7 @@ import java.awt.event.*;
 
 public class AtmGUI implements RoleBasedGUI {
 	private JFrame frame;
+	
 	private ClientController clientController;
 	private List<Message> userAccts;
 	
@@ -19,7 +20,7 @@ public class AtmGUI implements RoleBasedGUI {
 		// GUI frame
 		frame = new JFrame("Welcome Customer!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1050, 750);
+		frame.setSize(750, 550);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		
@@ -46,26 +47,48 @@ public class AtmGUI implements RoleBasedGUI {
 	        acctLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
 	        // Center — balance
-	        JLabel balLabel = new JLabel(String.format("$%,.2f", acct.getBalance()));
-	        balLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-	        balLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	        JLabel balanceLabel = new JLabel(String.format("$%,.2f", acct.getBalance()));
+	        balanceLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	        balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 	        // Right side — buttons
 	        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 	        btnPanel.setOpaque(false);
 	        JButton withdrawBtn = new JButton("Withdraw");
 	        JButton depositBtn = new JButton("Deposit");
-	        withdrawBtn.addActionListener(e -> handleWithdraw(acct.getAcctID()));
-	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID()));
+	        JButton transferBtn = new JButton("Transfer Funds");
+	        JButton viewTrxBtn = new JButton("View Transactions");
+	        JButton logoutBtn = new JButton("Logout");
+	        withdrawBtn.addActionListener(e -> handleWithdraw(acct.getAcctID(), balanceLabel, acct.getOwner()));
+	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID(), balanceLabel, acct.getOwner()));
+	        transferBtn.addActionListener(e -> handleTransfer(acct.getAcctID(), balanceLabel, acct.getOwner()));
+	        viewTrxBtn.addActionListener(e -> handleViewTrx(acct.getAcctID(), acct.getOwner()));
 	        btnPanel.add(withdrawBtn);
 	        btnPanel.add(depositBtn);
+	        btnPanel.add(transferBtn);
+	        btnPanel.add(viewTrxBtn);
 
+	        // add acct details to panel
 	        acctPanel.add(acctLabel, BorderLayout.WEST);
-	        acctPanel.add(balLabel, BorderLayout.CENTER);
+	        acctPanel.add(balanceLabel, BorderLayout.CENTER);
 	        acctPanel.add(btnPanel, BorderLayout.EAST);
-
+	        
+	        // add acctPanel to mainPanel
 	        mainPanel.add(acctPanel);
+	        
 	    }
+	    
+	    // add logout button and actionListener
+	    JButton logoutBtn = new JButton("Logout");
+	    logoutBtn.addActionListener(e -> handleLogout());
+	    
+	    // add reset password btn and actionListener
+	    JButton resetPassBtn = new JButton("Reset Password");
+	    resetPassBtn.addActionListener(e -> handleResetPass());
+	    
+	    // add btn's outside acctPanel to mainPanel
+	    mainPanel.add(logoutBtn);
+	    mainPanel.add(resetPassBtn);
 
 	    // Wrap in a scroll pane in case there are many accounts
 	    JScrollPane scrollPane = new JScrollPane(mainPanel);
@@ -82,11 +105,117 @@ public class AtmGUI implements RoleBasedGUI {
 		}
 	}
 	
-	public void handleWithdraw(int acctID) {
+	public void handleWithdraw(int acctID, JLabel balanceLabel, String username) {
+		// getting withdrawl amount
+		String input = JOptionPane.showInputDialog(frame, 
+				"Enter amount you'd like to withdraw (see teller if cents needed): ");
+		Float amount = strToFloat(input);
 		
+		if (amount.equals(null)) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+			return;
+		}
+		// initiate command via clientController
+		try {
+			Message msg = clientController.withdraw(acctID, amount, username);
+			TransactionMessage res = (TransactionMessage) msg;
+			String updatedBalance = String.valueOf(res.getUpdatedBalance());
+			balanceLabel.setText(updatedBalance);
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+		}
 	}
 	
-	public void handleDeposit(int acctID) {
+	public void handleDeposit(int acctID, JLabel balanceLabel, String username) {
+		// getting deposit amount
+		String input = JOptionPane.showInputDialog(frame, 
+				"Enter amount you'd like to deposit (see teller if cents needed): ");
+		Float amount = strToFloat(input);
 		
+		if (amount.equals(null)) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+			return;
+		}
+		// initiate command via clientController
+		try {
+			clientController.deposit(acctID, amount, username);
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "error occured, see teller");
+		}
+	}
+	
+	public void handleTransfer(int outgoingAcctID, JLabel balanceLabel, String username) {
+		String input = JOptionPane.showInputDialog(frame, "Enter transfer amount: ");
+		String transferToAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID you'd like to transfer to: ");
+		
+		try {
+			Float transferAmt = Float.parseFloat(input);
+			int incomingAcctID = Integer.parseInt(transferToAcctID);
+			TransactionMessage res = clientController.transfer(outgoingAcctID, incomingAcctID, transferAmt, username);
+			String updatedBalance = String.valueOf(res.getUpdatedBalance());
+			balanceLabel.setText(updatedBalance);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+		}
+	}
+	
+	public void handleViewTrx(int acctID, String username) {
+		List<Transaction> myTransactions = clientController.getTransactions(acctID, username);
+		String acctNum = String.valueOf(acctID);
+		String myTrx = "Transactions for Account #" + acctNum + "\n";
+		for (Transaction currTrx : myTransactions) {
+			myTrx += currTrx.toString() + "\n";
+		}
+		
+		JOptionPane.showMessageDialog(frame, myTrx);
+	}
+	
+	public void handleResetPass() {
+		String username = JOptionPane.showInputDialog(frame, "Enter current Username: ");
+		String newPassword = JOptionPane.showInputDialog(frame, "Enter NEW password: ");
+		
+		if (!username.equals("") && !newPassword.equals("")) {
+			try {
+				Boolean response = clientController.resetPassword(username, newPassword);
+				if (response) {
+					JOptionPane.showMessageDialog(frame, "Password successfully changed!");
+				} else {
+					JOptionPane.showMessageDialog(frame, "Password change was unsuccessful");
+				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(frame, "Oh No! An Error occured, see teller");
+			}
+		}
+	}
+	
+	public void handleLogout() {
+		try {
+			clientController.logout();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+		}
+	}
+	
+	// for taking user input into float
+	public Float strToFloat(String input) {
+		try {
+			// checking if user entered an amount with cents
+			if(input.contains(".")) {
+				return null;
+			}
+			
+			// if user enterd value with comma, remove comma
+			String strAmount = "";
+			if (input.contains(",")) {
+				input = input.replace(",", "");
+			}
+			
+			// converting withdrawl amount to float to return
+			return Float.parseFloat(strAmount);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }
