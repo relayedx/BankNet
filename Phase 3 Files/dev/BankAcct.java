@@ -65,9 +65,9 @@ public class BankAcct {
     		creditLine = 0;
     		availCredit = 0;
     	}
-    	if(type == AcctType.Credit) {
-    		
-    		creditLine = 40;
+    	if(type == AcctType.Credit) { // If account is a credit account
+    		// Account is opened with a line of credit
+    		creditLine = 40; // TODO: Prolly change this credit line to something bigger... 
     		availCredit = creditLine;
     	}
     	if(type != AcctType.Checking) {
@@ -149,12 +149,12 @@ public class BankAcct {
         }
     }
 
-    public boolean deposit(Transaction trans) {
+    public TransactionMessage deposit(Transaction trans) {
     	if (trans.getType() == TranType.WITHDRAWAL) { // Is the transaction a withdrawal but trying to make a deposit?
-    		return false; // Return error
+    		return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.ERROR, trans, acctID, balance);
     	}
     	if (frozen || closed) { // If this bank account is frozen or closed and user attempts to deposit
-    		return false; // Return error
+    		return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.ERROR, trans, acctID, balance);
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
         	float tempBalance = Math.round((balance + trans.getAmount()) * 100) / 100.0f;
@@ -162,12 +162,11 @@ public class BankAcct {
         }else {
         	balance = Math.round((balance - trans.getAmount()) * 100) / 100.0f;
         	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
-        	System.out.println("New Availible Credit: " + availCredit);
         	
         }
         System.out.println("New Balance: " + balance);
         transactions.add(trans);
-        return true;
+        return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, balance);
     }
     
     public void calculateMonths(LocalDate date) { // Used for credit/savings, calculating accured interest
@@ -191,7 +190,6 @@ public class BankAcct {
     		availCredit -= interest;  
     		Transaction sys = new Transaction("System/Interest", interest, TranType.SYSTEM);
     		transactions.add(sys);
-    		
     		
     	}
     	
@@ -264,6 +262,7 @@ public class BankAcct {
     public boolean getClosed() {
     	return closed;
     }
+    
     
 
 }

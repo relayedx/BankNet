@@ -46,16 +46,25 @@ public class CheckingAccountTests {
 	@DisplayName("Deposit Test")
 	public void depositTest() {
 		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
-		testAcct.deposit(trans1);
-		System.out.println("testBal: " + testAcct.getBalance());
-		Assertions.assertTrue(testAcct.getBalance() > 100);
+		TransactionMessage msg = testAcct.deposit(trans1);
+		Assertions.assertAll(
+				// The msg getting sent back should be a success, balance should not equal to what it was previous, and transactions should be > 1
+				() -> Assertions.assertEquals(Status.SUCCESS, msg.getStatus()),
+				() -> Assertions.assertNotEquals(100f, msg.getUpdatedBalance()),
+				() -> Assertions.assertTrue(testAcct.getTrans().size() > 1)
+		);
 	}
 	
 	@Test
 	@DisplayName("Deposit Test - Wrong Transaction Type")
 	public void depositWT() {
 		Transaction trans1 = new Transaction("User", 10, TranType.WITHDRAWAL);
-		Assertions.assertFalse(testAcct.deposit(trans1));
+		TransactionMessage msg = testAcct.deposit(trans1);
+		
+		Assertions.assertAll(
+				() -> Assertions.assertEquals(Status.ERROR, msg.getStatus()),
+				() -> Assertions.assertEquals(100f, msg.getUpdatedBalance())
+		);
 	}
 	
 	@Test
@@ -72,18 +81,19 @@ public class CheckingAccountTests {
 		Transaction trans1 = new Transaction("User", 110, TranType.WITHDRAWAL);
 		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertAll(
-				() -> Assertions.assertEquals(msgType.WITHDRAWAL_REQUEST, msg.getType()),
+				() -> Assertions.assertEquals(Status.ERROR, msg.getStatus()),
 				() -> Assertions.assertEquals(100f, msg.getUpdatedBalance()) // Balance should not have changed
 		);
 	}
 	
 	@Test
 	@DisplayName("Withdrawal Test - Wrong Transaction Type")
-	@Disabled
 	public void withdrawalWT() {
 		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
-		Assertions.assertFalse(testAcct.withdraw(trans1));
+		TransactionMessage msg = testAcct.withdraw(trans1);
+		Assertions.assertEquals(Status.ERROR,msg.getStatus());
 	}
+
 	
 	
 
