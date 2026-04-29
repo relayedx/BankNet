@@ -209,6 +209,14 @@ public class Client {
 		TransactionMessage d = deposit(incomingAcctID,incoming);
 		return w;
 	}
+	
+	public List<Transaction> getTransactions(int acctID, String username) {
+		// TODO: needs to get transactions from corresponding acctID and username
+		
+		// sending empty list for now
+		List<Transaction> myTransactions = new ArrayList<>();
+		return myTransactions;
+	}
 }
 
 
