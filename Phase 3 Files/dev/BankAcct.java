@@ -47,7 +47,7 @@ public class BankAcct {
     		this.dueDate = LocalDate.parse(dueDate);
     	}
     	if(type == AcctType.Credit) {
-    		creditLine = 40;
+    		creditLine = 4000f;
     		availCredit = creditLine;
     	}
     	this.frozen = frozen;
@@ -67,7 +67,7 @@ public class BankAcct {
     	}
     	if(type == AcctType.Credit) { // If account is a credit account
     		// Account is opened with a line of credit
-    		creditLine = 40; // TODO: Prolly change this credit line to something bigger... 
+    		creditLine = 4000f; // TODO: Prolly change this credit line to something bigger... 
     		availCredit = creditLine;
     	}
     	if(type != AcctType.Checking) {
@@ -137,12 +137,11 @@ public class BankAcct {
         	transactions.add(trans);
         	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
         }else {
-        	float tempAvailCredit = Math.round((availCredit - trans.getAmount()) * 100.0) / 100.0f;
-        	if (tempAvailCredit < 0) {
+        	float tempAvailCredit = Math.round((availCredit - trans.getAmount()) * 100.0) / 100.0f;        	if (tempAvailCredit < 0) {
         		System.out.println("Withdrawal goes below availbile credit, error!");
         		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance);
         	}
-        	balance += trans.getAmount(); // We'll just add onto the balance.
+        	balance = Math.round((balance + trans.getAmount()) * 100) / 100f; // We'll just add onto the balance.
         	System.out.println("New Balance: " + balance);
         	availCredit = tempAvailCredit;
         	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
