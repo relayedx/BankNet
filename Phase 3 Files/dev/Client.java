@@ -123,9 +123,11 @@ public class Client {
     }
     
     public TransactionMessage deposit(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
-    	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
+    	System.out.println("Sending deposit request");
+    	out.writeObject(new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.IN_PROGRESS,trans,acctID));
     	out.flush();
     	TransactionMessage msg = (TransactionMessage) in.readObject(); // We're expecting a transaction msf back
+    	System.out.println("Got response back" + msg.getStatus());
     	return msg;
     }
     
