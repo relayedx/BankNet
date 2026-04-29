@@ -98,6 +98,10 @@ public class ClientController {
 		
 	}
 	
+	public void transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
+		TransactionMessage msg = client.transfer(outgoingAcctID, incomingAcctID, amt, user);
+	}
+	
 	/// These are TELLER OPERATIONS, called from the respective GUI
 	public void resetPassword(String user, String pass) throws ClassNotFoundException, IOException{ 
 		boolean reset = client.resetPass("he", "yeah");
@@ -110,9 +114,10 @@ public class ClientController {
 		}
 	}
 	
-	public SkeletonAccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException{ // TODO: Swap accType with the actual account type later
+	public AccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException{ // TODO: Swap accType with the actual account type later
 		// Call create account
-		SkeletonAccountMessage acct = client.createAccount(user, accType);
+		AcctType type = AcctType.parseAcctType(accType);
+		AccountMessage acct = client.createAccount(user, type);
 		return acct; // We return this acct so the GUI knows to update w/ this skeleton acct, or display error.
 	}
 	
@@ -172,9 +177,7 @@ public class ClientController {
 		boolean created = client.createUser(userInfo, user, pass);
 	}
 	
-	public void transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
-		TransactionMessage msg = client.transfer(outgoingAcctID, incomingAcctID, amt, user);
-	}
+
 	
 	
 }
