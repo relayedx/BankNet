@@ -22,10 +22,11 @@ class Server {
 		loadUsers();
 		loadAccounts();*/
 		db = new DatabaseManager
-				(System.getProperty("user.dir") + "\\db\\AllUsers.txt",
-				 System.getProperty("user.dir") + "\\db\\AllAccounts.txt",
-				 System.getProperty("user.dir") + "\\db\\Users\\",
-				 System.getProperty("user.dir") + "\\db\\Accounts\\");
+				// i changed to // b/c it wasn't working on my mac with \\ :sob: - jerrick
+				(System.getProperty("user.dir") + "//db//AllUsers.txt",
+				 System.getProperty("user.dir") + "//db//AllAccounts.txt",
+				 System.getProperty("user.dir") + "//db//Users//",
+				 System.getProperty("user.dir") + "//db//Accounts//");
 		db.loadData();
 	}
 	
@@ -161,7 +162,7 @@ class Server {
 					}
 					if (type == msgType.ACCOUNT_CREATE) {
 						CreateAccountMessage aMsg =(CreateAccountMessage) msg; 
-						SkeletonAccountMessage acct = (SkeletonAccountMessage) server.createAcct(aMsg.getUser(), aMsg.getAcctType());
+						AccountMessage acct = (AccountMessage) server.createAcct(aMsg.getUser(), aMsg.getAcctType());
 						out.writeObject(acct);
 						out.flush();
 						
@@ -327,7 +328,6 @@ class Server {
 		// I ended up doing the implementaion, so i can test for role based GUI - fosa
 		
 		User user = db.getUser(username);
-		
 		if (user != null && password.equals(user.getPassword())) {
 			String role = "";
 			if (user.getRole()) {
@@ -352,7 +352,12 @@ class Server {
 		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
 		// For now, we will assume they have enough funds
-		TransactionMessage temp = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()-10);
+		BankAcct acct = db.getAccount(acctID);
+		if (acct == null) { // If there is no account under this ID.
+			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
+			return msg; // Return an error message
+		}
+		TransactionMessage temp = acct.withdraw(trans);
 		return temp;
 	}
 	
@@ -360,14 +365,20 @@ class Server {
 		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
 		// For now, we will assume they don't have enough funds
-		TransactionMessage temp = new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS,trans,acctID,trans.getAmount()+10);
+		BankAcct acct = db.getAccount(acctID);
+		if (acct == null) { // If there is no account under this ID.
+			TransactionMessage msg = new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.ERROR,trans, acctID);
+			return msg; // Return an error message
+		}
+		TransactionMessage temp = acct.deposit(trans);
 		return temp;
 	}
 	
 	public boolean resetPassword(String user, String newPass) {
 		// TODO: This is where the ArrayList of user is called, and their password is changed.
 		// For now we will assume the password is changed
-		return true;
+		boolean updated = db.updatePassword(user, newPass);
+		return updated;
 	}
 	
 	public List<Message> getAccts(String user){
@@ -393,11 +404,18 @@ class Server {
 	}
 	
 	
-	public SkeletonAccountMessage createAcct(String user, String acctType) { // This will return a skeleton acct back to user
+	public AccountMessage createAcct(String user, AcctType acctType) { // This will return a skeleton acct back to user
 		// TODO: This will call accounts to create an account with these details, also automatically assinging the account to the user
 		// Call create account, returned is a skeleton acct msg
-		SkeletonAccountMessage test = new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings");
-		return test;
+		User u = db.getUser(user);
+		if (u == null) { // If the user was not found, we're going to return an error.
+			AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.ERROR,null);
+			return msg;
+		}
+		BankAcct acct = new BankAcct(acctType, u);
+		db.addAccount(acct);
+		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct);
+		return msg;
 	}
 	
 	public boolean closeAcct(int acctID) {
@@ -418,12 +436,14 @@ class Server {
 		return true;
 	}
 	
-	public boolean createUser(String userInfo, String user, String pass){
+	public boolean createUser(UserInfo userInfo, String username, String pass){
 		// TODO: This is where we will have the ArrayList of users, check if they exist and then add.
+		User user = new User(username, pass, userInfo, false, null, false);
+		boolean updated = db.addUser(user);
 		// Create user object
 		// Add to array
 		// We assume that this process is succesful (error would be if user already exists
-		return true;
+		return updated;
 	}
 	
 	public AccountMessage getAcct(int acctID) {
@@ -431,13 +451,8 @@ class Server {
 		// For now, we'll send back a static manual account message
 		
 		
-		List<Integer> authAccts = new ArrayList<>();
-		authAccts.add(1);
-		authAccts.add(2);
-		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
-		User user = new User("jerrick", "pass", info, false, authAccts, true);
-		BankAcct test = new BankAcct(AcctType.Checking,user);
-		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
+		BankAcct acct = db.getAccount(acctID);
+		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,acct);
 		return msg;
 	}
 }
