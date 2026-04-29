@@ -144,6 +144,7 @@ public class BankAcct {
         	balance = Math.round((balance + trans.getAmount()) * 100) / 100f; // We'll just add onto the balance.
         	System.out.println("New Balance: " + balance);
         	availCredit = tempAvailCredit;
+        	transactions.add(trans);
         	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
         }
     }

@@ -47,12 +47,47 @@ public class CreditAccountTests {
 	@DisplayName("Withdraw Test")
 	public void withdraw() {
 		Transaction trans1 = new Transaction("User", 10.35f, TranType.WITHDRAWAL);
-		for (int i = 0; i < 10; i ++) {
+		for (int i = 0; i < 9; i ++) {
 			testAcct.withdraw(trans1);
 		}
+		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertAll(
 				// Since we are using doubles, we need to allow for a bit of an error 
-				() -> Assertions.assertEquals(3896.5, testAcct.getAvailCredit(),0.01)
+				() -> Assertions.assertEquals(3896.5, testAcct.getAvailCredit(),0.01),
+				() -> Assertions.assertEquals(10, testAcct.getTrans().size()),
+				() -> Assertions.assertEquals(103.5, testAcct.getBalance(), 0.01),
+				() -> Assertions.assertEquals(Status.SUCCESS,msg.getStatus())
 		);
 	}
+	
+	@Test
+	@DisplayName("Withdrawal Overdraft Test")
+	public void withdrawO() {
+		Transaction trans1 = new Transaction("User", 4001, TranType.WITHDRAWAL);
+		TransactionMessage msg = testAcct.withdraw(trans1);
+		Assertions.assertAll(
+				() -> Assertions.assertEquals(Status.ERROR, msg.getStatus()),
+				() -> Assertions.assertEquals(4000, testAcct.getAvailCredit()),
+				() -> Assertions.assertEquals(0, testAcct.getTrans().size())
+		);
+	}
+	
+	@Test
+	@DisplayName("Deposit Test")
+	public void deposit() {
+		Transaction trans1 = new Transaction("User", 10.35f, TranType.DEPOSIT);
+		for (int i = 0; i < 9; i ++) {
+			testAcct.deposit(trans1);
+		}
+		TransactionMessage msg = testAcct.deposit(trans1);
+		Assertions.assertAll(
+				// Since we are using doubles, we need to allow for a bit of an error 
+				() -> Assertions.assertEquals(4103.5, testAcct.getAvailCredit(),0.01),
+				() -> Assertions.assertEquals(-103.5, testAcct.getBalance(), 0.01),
+				() -> Assertions.assertEquals(10, testAcct.getTrans().size()),
+				() -> Assertions.assertEquals(Status.SUCCESS,msg.getStatus())
+		);
+	}
+	
+	
 }
