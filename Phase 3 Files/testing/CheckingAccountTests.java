@@ -71,8 +71,14 @@ public class CheckingAccountTests {
 	@DisplayName("Withdrawal Test")
 	public void withdrawTest() {
 		Transaction trans1 = new Transaction("User", 10.1f, TranType.WITHDRAWAL);
-		testAcct.withdraw(trans1);
-		Assertions.assertEquals(89.9, testAcct.getBalance(), 0.001);
+		TransactionMessage msg = testAcct.withdraw(trans1);
+		Assertions.assertAll(
+				// The msg getting sent back should be a success, balance should not equal to what it was previous, and transactions should be > 1
+				() -> Assertions.assertEquals(Status.SUCCESS, msg.getStatus()),
+				() -> Assertions.assertNotEquals(100f, msg.getUpdatedBalance()),
+				() -> Assertions.assertTrue(testAcct.getTrans().size() > 1),
+				() -> Assertions.assertEquals(89.9, msg.getUpdatedBalance(), 0.001)
+		);
 	}
 	
 	@Test
