@@ -1,11 +1,11 @@
 package dev;
 
 public class CreateUserMessage extends Message{
-	private final String info;
+	private final UserInfo info;
 	private final String user;
 	private final String pass;
 	
-	public CreateUserMessage(msgType type, Status status, String info, String user, String pass) {
+	public CreateUserMessage(msgType type, Status status, UserInfo info, String user, String pass) {
 		super(type,status);
 		this.user = user;
 		this.pass = pass;
@@ -20,7 +20,7 @@ public class CreateUserMessage extends Message{
 		return pass;
 	}
 	
-	public String getInfo() {
+	public UserInfo getInfo() {
 		return info;
 	}
 }

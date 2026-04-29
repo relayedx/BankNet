@@ -1,7 +1,8 @@
 package dev;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class UserInfo {
+public class UserInfo implements Serializable{
 	private String firstName;
 	private String lastName;
 	private String address;
