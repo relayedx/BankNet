@@ -51,6 +51,7 @@ public class CreditAccountTests {
 			testAcct.withdraw(trans1);
 		}
 		Assertions.assertAll(
+				// Since we are using doubles, we need to allow for a bit of an error 
 				() -> Assertions.assertEquals(3896.5, testAcct.getAvailCredit(),0.01)
 		);
 	}

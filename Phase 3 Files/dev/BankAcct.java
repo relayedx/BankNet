@@ -156,8 +156,8 @@ public class BankAcct {
     		return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.ERROR, trans, acctID, balance);
     	}
         if (type != AcctType.Credit) { // If it's checking or savings
-        	float tempBalance = Math.round((balance + trans.getAmount()) * 100) / 100.0f;
-        	balance += tempBalance; // We'll just add onto the balance.
+        	float tempBalance = Math.round((balance + trans.getAmount()) * 100) / 100.0f; // We'll just add onto the balance.
+        	balance = tempBalance; 
         }else {
         	balance = Math.round((balance - trans.getAmount()) * 100) / 100.0f;
         	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
