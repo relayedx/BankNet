@@ -17,6 +17,7 @@ public class UserInfo implements Serializable{
 		this.phoneNum = num;
 	}
 	
+	/// SETTERS
 	public void setFirstName(String newFirst) {
 		this.firstName = newFirst;
 	}
@@ -37,6 +38,7 @@ public class UserInfo implements Serializable{
 		this.phoneNum = newPhone;
 	}
 	
+	/// GETTERS
 	public String getFirstName() {
 		return firstName;
 	}

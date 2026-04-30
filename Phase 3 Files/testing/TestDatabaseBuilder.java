@@ -1,9 +1,17 @@
-package dev;
+package testing;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import dev.DatabaseManager;
+import dev.AcctType;
+import dev.BankAcct;
+import dev.Transaction;
+import dev.TranType;
+import dev.User;
+import dev.UserInfo;
 
 public class TestDatabaseBuilder {
 	public static void main(String[] args) {

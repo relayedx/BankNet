@@ -524,6 +524,27 @@ public class DatabaseManager {
 		return false;	// operation failed
 	}
 	
+	/* CHANGES AN ACCOUNTS FROZEN BOOLEAN AND RECORDS THE CHANGES TO FILES */
+	public boolean freeze(int acctID) {
+		// tries to find the given account
+		BankAcct account = getAccount(acctID);
+		
+		// if the account is found
+		if (account != null) {
+			// logic for freezing account
+			account.freezeAcc();
+			
+			// update account file method
+			writeToAllAccounts();
+			
+			// operation success!
+			return true;
+		}
+		
+		// else doesn't update
+		return false; // operation failed
+	}
+	
 	/* ADDS A TRANSACTION TO AN ACCOUNT AND RECORDS THE CHANGES TO FILES */
 	public boolean addTransaction(int acctID, Transaction trans) {
 		// assume the logic for transactions (deposit/withdraw) have taken place already
@@ -534,6 +555,8 @@ public class DatabaseManager {
 		if (account != null && trans != null) {
 			// update transaction file method
 			writeToTransactions(acctID, trans);
+			
+			writeToAllAccounts();
 			
 			// operation success!
 			return true;

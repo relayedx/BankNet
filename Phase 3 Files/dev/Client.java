@@ -1,5 +1,6 @@
 package dev;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,27 @@ public class Client {
     	// creating latch counter to stop main from terminating 
     	CountDownLatch latch = new CountDownLatch(1);
     	
-        Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
-        System.out.println("Enter the port number to connect to: <1234>");
-        int port = sc.nextInt();
-        sc.nextLine(); // Flushes out the stream to get ready for asking for host address
-        System.out.println("Enter the host address to connect to: <localhost> ");
-        String host = sc.nextLine();
+    	// automatically connects the client to the server
+    	int serverPort = 1234;
+    	String serverIP = InetAddress.getLocalHost().getHostAddress();
+    	
+        // Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
+        // System.out.println("Enter the port number to connect to: <1234>");
+        int port = serverPort; // sc.nextInt();
+        // sc.nextLine(); // Flushes out the stream to get ready for asking for host address
+        // System.out.println("Enter the host address to connect to: <localhost> ");
+        String host = serverIP; // sc.nextLine();
         
         // Connect to the ServerSocket at host:port
-        Socket socket = new Socket(host, port);
-        System.out.println("Connected to " + host + ":" + port);
+        Socket socket = null;
+        try {
+        	socket = new Socket(host, port);
+        	System.out.println("Connected to " + host + ":" + port);
+        } catch (IOException e) {
+            System.err.println("Failed to connect to " + host + ":" + port);
+            System.err.println("Is the server running?");
+            System.exit(1);
+        }
       
         Client clientRef = new Client(socket, latch);
         ClientController clientController = new ClientController(clientRef);
@@ -208,15 +220,30 @@ public class Client {
 		Transaction incoming = new Transaction(user, amt, TranType.TRANSFER);
 		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
 		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
+		// We could have this be returned in a list, idk
+		if (w.getStatus() == Status.ERROR) { // If withdrawing comes up with an error
+			return w;  // Don't deposit, return
+		}
 		TransactionMessage d = deposit(incomingAcctID,incoming);
 		return w;
 	}
 	
-	public List<Transaction> getTransactions(int acctID, String username) {
+	public List<Transaction> getTransactions(int acctID, String username) throws IOException, ClassNotFoundException {
 		// TODO: needs to get transactions from corresponding acctID and username
+		out.writeObject(new AccountsRequestMessage(msgType.TRANSACTIONS_REQUEST,Status.IN_PROGRESS,username,acctID));
+		out.flush();
+		List<Message> response = (List<Message>) in.readObject();
+		List<Transaction> myTransactions = new ArrayList<Transaction>();
+		if (response.getFirst().getStatus() != Status.ERROR) { // If the first message tells us it was a success
+			response.removeFirst(); // remove the msg 
+			for (Message msg : response) {
+				TransactionMessage tMsg = (TransactionMessage) msg;
+				myTransactions.add(tMsg.getTransaction());
+				
+			}
+		} // Otherwise, myTransactions will just return an empty list of transactions
 		
-		// sending empty list for now
-		List<Transaction> myTransactions = new ArrayList<>();
+		// 
 		return myTransactions;
 	}
 }
