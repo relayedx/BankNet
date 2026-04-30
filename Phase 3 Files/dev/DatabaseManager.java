@@ -535,6 +535,8 @@ public class DatabaseManager {
 			// update transaction file method
 			writeToTransactions(acctID, trans);
 			
+			writeToAllAccounts();
+			
 			// operation success!
 			return true;
 		}

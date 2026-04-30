@@ -208,6 +208,10 @@ public class Client {
 		Transaction incoming = new Transaction(user, amt, TranType.TRANSFER);
 		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
 		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
+		// We could have this be returned in a list, idk
+		if (w.getStatus() == Status.ERROR) { // If withdrawing comes up with an error
+			return w;  // Don't deposit, return
+		}
 		TransactionMessage d = deposit(incomingAcctID,incoming);
 		return w;
 	}
