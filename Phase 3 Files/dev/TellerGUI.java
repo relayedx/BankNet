@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 class TellerGUI implements RoleBasedGUI {
 	private ClientController clientController;
@@ -165,7 +167,7 @@ class TellerGUI implements RoleBasedGUI {
 	public void handleDeposit() {
 		// dialog popup
 		JDialog dialog = new JDialog(frame, "Assist customer with deposit", true); // true = modal (blocks until closed)
-	    dialog.setSize(350, 300);
+	    dialog.setSize(450, 350);
 	    dialog.setLocationRelativeTo(frame);
 	    dialog.setLayout(new BorderLayout());
 
@@ -221,19 +223,108 @@ class TellerGUI implements RoleBasedGUI {
 	}
 	
 	public void handleViewTransactions() {
-		
+		// dialog popup
+		JDialog dialog = new JDialog(frame, "Assist customer with deposit", true); // true = modal (blocks until closed)
+	    dialog.setSize(450, 350);
+	    dialog.setLocationRelativeTo(frame);
+	    dialog.setLayout(new BorderLayout());
+
+	    // Form panel
+	    JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+	    formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+	    
+	    formPanel.add(new JLabel("Enter account ID:"));
+	    JTextField acctTextField = new JTextField();
+	    formPanel.add(acctTextField);
+	    
+	    formPanel.add(new JLabel("Enter username:"));
+	    JTextField usernameTextField = new JTextField();
+	    formPanel.add(usernameTextField);
+	    
+	    // Button panel
+	    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	    JButton confirmBtn = new JButton("Confirm");
+	    JButton cancelBtn = new JButton("Cancel");
+	    btnPanel.add(cancelBtn);
+	    btnPanel.add(confirmBtn);
+	    
+	    // confirmBtn onClick logic
+	    confirmBtn.addActionListener(e -> {
+	    	try {
+	    		int acctID = Integer.parseInt(acctTextField.getText());
+	    		String username = usernameTextField.getText();
+	    		List<Transaction> userTransactions = clientController.getTransactions(acctID, username);
+	    		String myTrx = "Transactions for Account #" + acctTextField.getText() + "\n";
+	    		for (Transaction currTrx : userTransactions) {
+	    			myTrx += currTrx.toString() + "\n";
+	    		}
+	    		JOptionPane.showMessageDialog(frame, myTrx);
+	    	} catch (Exception error) {
+	    		JOptionPane.showMessageDialog(frame, "System error occured.");
+	    	}
+	    	
+	    	dialog.dispose();
+	    });
+	    
+	    cancelBtn.addActionListener(e -> dialog.dispose());
+	    
+	    // display
+	    dialog.add(formPanel, BorderLayout.CENTER);
+	    dialog.add(btnPanel, BorderLayout.SOUTH);
+	    dialog.setVisible(true); // blocks here until dialog is closed because modal=true
 	}
 	
 	public void handleFreezeAcct() {
-		
+		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to freeze account:");
+		int acctID = Integer.parseInt(strAcctID);
+		try {
+			Boolean result = clientController.freezeAccount(acctID);
+			if (result) {
+				JOptionPane.showMessageDialog(frame, "Account #" + strAcctID + 
+					" successfully frozen!");
+			} else {
+				JOptionPane.showMessageDialog(frame, "Potential system error, Account #" + strAcctID + 
+					" could not be frozen.");
+			}
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System error occurred.");
+		}
 	}
 	
 	public void handleCloseAcct() {
-		
+		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to request it to be closed:");
+		int acctID = Integer.parseInt(strAcctID);
+		try {
+			Boolean result = clientController.closeAccount(acctID);
+			if (result) {
+				JOptionPane.showMessageDialog(frame, "Account #" + strAcctID + 
+					" successfully closed!");
+			} else {
+				JOptionPane.showMessageDialog(frame, "Potential system error, Account #" + strAcctID + 
+					" could not be closed.");
+			}
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System error occurred.");
+		}
 	}
 	
 	public void handleAddAuthUser() {
-		
+		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to add authorized user to:");
+		String username = JOptionPane.showInputDialog(frame, "Enter the username of the requested authorized user:");
+		int acctID = Integer.parseInt(strAcctID);
+		try {
+			Boolean result = clientController.addAuthUser(username, acctID);
+			if (result) {
+				JOptionPane.showMessageDialog(frame, "User successfully added as an authorized user!");
+			} else {
+				JOptionPane.showMessageDialog(frame, "Potential system error, user could not be added as an "
+					+ "authorized user");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System error occurred.");
+		} 
 	}
 	
 	public void handleAddCreditLine() {
@@ -241,7 +332,11 @@ class TellerGUI implements RoleBasedGUI {
 	}
 	
 	public void handleLogout() {
-		
+		try {
+			clientController.logout();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System Error occured");
+		}
 	}
 	
 	private UserInfo[] showCreateUserDialog() {

@@ -113,35 +113,29 @@ public class ClientController {
 		return acct;
 	}
 	
-	public void closeAccount(int acctID) throws ClassNotFoundException, IOException {
+	public boolean closeAccount(int acctID) throws ClassNotFoundException, IOException {
 		boolean close = client.closeAccount(acctID);
 		if (close) {
-			JOptionPane.showMessageDialog(null,"Closed");
-
-		}else {
-			JOptionPane.showMessageDialog(null, "Error in closing");
-
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
-	public void addAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
+	public boolean addAuthUser(String user, int acctID) throws ClassNotFoundException, IOException {
 		boolean add = client.addAuthUser(user, acctID);
 		if (add) {
-			JOptionPane.showMessageDialog(null,"User added");
-
+			return true;
 		} else {
-			JOptionPane.showMessageDialog(null, "Error in adding authorized user");
-
+			return false;
 		}
 	}
 	
 	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException {
 		boolean freeze = client.freezeAccount(acctID);
 		if (freeze) {
-			JOptionPane.showMessageDialog(null,"Freezed/Unfrozen");
 			return true;
 		} else {
-			JOptionPane.showMessageDialog(null, "Error in freezing");
 			return false;
 		}
 	}
