@@ -46,6 +46,7 @@ public class ClientController {
 		if (logout) { // If they were able to logout
 			currentGUI.closeUI();
 			currentGUI = new LoginGUI(this);
+			currentGUI.launchUI();
 		}
 	}
 	
@@ -127,12 +128,14 @@ public class ClientController {
 		}
 	}
 	
-	public void freezeAccount(int acctID) throws ClassNotFoundException, IOException {
-		boolean freeze = client.closeAccount(acctID);
+	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException {
+		boolean freeze = client.freezeAccount(acctID);
 		if (freeze) {
 			JOptionPane.showMessageDialog(null,"Freezed/Unfrozen");
+			return true;
 		} else {
 			JOptionPane.showMessageDialog(null, "Error in freezing");
+			return false;
 		}
 	}
 	

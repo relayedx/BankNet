@@ -21,7 +21,7 @@ public class AtmGUI implements RoleBasedGUI {
 		// GUI frame
 		frame = new JFrame("Welcome Customer!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(750, 550);
+		frame.setSize(1000, 550);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		
@@ -44,8 +44,20 @@ public class AtmGUI implements RoleBasedGUI {
 	        acctPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // caps the height
 
 	        // Left side — account type and ID
+	        JPanel leftPanel = new JPanel();
+	        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
+	        
 	        JLabel acctLabel = new JLabel(acct.getAcctType() + " Account #" + acct.getAcctID());
 	        acctLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	        JLabel frozenLabel = new JLabel("Frozen: " + acct.getFrozen());
+	        frozenLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	        leftPanel.add(acctLabel);
+	        leftPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+	        leftPanel.add(frozenLabel);
+	        leftPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+	      	        
+	        
 
 	        // Center — balance
 	        JLabel balanceLabel = new JLabel(String.format("$%,.2f", acct.getBalance()));
@@ -59,18 +71,20 @@ public class AtmGUI implements RoleBasedGUI {
 	        JButton depositBtn = new JButton("Deposit");
 	        JButton transferBtn = new JButton("Transfer Funds");
 	        JButton viewTrxBtn = new JButton("View Transactions");
-	        JButton logoutBtn = new JButton("Logout");
+	        JButton freezeBtn = new JButton("Freeze Account");
 	        withdrawBtn.addActionListener(e -> handleWithdraw(acct.getAcctID(), balanceLabel, acct.getOwner()));
 	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID(), balanceLabel, acct.getOwner()));
 	        transferBtn.addActionListener(e -> handleTransfer(acct.getAcctID(), balanceLabel, acct.getOwner()));
 	        viewTrxBtn.addActionListener(e -> handleViewTrx(acct.getAcctID(), acct.getOwner()));
+	        freezeBtn.addActionListener(e -> handleFreeze(acct.getAcctID(),frozenLabel));
 	        btnPanel.add(withdrawBtn);
 	        btnPanel.add(depositBtn);
 	        btnPanel.add(transferBtn);
 	        btnPanel.add(viewTrxBtn);
+	        btnPanel.add(freezeBtn);
 
 	        // add acct details to panel
-	        acctPanel.add(acctLabel, BorderLayout.WEST);
+	        acctPanel.add(leftPanel, BorderLayout.WEST);
 	        acctPanel.add(balanceLabel, BorderLayout.CENTER);
 	        acctPanel.add(btnPanel, BorderLayout.EAST);
 	        
@@ -205,6 +219,21 @@ public class AtmGUI implements RoleBasedGUI {
 	public void handleLogout() {
 		try {
 			clientController.logout();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+		}
+	}
+	
+	public void handleFreeze(int acctID, JLabel frozenLabel) {
+		try {
+			Boolean froze = clientController.freezeAccount(acctID);
+			if (froze) {
+				if (frozenLabel.getText().contains("false")) {
+					frozenLabel.setText("Frozen: true");
+				}else {
+					frozenLabel.setText("Frozen: false");
+				}
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
 		}

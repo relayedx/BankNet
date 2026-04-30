@@ -203,11 +203,11 @@ class Server {
 					}
 					if (type == msgType.ACCOUNTS_FREEZE) {
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
-						boolean froze = server.closeAcct(aMsg.getID());
+						boolean froze = server.freezeAcct(aMsg.getID());
 						if (froze) { // if so,
-							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.SUCCESS)); // Send a success msg
+							out.writeObject(new Message(msgType.ACCOUNTS_FREEZE, Status.SUCCESS)); // Send a success msg
 						}else {
-							out.writeObject(new Message(msgType.ACCOUNT_CLOSE, Status.ERROR)); // Otherwise send error
+							out.writeObject(new Message(msgType.ACCOUNTS_FREEZE, Status.ERROR)); // Otherwise send error
 						}
 						out.flush();
 					}
@@ -477,14 +477,8 @@ class Server {
 	}
 	
 	public boolean freezeAcct(int acctID) {
-		// TODO: This is where we will call Accounts to freeze an account 
-		BankAcct acct = db.getAccount(acctID);
-		if (acct == null) { // If account does not exist
-			return false; // Return false
-		}
-		// Otherwise, the account is either frozen or unfrozen
-		acct.freezeAcc();
-		return true; // Return true
+		boolean froze = db.freeze(acctID);
+		return froze; // Return true
 	}
 	
 	public boolean createUser(UserInfo userInfo, String username, String pass){
