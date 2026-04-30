@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class AtmGUI implements RoleBasedGUI {
 	private JFrame frame;
@@ -119,7 +120,7 @@ public class AtmGUI implements RoleBasedGUI {
 		try {
 			Message msg = clientController.withdraw(acctID, amount, username);
 			TransactionMessage res = (TransactionMessage) msg;
-			String updatedBalance = String.valueOf(res.getUpdatedBalance());
+			String updatedBalance = String.format("$%,.2f", res.getUpdatedBalance());
 			balanceLabel.setText(updatedBalance);
 			
 		} catch (Exception e) {
@@ -142,7 +143,7 @@ public class AtmGUI implements RoleBasedGUI {
 			Message msg = clientController.deposit(acctID, amount, username);
 			TransactionMessage res = (TransactionMessage) msg;
 			
-			String updatedBalance = String.valueOf(res.getUpdatedBalance());
+			String updatedBalance = String.format("$%,.2f", res.getUpdatedBalance());
 			JOptionPane.showMessageDialog(frame, updatedBalance);
 			balanceLabel.setText(updatedBalance);
 			
@@ -168,7 +169,12 @@ public class AtmGUI implements RoleBasedGUI {
 	}
 	
 	public void handleViewTrx(int acctID, String username) {
-		List<Transaction> myTransactions = clientController.getTransactions(acctID, username);
+		List<Transaction> myTransactions = new ArrayList<Transaction>();
+		try {
+			myTransactions = clientController.getTransactions(acctID, username);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
+		}
 		String acctNum = String.valueOf(acctID);
 		String myTrx = "Transactions for Account #" + acctNum + "\n";
 		for (Transaction currTrx : myTransactions) {
