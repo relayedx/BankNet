@@ -134,9 +134,11 @@ class TellerGUI implements RoleBasedGUI {
 	    
 	    formPanel.add(new JLabel("Date Of Birth (Ex: 2000-11-03):"));
 	    JTextField dobField = new JTextField();
+	    formPanel.add(dobField);
 	    
 	    formPanel.add(new JLabel("Phone Number:"));
 	    JTextField phoneNumField = new JTextField();
+	    formPanel.add(phoneNumField);
 
 	    // Button panel
 	    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
