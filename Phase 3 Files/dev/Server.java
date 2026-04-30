@@ -83,6 +83,7 @@ class Server {
 		private ObjectOutputStream out = null;
 		private ObjectInputStream in = null;
 		private boolean loggedIn = false;
+		private boolean connected = true;
 		private String user;
 
 		// Constructor
@@ -101,7 +102,7 @@ class Server {
 				// get the inputstream of client
 				in = new ObjectInputStream(clientSocket.getInputStream());
 				
-				while(true) { // While client is connected
+				while(connected) { // While client is connected
 					Message msg = (Message) in.readObject(); // Wait for client to send a msg
 					if (msg.getType() == msgType.LOGIN_REQUEST) { // If it is a login request, we can upcast it into a LoginMessage
 						LoginMessage loginMsg = (LoginMessage) msg;
@@ -127,6 +128,7 @@ class Server {
 						Boolean logout = server.logout(user);
 						if (logout) {
 							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.SUCCESS));
+							connected = false;
 						}else {
 							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.ERROR));
 						}
@@ -217,6 +219,12 @@ class Server {
 						}else {
 							out.writeObject(new Message(msgType.USER_CREATE, Status.ERROR)); // Otherwise send error
 						}
+						out.flush();
+					}
+					if (type == msgType.TRANSACTIONS_REQUEST) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						List<Message> transactions = server.getTransactions(aMsg.getUser(), aMsg.getID());
+						out.writeObject(transactions);
 						out.flush();
 					}
 					
@@ -493,6 +501,25 @@ class Server {
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,acct);
 		return msg;
 	}
+	
+	public List<Message> getTransactions(String username, int acctID){
+		BankAcct acct = db.getAccount(acctID);
+		List<Transaction> transactions = new ArrayList<Transaction>();
+		List<Message> msgs = new ArrayList<Message>();
+		if (acct == null) {
+			msgs.add(new Message(msgType.TRANSACTIONS_REQUEST,Status.ERROR));
+			return msgs;
+		}
+		transactions = acct.getTrans();
+		// If we get here, first msg is a success msg
+		msgs.add(new Message(msgType.TRANSACTIONS_REQUEST,Status.SUCCESS));
+		for (Transaction trans : transactions) {
+			msgs.add(new TransactionMessage(msgType.TRANSACTIONS_REQUEST,Status.SUCCESS,trans,acctID));
+		}
+		return msgs;
+	}
+	
+	
 	
 
 }

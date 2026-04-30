@@ -228,11 +228,22 @@ public class Client {
 		return w;
 	}
 	
-	public List<Transaction> getTransactions(int acctID, String username) {
+	public List<Transaction> getTransactions(int acctID, String username) throws IOException, ClassNotFoundException {
 		// TODO: needs to get transactions from corresponding acctID and username
+		out.writeObject(new AccountsRequestMessage(msgType.TRANSACTIONS_REQUEST,Status.IN_PROGRESS,username,acctID));
+		out.flush();
+		List<Message> response = (List<Message>) in.readObject();
+		List<Transaction> myTransactions = new ArrayList<Transaction>();
+		if (response.getFirst().getStatus() != Status.ERROR) { // If the first message tells us it was a success
+			response.removeFirst(); // remove the msg 
+			for (Message msg : response) {
+				TransactionMessage tMsg = (TransactionMessage) msg;
+				myTransactions.add(tMsg.getTransaction());
+				
+			}
+		} // Otherwise, myTransactions will just return an empty list of transactions
 		
-		// sending empty list for now
-		List<Transaction> myTransactions = new ArrayList<>();
+		// 
 		return myTransactions;
 	}
 }

@@ -68,7 +68,7 @@ public class ClientController {
 		return msg;
 	}
 	
-	public List<Transaction> getTransactions(int acctID, String username) {
+	public List<Transaction> getTransactions(int acctID, String username) throws ClassNotFoundException, IOException {
 		List<Transaction> transactions = client.getTransactions(acctID, username);
 		return transactions;
 	}
