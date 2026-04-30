@@ -20,7 +20,7 @@ public class LoginGUI implements RoleBasedGUI {
 		// GUI frame
 		frame = new JFrame("BankNet Login");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(350, 250);
+		frame.setSize(450, 350);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		

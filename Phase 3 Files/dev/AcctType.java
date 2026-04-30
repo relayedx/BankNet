@@ -7,12 +7,12 @@ public enum AcctType{
 	
 	// added parsing method to translate from our files
 	public static AcctType parseAcctType(String type) {
-		switch(type) {
-			case "Credit":
+		switch(type.toLowerCase()) {
+			case "credit":
 				return AcctType.Credit;
-			case "Checking":
+			case "checking":
 				return AcctType.Checking;
-			case "Savings":
+			case "savings":
 				return AcctType.Savings;
 			default:
 				return null;

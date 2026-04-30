@@ -1,1 +1,2 @@
 johndoe|johndoe123|false|0,1,2,4,7,9,6
+johnnydoe|johnnydoe123|true|0

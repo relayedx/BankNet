@@ -9,24 +9,16 @@ import java.util.Scanner;
 
 // Server class
 class Server {
-	/* private File UsersFile;
-	private File BankAccountsFile;
-	private List<User> usersDB;
-	private Accounts accountsDB; */
 	DatabaseManager db;
 	
 	Server() {
-		/*this.UsersFile = new File("Users.txt");
-		this.BankAccountsFile = new File("BankAccounts.txt");
-		this.usersDB = new ArrayList<>();
-		loadUsers();
-		loadAccounts();*/
 		db = new DatabaseManager
 				// i changed to // b/c it wasn't working on my mac with \\ :sob: - jerrick
-				(System.getProperty("user.dir") + "//db//AllUsers.txt",
-				 System.getProperty("user.dir") + "//db//AllAccounts.txt",
-				 System.getProperty("user.dir") + "//db//Users//",
-				 System.getProperty("user.dir") + "//db//Accounts//");
+				// i changed it as well b/c the db package is in Phase 3 Files for me :D - fosa
+				(System.getProperty("user.dir") + "//Phase 3 Files//db//AllUsers.txt",
+				 System.getProperty("user.dir") + "//Phase 3 Files//db//AllAccounts.txt",
+				 System.getProperty("user.dir") + "//Phase 3 Files//db//Users//",
+				 System.getProperty("user.dir") + "//Phase 3 Files//db//Accounts//");
 		db.loadData();
 	}
 	
@@ -250,96 +242,9 @@ class Server {
 	
 	}
 	
-	/* public void loadUsers() {
-		
-		
-		try {
-			Scanner scanner = new Scanner(UsersFile);
-			while(scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				String[] data = line.split("\\|");
-				// 0 -> username, 1 -> password, 2 -> acctType
-				// 3 -> authAccts, 4 -> isLoggedIn
-				String username = data[0];
-				String password = data[1];
-				Boolean isTeller = Boolean.parseBoolean(data[2]);
-				List<Integer> authAcctIDs = new ArrayList<>();
-				String[] AcctIDsAsString = data[3].split(",");
-				for (String id : AcctIDsAsString) {
-					authAcctIDs.add(Integer.parseInt(id));
-				}
-				Boolean isLoggedIn = Boolean.parseBoolean(data[4]);
-				usersDB.add(new User(username, password,
-					isTeller, authAcctIDs, isLoggedIn));
-			}
-			
-			
-		} catch (Exception e) {
-			System.out.println("Error: " + e);
-		}
-	}
-	
-	public void loadAccounts() {
-		try {
-			// List of BankAccts that will be used to initialize accountsDB
-			List<BankAcct> BankAccts = new ArrayList<>();
-			Scanner scanner = new Scanner(BankAccountsFile);
-			while (scanner.hasNextLine() ) {
-				// parsing each line by '|'
-				String line = scanner.nextLine();
-				String[] data = line.split("\\|");
-				// getting acctID
-				int acctID = Integer.parseInt(data[0]);
-				// getting account type
-				AcctType type = AcctType.Credit;
-				if (data[1].equals("checking")) {type = AcctType.Checking;}
-				else if (data[1].equals("savings")) {type = AcctType.Savings;}
-				else if (data[1].equals("credit")) {type = AcctType.Credit;}
-				// getting acct balance
-				String bal = data[2].replace("$", "");
-				float balance = Float.parseFloat(bal);
-				// getting acct status (frozen & closed)
-				boolean frozen = Boolean.parseBoolean(data[3]);
-				boolean closed = Boolean.parseBoolean(data[4]);
-				String dueDate = data[5];
-				// getting owner of acct
-				String ownerUsername = data[6];
-				// finding account owner obj from usersDB
-				User owner = findUser(ownerUsername);
-				// parsing authUsers in file to add to List for authUsers
-				List<User> authUsers = new ArrayList<>(); // creating new authUsers array so i can just pass in as param
-				String[] authUsersInFile = data[7].split(",");
-				for (String username : authUsersInFile) {
-					User authUser = findUser(username);
-					authUsers.add(authUser);
-				}
-				// manually creating temporary transactions list
-				List<Transaction> transactions = new ArrayList<>();
-				transactions.add(new Transaction("johndoe", 350.22f, TranType.WITHDRAWAL));
-				// creating BankAccts with parsed info and adding to list
-				BankAccts.add(new BankAcct(acctID, type, owner, balance, frozen,
-					closed, dueDate, authUsers, transactions));
-			}
-			// initializing accountsDB with all list of all BankAccts we parsed
-			accountsDB = new Accounts(BankAccts);
-		} catch (Exception e) {
-			System.out.println("Error: " + e);
-		}
-	}
-	
-	public User findUser(String username) {
-		 for (User user : usersDB) {
-		        if (user.getUsername().equals(username)) {
-		            return user;
-		        }
-		    }
-		    return null;
-	} */
-	
 	public Message isUser(String username, String password) {
 		// TODO: This will be where the user is looked up in the system, and whether or not they are logged in or not. (Michelle)
 		// I ended up doing the implementaion, so i can test for role based GUI - fosa
-		
 		User user = db.getUser(username);
 		if (user != null && password.equals(user.getPassword())) {
 			if (user.getIsLoggedIn()) {  // Is the user currently logged in?
@@ -354,11 +259,6 @@ class Server {
 			} else {
 				role = "customer";
 				return new Message(msgType.LOGIN_REQUEST, Status.SUCCESS, role);
-				
-				// List<Integer> authAcctIDs = user.getAuthAcctIDs();
-				// List<BankAcct> customerBankAccts = accountsDB.getAccts(authAcctIDs);
-				// return new AccountMessage(msgType.ACCOUNT_REQUEST, Status.SUCCESS,
-				//	customerBankAccts.get(0));
 			}
 		}
 		

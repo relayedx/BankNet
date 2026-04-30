@@ -16,6 +16,7 @@ public class AccountMessage extends Message {
     private final float creditLine;
     private final LocalDate dueDate;
     private final Boolean isTeller;
+    private final String firstName;
     
     AccountMessage(msgType type, Status status, BankAcct acct) {
     	super(type,status);
@@ -35,6 +36,8 @@ public class AccountMessage extends Message {
     	creditLine = acct.getCredit();
     	dueDate = acct.getDueDate();
     	isTeller = acct.getOwner().getRole();
+    	//UserInfo tempUserInfoObj = acct.getOwner().getUserInfo();
+    	firstName = acct.getOwner().getUserInfo().getFirstName();
     }
     
     public String getOwner() {
@@ -83,5 +86,9 @@ public class AccountMessage extends Message {
     
     public boolean getRole() {
     	return isTeller;
+    }
+    
+    public String getFirstName() {
+    	return firstName;
     }
 }

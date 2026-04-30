@@ -34,6 +34,7 @@ public class ClientController {
 			} else {
 				// this is a customer so we can req for their accounts
 				List<Message> listOfAccts = client.getAccts(username);
+				System.out.println(listOfAccts);
 				currentGUI.closeUI();
 				currentGUI = new AtmGUI(this, listOfAccts);
 				currentGUI.launchUI();
@@ -51,7 +52,8 @@ public class ClientController {
 	
 	public Message withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
 		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
-		TransactionMessage msg = client.withdraw(acctID, temp); // We're going to get a transaction msg back so we can have the updated bal and whether it was an error
+		TransactionMessage msg = client.withdraw(acctID, temp); // We're going to get a transaction msg back.. 
+		// ..so we can have the updated bal and whether it was an error
 		return (Message) msg;
 	}
 	
@@ -121,7 +123,7 @@ public class ClientController {
 		if (add) {
 			JOptionPane.showMessageDialog(null,"User added");
 
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(null, "Error in adding authorized user");
 
 		}
@@ -136,8 +138,9 @@ public class ClientController {
 		}
 	}
 	
-	public void createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
+	public boolean createUser(UserInfo userInfo, String user, String pass) throws ClassNotFoundException, IOException {
 		boolean created = client.createUser(userInfo, user, pass);
+		return created;
 	}
 	
 }

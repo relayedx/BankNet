@@ -18,6 +18,8 @@ public class AtmGUI implements RoleBasedGUI {
 	
 	public void launchUI() {
 		// GUI frame
+		AccountMessage currAcct = (AccountMessage) userAccts.get(0);
+		String firstName = currAcct.getFirstName();
 		frame = new JFrame("Welcome Customer!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(750, 550);
@@ -43,7 +45,7 @@ public class AtmGUI implements RoleBasedGUI {
 	        acctPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // caps the height
 
 	        // Left side — account type and ID
-	        JLabel acctLabel = new JLabel(acct.getAcctType() + " Account #" + acct.getAcctID());
+	        JLabel acctLabel = new JLabel(acct.getAcctType() + " Account #" + acct.getAcctID() + " ");
 	        acctLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
 	        // Center — balance
@@ -120,7 +122,8 @@ public class AtmGUI implements RoleBasedGUI {
 			Message msg = clientController.withdraw(acctID, amount, username);
 			TransactionMessage res = (TransactionMessage) msg;
 			String updatedBalance = String.valueOf(res.getUpdatedBalance());
-			balanceLabel.setText(updatedBalance);
+			JOptionPane.showMessageDialog(frame, "Withdrawl was successful!");
+			balanceLabel.setText("$" + updatedBalance);
 			
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
@@ -143,9 +146,8 @@ public class AtmGUI implements RoleBasedGUI {
 			TransactionMessage res = (TransactionMessage) msg;
 			
 			String updatedBalance = String.valueOf(res.getUpdatedBalance());
-			JOptionPane.showMessageDialog(frame, updatedBalance);
-			balanceLabel.setText(updatedBalance);
-			
+			JOptionPane.showMessageDialog(frame, "Deposit was successful!");
+			balanceLabel.setText("$" + updatedBalance);
 			
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "error occured, see teller");
@@ -161,7 +163,7 @@ public class AtmGUI implements RoleBasedGUI {
 			int incomingAcctID = Integer.parseInt(transferToAcctID);
 			TransactionMessage res = clientController.transfer(outgoingAcctID, incomingAcctID, transferAmt, username);
 			String updatedBalance = String.valueOf(res.getUpdatedBalance());
-			balanceLabel.setText(updatedBalance);
+			balanceLabel.setText("$" + updatedBalance);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
 		}
