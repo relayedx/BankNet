@@ -1,2 +1,1 @@
-jelly|ultra|false|1,2
-shar|yap|false|0
+user1|pass1|false|0,2,6

@@ -387,7 +387,6 @@ class Server {
 		User user = db.getUser(username);
 		// If the user trying this transaction is not a teller or the owner/authorized user
 		
-		
 		TransactionMessage temp = acct.withdraw(trans);
 		db.addTransaction(acctID, trans);
 		return temp;
