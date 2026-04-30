@@ -33,8 +33,10 @@ class TellerGUI implements RoleBasedGUI {
 		JButton depositBtn = new JButton("Deposit");
 		JButton freezeAcctBtn = new JButton("Freeze Acct");
 		JButton closeAcctBtn = new JButton("Close Acct");
-		JButton addAuthUser = new JButton("add Authorized User");
-		JButton addCreditLine = new JButton("add Credit Line");
+		JButton addAuthUserBtn = new JButton("add Authorized User");
+		JButton addCreditLineBtn = new JButton("add Credit Line");
+		JButton viewTransactionsBtn = new JButton("View Transactions");
+		JButton logoutBtn = new JButton("logout");
 		
 		// adding action listeners for buttons
 		createUserBtn.addActionListener(e -> handleCreateUser());
@@ -43,8 +45,10 @@ class TellerGUI implements RoleBasedGUI {
 		depositBtn.addActionListener(e -> handleDeposit());
 		freezeAcctBtn.addActionListener(e -> handleFreezeAcct());
 		closeAcctBtn.addActionListener(e -> handleCloseAcct());
-		addAuthUser.addActionListener(e -> handleAddAuthUser());
-		addCreditLine.addActionListener(e -> handleAddCreditLine());
+		addAuthUserBtn.addActionListener(e -> handleAddAuthUser());
+		addCreditLineBtn.addActionListener(e -> handleAddCreditLine());
+		viewTransactionsBtn.addActionListener(e -> handleViewTransactions());
+		logoutBtn.addActionListener(e -> handleLogout());
 		
 		// adding buttons to panel
 		mainPanel.add(createUserBtn);
@@ -53,8 +57,10 @@ class TellerGUI implements RoleBasedGUI {
 		mainPanel.add(depositBtn);
 		mainPanel.add(freezeAcctBtn);
 		mainPanel.add(closeAcctBtn);
-		mainPanel.add(addAuthUser);
-		mainPanel.add(addCreditLine);
+		mainPanel.add(addAuthUserBtn);
+		mainPanel.add(addCreditLineBtn);
+		mainPanel.add(viewTransactionsBtn);
+		mainPanel.add(logoutBtn);
 		
 		frame.add(mainPanel);
 		frame.setVisible(true);
@@ -100,10 +106,121 @@ class TellerGUI implements RoleBasedGUI {
 	}
 	
 	public void handleWithdraw() {
-		
+		// dialog popup
+		JDialog dialog = new JDialog(frame, "Assist customer with withdrawal", true); // true = modal (blocks until closed)
+	    dialog.setSize(350, 300);
+	    dialog.setLocationRelativeTo(frame);
+	    dialog.setLayout(new BorderLayout());
+
+	    // Form panel
+	    JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+	    formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+	    
+	    formPanel.add(new JLabel("Enter account ID:"));
+	    JTextField acctIDField = new JTextField();
+	    formPanel.add(acctIDField);
+	    
+	    formPanel.add(new JLabel("Enter withdrawal amount:"));
+	    JTextField amountField = new JTextField();
+	    formPanel.add(amountField);
+	    
+	    formPanel.add(new JLabel("Enter customer username:"));
+	    JTextField usernameField = new JTextField();
+	    formPanel.add(usernameField);
+	    
+	    // Button panel
+	    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	    JButton confirmBtn = new JButton("Confirm");
+	    JButton cancelBtn = new JButton("Cancel");
+	    btnPanel.add(cancelBtn);
+	    btnPanel.add(confirmBtn);
+	    
+	    // confirmBtn onClick logic
+	    confirmBtn.addActionListener(e -> {
+	    	try {
+	    		int acctID = Integer.parseInt(acctIDField.getText());
+	    		Float amount = Float.parseFloat(amountField.getText());
+	    		String username = usernameField.getText();
+	    		Message msg = clientController.withdraw(acctID, amount, username);
+	    		if (msg.getStatus() == Status.SUCCESS) {
+	    			JOptionPane.showMessageDialog(frame, "Transaction was made Successfully");
+	    		} else {
+	    			JOptionPane.showMessageDialog(frame, "Transaction could not be made.");
+	    		}
+	    	} catch (Exception error) {
+	    		JOptionPane.showMessageDialog(frame, "System error occured");
+	    	}
+	    	dialog.dispose();
+	    });
+	    
+	    // cancelBtn onClick logic
+	    cancelBtn.addActionListener(e -> dialog.dispose());
+	    
+	    // display
+	    dialog.add(formPanel, BorderLayout.CENTER);
+	    dialog.add(btnPanel, BorderLayout.SOUTH);
+	    dialog.setVisible(true); // blocks here until dialog is closed because modal=true
 	}
 	
 	public void handleDeposit() {
+		// dialog popup
+		JDialog dialog = new JDialog(frame, "Assist customer with deposit", true); // true = modal (blocks until closed)
+	    dialog.setSize(350, 300);
+	    dialog.setLocationRelativeTo(frame);
+	    dialog.setLayout(new BorderLayout());
+
+	    // Form panel
+	    JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+	    formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+	    
+	    formPanel.add(new JLabel("Enter account ID:"));
+	    JTextField acctIDField = new JTextField();
+	    formPanel.add(acctIDField);
+	    
+	    formPanel.add(new JLabel("Enter deposit amount:"));
+	    JTextField amountField = new JTextField();
+	    formPanel.add(amountField);
+	    
+	    formPanel.add(new JLabel("Enter customer username:"));
+	    JTextField usernameField = new JTextField();
+	    formPanel.add(usernameField);
+	    
+	    // Button panel
+	    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	    JButton confirmBtn = new JButton("Confirm");
+	    JButton cancelBtn = new JButton("Cancel");
+	    btnPanel.add(cancelBtn);
+	    btnPanel.add(confirmBtn);
+	    
+	    // confirmBtn onClick logic
+	    confirmBtn.addActionListener(e -> {
+	    	try {
+	    		int acctID = Integer.parseInt(acctIDField.getText());
+	    		Float amount = Float.parseFloat(amountField.getText());
+	    		String username = usernameField.getText();
+	    		Message msg = clientController.deposit(acctID, amount, username);
+	    		if (msg.getStatus() == Status.SUCCESS) {
+	    			JOptionPane.showMessageDialog(frame, "Transaction was made Successfully");
+	    		} else {
+	    			JOptionPane.showMessageDialog(frame, "Transaction could not be made.");
+	    		}
+	    	} catch (Exception error) {
+	    		JOptionPane.showMessageDialog(frame, "System error occured");
+	    	}
+	    	dialog.dispose();
+	    });
+	    
+	    // cancelBtn onClick logic
+	    cancelBtn.addActionListener(e -> dialog.dispose());
+	    
+	    // display
+	    dialog.add(formPanel, BorderLayout.CENTER);
+	    dialog.add(btnPanel, BorderLayout.SOUTH);
+	    dialog.setVisible(true); // blocks here until dialog is closed because modal=true
+	    
+	}
+	
+	public void handleViewTransactions() {
 		
 	}
 	
@@ -120,6 +237,10 @@ class TellerGUI implements RoleBasedGUI {
 	}
 	
 	public void handleAddCreditLine() {
+		
+	}
+	
+	public void handleLogout() {
 		
 	}
 	

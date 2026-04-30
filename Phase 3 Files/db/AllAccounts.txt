@@ -1,2 +1,2 @@
-1|johndoe|Checking|670.36|0.0|0.0|false|false|2026-04-27|johndoe
-2|johndoe|Savings|11478.96|0.0|0.0|false|false|2026-04-27|johndoe
+1|johndoe|Checking|1000.0|0.0|0.0|false|false|2026-04-27|johndoe
+2|johndoe|Savings|11000.0|0.0|0.0|false|false|2026-04-27|johndoe
