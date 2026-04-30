@@ -81,12 +81,17 @@ public class ClientController {
 		return reset;
 	}
 	
-	public AccountMessage createAccount(String user, String accType) throws ClassNotFoundException, IOException { 
+	public boolean createAccount(String user, String accType) throws ClassNotFoundException, IOException { 
 		// TODO: Swap accType with the actual account type later
 		// Call create account
 		AcctType type = AcctType.parseAcctType(accType);
 		AccountMessage acct = client.createAccount(user, type);
-		return acct; // We return this acct so the GUI knows to update w/ this skeleton acct, or display error.
+		if (acct.getStatus() == Status.SUCCESS) {
+			return true;
+		} else {
+			return false;
+		}
+		// We return this acct so the GUI knows to update w/ this skeleton acct, or display error.
 	}
 	
 	

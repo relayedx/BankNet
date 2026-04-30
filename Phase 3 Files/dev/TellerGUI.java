@@ -79,13 +79,24 @@ class TellerGUI implements RoleBasedGUI {
 					JOptionPane.showMessageDialog(frame, "User could not be created.");
 				}
 			} catch (Exception e) {
-				
+				JOptionPane.showMessageDialog(frame, "System error occured.");
 			}
 		}
 	}
 	
 	public void handleCreateBankAcct() {
-		
+		String username = JOptionPane.showInputDialog(frame, "Enter username of customer:");
+		String acctType = JOptionPane.showInputDialog(frame, "Enter account type (checking, savings, credit):");
+		try {
+			Boolean result = clientController.createAccount(username, acctType);
+			if (result) {
+				JOptionPane.showMessageDialog(frame, "Account Successfully created!");
+			} else {
+				JOptionPane.showMessageDialog(frame, "Account could not be created.");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System error occured");
+		}
 	}
 	
 	public void handleWithdraw() {
