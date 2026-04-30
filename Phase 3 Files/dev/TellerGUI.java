@@ -51,6 +51,8 @@ class TellerGUI implements RoleBasedGUI {
 		mainPanel.add(createBankAcctBtn);
 		mainPanel.add(withdrawBtn);
 		mainPanel.add(depositBtn);
+		mainPanel.add(freezeAcctBtn);
+		mainPanel.add(closeAcctBtn);
 		mainPanel.add(addAuthUser);
 		mainPanel.add(addCreditLine);
 		
