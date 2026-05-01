@@ -205,7 +205,7 @@ class Server {
 					}
 					if (type == msgType.ACCOUNTS_FREEZE) {
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
-						boolean froze = server.freezeAcct(aMsg.getID());
+						boolean froze = server.freezeAcct(aMsg.getUser(),aMsg.getID());
 						if (froze) { // if so,
 							out.writeObject(new Message(msgType.ACCOUNTS_FREEZE, Status.SUCCESS)); // Send a success msg
 						}else {
@@ -402,8 +402,9 @@ class Server {
 		return removed;
 	}
 	
-	public boolean freezeAcct(int acctID) {
-		boolean froze = db.freeze(acctID);
+	public boolean freezeAcct(String user, int acctID) {
+		/* CHECKS TO SEE IF USER IS AUTHORIZED TO FREEZE AN ACCOUNT (TELLER/OWNER)*/
+		boolean froze = db.freeze(user, acctID);
 		return froze; // Return true
 	}
 	

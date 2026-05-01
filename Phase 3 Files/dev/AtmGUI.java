@@ -81,7 +81,7 @@ public class AtmGUI implements RoleBasedGUI {
 	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID(), balanceLabel, user));
 	        transferBtn.addActionListener(e -> handleTransfer(acct.getAcctID(), balanceLabel, user));
 	        viewTrxBtn.addActionListener(e -> handleViewTrx(acct.getAcctID(), user));
-	        freezeBtn.addActionListener(e -> handleFreeze(acct.getAcctID(),frozenLabel));
+	        freezeBtn.addActionListener(e -> handleFreeze(acct.getAcctID(),frozenLabel, user));
 	        btnPanel.add(withdrawBtn);
 	        btnPanel.add(depositBtn);
 	        btnPanel.add(transferBtn);
@@ -225,9 +225,9 @@ public class AtmGUI implements RoleBasedGUI {
 		}
 	}
 	
-	public void handleFreeze(int acctID, JLabel frozenLabel) {
+	public void handleFreeze(int acctID, JLabel frozenLabel, String user) {
 		try {
-			Boolean froze = clientController.freezeAccount(acctID);
+			Boolean froze = clientController.freezeAccount(acctID,user);
 			if (froze) {
 				if (frozenLabel.getText().contains("false")) {
 					frozenLabel.setText("Frozen: true");

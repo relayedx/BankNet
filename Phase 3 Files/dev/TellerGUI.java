@@ -9,11 +9,12 @@ import java.util.List;
 class TellerGUI implements RoleBasedGUI {
 	private ClientController clientController;
 	private JFrame frame;
+	private String user;
 	
 	
-	public TellerGUI(ClientController clientController) {
+	public TellerGUI(ClientController clientController, String username) {
 		this.clientController = clientController;
-		
+		user = username;
 	}
 	
 	public void launchUI() {
@@ -279,7 +280,7 @@ class TellerGUI implements RoleBasedGUI {
 		if (strAcctID == null) return;
 		int acctID = Integer.parseInt(strAcctID);
 		try {
-			Boolean result = clientController.freezeAccount(acctID);
+			Boolean result = clientController.freezeAccount(acctID,user);
 			if (result) {
 				JOptionPane.showMessageDialog(frame, "Account #" + strAcctID + 
 					" successfully frozen!");

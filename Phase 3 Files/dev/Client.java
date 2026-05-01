@@ -187,8 +187,8 @@ public class Client {
 		return false;
 	}
 	
-	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException{
-		out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_FREEZE,Status.IN_PROGRESS,acctID));
+	public boolean freezeAccount(String user, int acctID) throws ClassNotFoundException, IOException{
+		out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_FREEZE,Status.IN_PROGRESS,user,acctID));
 		out.flush();
 		Message msg = (Message) in.readObject();
 		if (msg.getStatus() == Status.SUCCESS) {

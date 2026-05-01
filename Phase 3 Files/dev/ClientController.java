@@ -28,7 +28,7 @@ public class ClientController {
 			if (role.equals("teller")) {
 				// this is a teller so we can open their portal
 				currentGUI.closeUI();
-				currentGUI = new TellerGUI(this);
+				currentGUI = new TellerGUI(this,username);
 				currentGUI.launchUI();
 				return;
 			} else {
@@ -140,8 +140,8 @@ public class ClientController {
 		}
 	}
 	
-	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException {
-		boolean freeze = client.freezeAccount(acctID);
+	public boolean freezeAccount(int acctID, String user) throws ClassNotFoundException, IOException {
+		boolean freeze = client.freezeAccount(user, acctID);
 		if (freeze) {
 			return true;
 		} else {

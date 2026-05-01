@@ -527,12 +527,16 @@ public class DatabaseManager {
 	}
 	
 	/* CHANGES AN ACCOUNTS FROZEN BOOLEAN AND RECORDS THE CHANGES TO FILES */
-	public boolean freeze(int acctID) {
+	public boolean freeze(String username, int acctID) {
+		// tries to get the user of the account
+		User user = getUser(username);
+		
 		// tries to find the given account
 		BankAcct account = getAccount(acctID);
 		
-		// if the account is found
-		if (account != null) {
+		
+		// if the account and user is found and they are authorized to make the change
+		if ((account != null || user != null) && (user.getRole() || account.getOwner() == user)) {
 			// logic for freezing account
 			account.freezeAcc();
 			
@@ -541,6 +545,7 @@ public class DatabaseManager {
 			
 			// operation success!
 			return true;
+			
 		}
 		
 		// else doesn't update
