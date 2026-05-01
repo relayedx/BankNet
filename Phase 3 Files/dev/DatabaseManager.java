@@ -489,9 +489,11 @@ public class DatabaseManager {
 		if (user != null && account != null) {
 			// logic for adding auth users to an account
 			account.addAuthUser(user);
+			user.addAuthAcct(acctID);
 			
 			// update account file method
 			writeToAllAccounts();
+			writeToAllUsers();
 			
 			// operation success!
 			return true;
