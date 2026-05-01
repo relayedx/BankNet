@@ -19,8 +19,9 @@ public class AtmGUI implements RoleBasedGUI {
 	
 	public void launchUI() {
 		// GUI frame
-		AccountMessage currAcct = (AccountMessage) userAccts.get(0);
-		String firstName = currAcct.getFirstName();
+		if (userAccts.size() > 0) {
+			AccountMessage currAcct = (AccountMessage) userAccts.get(0);
+		}
 		frame = new JFrame("Welcome Customer!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1000, 550);
