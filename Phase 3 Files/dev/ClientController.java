@@ -131,6 +131,15 @@ public class ClientController {
 		}
 	}
 	
+	public boolean deleteAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
+		boolean removed = client.deleteAuthUser(user, acctID);
+		if (removed) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean freezeAccount(int acctID) throws ClassNotFoundException, IOException {
 		boolean freeze = client.freezeAccount(acctID);
 		if (freeze) {
@@ -144,5 +153,12 @@ public class ClientController {
 		boolean created = client.createUser(userInfo, user, pass);
 		return created;
 	}
+	
+	public boolean updatedUser(UserInfo userInfo, String user) throws ClassNotFoundException, IOException {
+		boolean updated = client.updatedUser(userInfo, user);
+		return updated;
+	}
+	
+	
 	
 }

@@ -15,10 +15,10 @@ class Server {
 		db = new DatabaseManager
 				// i changed to // b/c it wasn't working on my mac with \\ :sob: - jerrick
 				// i changed it as well b/c the db package is in Phase 3 Files for me :D - fosa
-				(System.getProperty("user.dir") + "//Phase 3 Files//db//AllUsers.txt",
-				 System.getProperty("user.dir") + "//Phase 3 Files//db//AllAccounts.txt",
-				 System.getProperty("user.dir") + "//Phase 3 Files//db//Users//",
-				 System.getProperty("user.dir") + "//Phase 3 Files//db//Accounts//");
+				(System.getProperty("user.dir") + "//db//AllUsers.txt",
+				 System.getProperty("user.dir") + "//db//AllAccounts.txt",
+				 System.getProperty("user.dir") + "//db//Users//",
+				 System.getProperty("user.dir") + "//db//Accounts//");
 		db.loadData();
 	}
 	
@@ -193,6 +193,16 @@ class Server {
 						}
 						out.flush();
 					}
+					if (type == msgType.AUTHUSER_DELETE) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						boolean deleted = server.deleteAuthUser(aMsg.getUser(), aMsg.getID());
+						if (deleted) { // if so,
+							out.writeObject(new Message(msgType.AUTHUSER_DELETE, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.AUTHUSER_DELETE, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
 					if (type == msgType.ACCOUNTS_FREEZE) {
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
 						boolean froze = server.freezeAcct(aMsg.getID());
@@ -217,6 +227,16 @@ class Server {
 						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
 						List<Message> transactions = server.getTransactions(aMsg.getUser(), aMsg.getID());
 						out.writeObject(transactions);
+						out.flush();
+					}
+					if (type == msgType.USER_EDIT) {
+						CreateUserMessage aMsg = (CreateUserMessage) msg;
+						boolean updated = server.updateUser(aMsg.getInfo(), aMsg.getUser());
+						if (updated) { // if so,
+							out.writeObject(new Message(msgType.USER_EDIT, Status.SUCCESS)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.USER_EDIT, Status.ERROR)); // Otherwise send error
+						}
 						out.flush();
 					}
 					
@@ -340,7 +360,6 @@ class Server {
 		msgs.add(new SkeletonAccountMessage(msgType.ACCOUNTS_REQUEST,Status.SUCCESS,3,100,"checkings"));
 		return msgs;
 		*/
-
 	}
 	
 	
@@ -354,6 +373,7 @@ class Server {
 		}
 		BankAcct acct = new BankAcct(acctType, u);
 		db.addAccount(acct);
+		System.out.println("Created account");
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct);
 		return msg;
 	}
@@ -372,8 +392,14 @@ class Server {
 	public boolean addAuthUser(String user, int acctID) {
 		// TODO: This is where we will call accounts and add an authorized user, and returning whether they worked or not.
 		// We'll assume for now the user was added.
+		boolean changed = db.addAuthUser(user, acctID);
 		
-		return true;
+		return changed;
+	}
+	
+	public boolean deleteAuthUser(String user, int acctID) {
+		boolean removed = db.removeAuthUser(user, acctID);
+		return removed;
 	}
 	
 	public boolean freezeAcct(int acctID) {
@@ -387,6 +413,14 @@ class Server {
 		User user = new User(username, pass, userInfo, false, temp, false);
 		boolean added = db.addUser(user);
 		return added;
+	}
+	
+	public boolean updateUser(UserInfo userInfo, String user) {
+		boolean cond1 = db.updateDOB(user, userInfo.getDOB());
+		boolean cond2 = db.updateAddress(user, userInfo.getAddress());
+		boolean cond3 = db.updateName(user, userInfo.getFirstName(), userInfo.getLastName());
+		boolean cond4 = db.updatePhone(user, userInfo.getPhone());
+		return cond1 && cond2 && cond3 && cond4;
 	}
 	
 	public AccountMessage getAcct(int acctID) {
@@ -412,6 +446,7 @@ class Server {
 		}
 		return msgs;
 	}
+	
 	
 	
 	

@@ -36,7 +36,7 @@ public class Client {
     	
     	// automatically connects the client to the server
     	int serverPort = 1234;
-    	String serverIP = InetAddress.getLocalHost().getHostAddress();
+    	String serverIP = "localhost";
     	
         // Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
         // System.out.println("Enter the port number to connect to: <1234>");
@@ -126,7 +126,6 @@ public class Client {
     }
    
     
-    // TODO: we can prolly combine this and then just send in a msgType as the argument but either works 
     public TransactionMessage withdraw(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
     	out.writeObject(new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.IN_PROGRESS,trans,acctID));
     	out.flush();
@@ -245,6 +244,26 @@ public class Client {
 		
 		// 
 		return myTransactions;
+	}
+	
+	public boolean deleteAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
+		out.writeObject(new AccountsRequestMessage(msgType.AUTHUSER_DELETE, Status.IN_PROGRESS,user,acctID));
+		out.flush();
+		Message response = (Message) in.readObject();
+		if (response.getStatus() == Status.ERROR) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean updatedUser(UserInfo userInfo, String user) throws ClassNotFoundException, IOException {
+		out.writeObject(new CreateUserMessage(msgType.USER_EDIT,Status.IN_PROGRESS,userInfo,user,""));
+		out.flush();
+		Message msg = (Message) in.readObject();
+		if (msg.getStatus() == Status.SUCCESS) {
+			return true;
+		}
+		return false;
 	}
 }
 
