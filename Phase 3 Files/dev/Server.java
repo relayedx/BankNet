@@ -119,8 +119,8 @@ class Server {
 					if (type == msgType.LOGOUT_REQUEST) {
 						Boolean logout = server.logout(user);
 						if (logout) {
+							loggedIn = false;
 							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.SUCCESS));
-							connected = false;
 						}else {
 							out.writeObject(new Message(msgType.LOGOUT_REQUEST, Status.ERROR));
 						}
