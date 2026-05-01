@@ -514,9 +514,11 @@ public class DatabaseManager {
 		if (user != null && account != null) {
 			// logic for removing auth users to an account
 			account.removeAuth(user);
+			user.deleteAuthAcct(acctID);
 			
 			// update account file method
 			writeToAllAccounts();
+			writeToAllUsers();
 			
 			// operation success!
 			return true;

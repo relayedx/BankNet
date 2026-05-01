@@ -56,5 +56,9 @@ public class User {
 	public void addAuthAcct(int id) {
 		authAcctIDs.add(id);
 	}
+	
+	public void deleteAuthAcct(int id) {
+		authAcctIDs.remove(Integer.valueOf(id));
+	}
 }
 

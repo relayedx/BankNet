@@ -39,6 +39,7 @@ class TellerGUI implements RoleBasedGUI {
 		JButton freezeAcctBtn = new JButton("Freeze Acct");
 		JButton closeAcctBtn = new JButton("Close Acct");
 		JButton addAuthUserBtn = new JButton("add Authorized User");
+		JButton delAuthUserBtn = new JButton("Delete Authorized User");
 		JButton addCreditLineBtn = new JButton("add Credit Line");
 		JButton viewTransactionsBtn = new JButton("View Transactions");
 		JButton updateUserInfoBtn = new JButton("Update User Info");
@@ -52,6 +53,7 @@ class TellerGUI implements RoleBasedGUI {
 		freezeAcctBtn.addActionListener(e -> handleFreezeAcct());
 		closeAcctBtn.addActionListener(e -> handleCloseAcct());
 		addAuthUserBtn.addActionListener(e -> handleAddAuthUser());
+		delAuthUserBtn.addActionListener(e ->  handleDeleteAuthUser());
 		addCreditLineBtn.addActionListener(e -> handleAddCreditLine());
 		viewTransactionsBtn.addActionListener(e -> handleViewTransactions());
 		updateUserInfoBtn.addActionListener(e -> handleUpdateUserInfo());
@@ -65,6 +67,8 @@ class TellerGUI implements RoleBasedGUI {
 		mainPanel.add(freezeAcctBtn);
 		mainPanel.add(closeAcctBtn);
 		mainPanel.add(addAuthUserBtn);
+		mainPanel.add(delAuthUserBtn);
+		
 		mainPanel.add(addCreditLineBtn);
 		mainPanel.add(viewTransactionsBtn);
 		mainPanel.add(updateUserInfoBtn);
@@ -512,6 +516,23 @@ class TellerGUI implements RoleBasedGUI {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "Error occured.");
 		}
+	}
+	
+	public void handleDeleteAuthUser() {
+		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to delete authorized user from:");
+		String username = JOptionPane.showInputDialog(frame, "Enter the username of the requested deleted authorized user:");
+		int acctID = Integer.parseInt(strAcctID);
+		try {
+			Boolean result = clientController.deleteAuthUser(username, acctID);
+			if (result) {
+				JOptionPane.showMessageDialog(frame, "User successfully deleted as an authorized user!");
+			} else {
+				JOptionPane.showMessageDialog(frame, "Potential system error, user could not be deleted as an "
+					+ "authorized user");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "System error occurred.");
+		} 
 	}
 	
 	
