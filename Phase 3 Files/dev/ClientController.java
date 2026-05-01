@@ -159,6 +159,10 @@ public class ClientController {
 		return updated;
 	}
 	
+	public UserInfo getUserInfo(String user) throws ClassNotFoundException, IOException {
+		return client.getUserInfo(user);
+	}
+	
 	
 	
 }

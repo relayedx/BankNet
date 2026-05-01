@@ -239,6 +239,12 @@ class Server {
 						}
 						out.flush();
 					}
+					if (type == msgType.USER_REQUEST) {
+						AccountsRequestMessage aMsg = (AccountsRequestMessage) msg;
+						Message outgoing = server.getUserInfo(aMsg.getUser());
+						out.writeObject(outgoing);
+						out.flush();
+					}
 					
 					
 					
@@ -446,6 +452,14 @@ class Server {
 			msgs.add(new TransactionMessage(msgType.TRANSACTIONS_REQUEST,Status.SUCCESS,trans,acctID));
 		}
 		return msgs;
+	}
+	
+	public Message getUserInfo(String username) {
+		User user = db.getUser(username);
+		if (user != null) {
+			return new CreateUserMessage(msgType.USER_REQUEST,Status.SUCCESS,user.getUserInfo(),username,null);
+		}
+		return new Message(msgType.USER_REQUEST,Status.ERROR);
 	}
 	
 	

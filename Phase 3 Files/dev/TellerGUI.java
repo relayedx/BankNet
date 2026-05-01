@@ -2,7 +2,9 @@ package dev;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ class TellerGUI implements RoleBasedGUI {
 		
 		// GUI Panel holding all components
 		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new GridLayout(0,2));
+		mainPanel.setLayout(new GridLayout(0,3));
 		
 		// creating buttons for teller actions
 		JButton createUserBtn = new JButton("Create User");
@@ -39,6 +41,7 @@ class TellerGUI implements RoleBasedGUI {
 		JButton addAuthUserBtn = new JButton("add Authorized User");
 		JButton addCreditLineBtn = new JButton("add Credit Line");
 		JButton viewTransactionsBtn = new JButton("View Transactions");
+		JButton updateUserInfoBtn = new JButton("Update User Info");
 		JButton logoutBtn = new JButton("logout");
 		
 		// adding action listeners for buttons
@@ -51,6 +54,7 @@ class TellerGUI implements RoleBasedGUI {
 		addAuthUserBtn.addActionListener(e -> handleAddAuthUser());
 		addCreditLineBtn.addActionListener(e -> handleAddCreditLine());
 		viewTransactionsBtn.addActionListener(e -> handleViewTransactions());
+		updateUserInfoBtn.addActionListener(e -> handleUpdateUserInfo());
 		logoutBtn.addActionListener(e -> handleLogout());
 		
 		// adding buttons to panel
@@ -63,6 +67,7 @@ class TellerGUI implements RoleBasedGUI {
 		mainPanel.add(addAuthUserBtn);
 		mainPanel.add(addCreditLineBtn);
 		mainPanel.add(viewTransactionsBtn);
+		mainPanel.add(updateUserInfoBtn);
 		mainPanel.add(logoutBtn);
 		
 		frame.add(mainPanel);
@@ -408,5 +413,106 @@ class TellerGUI implements RoleBasedGUI {
 
 	    return result;
 	}
+	
+	private UserInfo[] showUpdatedUserDialog(UserInfo info) {
+	    JDialog dialog = new JDialog(frame, "Update User", true); // true = modal (blocks until closed)
+	    dialog.setSize(350, 300);
+	    dialog.setLocationRelativeTo(frame);
+	    dialog.setLayout(new BorderLayout());
+
+	    // Form panel
+	    JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+	    formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+
+	    formPanel.add(new JLabel("First Name:"));
+	    JTextField firstNameField = new JTextField();
+	    firstNameField.setText(info.getFirstName());
+	    formPanel.add(firstNameField);
+
+	    formPanel.add(new JLabel("Last Name:"));
+	    JTextField lastNameField = new JTextField();
+	    lastNameField.setText(info.getLastName());
+	    formPanel.add(lastNameField);
+
+	    formPanel.add(new JLabel("Current Address:"));
+	    JTextField addressField = new JTextField();
+	    addressField.setText(info.getAddress());
+	    formPanel.add(addressField);
+	    
+	    formPanel.add(new JLabel("Date Of Birth (Ex: 2000-11-03):"));
+	    JTextField dobField = new JTextField();
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    dobField.setText(info.getDOB().format(formatter));
+	    formPanel.add(dobField);
+	    
+	    formPanel.add(new JLabel("Phone Number:"));
+	    JTextField phoneNumField = new JTextField();
+	    phoneNumField.setText(info.getPhone());
+	    formPanel.add(phoneNumField);
+
+	    // Button panel
+	    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	    JButton confirmBtn = new JButton("Create");
+	    JButton cancelBtn = new JButton("Cancel");
+	    btnPanel.add(cancelBtn);
+	    btnPanel.add(confirmBtn);
+
+	    // Result array — null means cancelled
+	    UserInfo[] result = {null};
+
+	    confirmBtn.addActionListener(e -> {
+	        String firstName = firstNameField.getText().trim();
+	        String lastName = lastNameField.getText().trim();
+	        String address = addressField.getText().trim();
+	        String strDOB = dobField.getText().trim();
+	        String phoneNum = phoneNumField.getText().trim();
+
+	        if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty()
+	        		|| strDOB.isEmpty() || phoneNum.isEmpty()) {
+	            JOptionPane.showMessageDialog(dialog, "All fields have not been filled!");
+	            return;
+	        }
+	        
+	        LocalDate dob = LocalDate.parse(strDOB);
+	        result[0] = new UserInfo(firstName, lastName, address, dob, phoneNum);
+	        
+	        dialog.dispose();
+	    });
+
+	    cancelBtn.addActionListener(e -> dialog.dispose());
+
+	    dialog.add(formPanel, BorderLayout.CENTER);
+	    dialog.add(btnPanel, BorderLayout.SOUTH);
+	    dialog.setVisible(true); // blocks here until dialog is closed because modal=true
+	    return result;
+	}
+	
+	public void handleUpdateUserInfo() {
+		String username = JOptionPane.showInputDialog(frame, "Enter username of user's info to edit");
+		UserInfo info = null;
+		if (username == null) {
+			JOptionPane.showMessageDialog(frame, "Username cannot be blank, try again.");
+			return;
+		}
+		try {
+			info = clientController.getUserInfo(username);
+			if (info != null) {
+				UserInfo[] updated = showUpdatedUserDialog(info);
+				if (updated[0] != null) {
+					boolean success = clientController.updatedUser(updated[0], username);
+					if (success) {
+						JOptionPane.showMessageDialog(frame, "Successfully updated user info");
+					}else {
+						JOptionPane.showMessageDialog(frame, "Error updating user info");
+					}
+				}
+			}else {
+				JOptionPane.showMessageDialog(frame,"User not found, check spelling");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Error occured.");
+		}
+	}
+	
 	
 }

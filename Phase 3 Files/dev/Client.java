@@ -265,6 +265,17 @@ public class Client {
 		}
 		return false;
 	}
+	
+	public UserInfo getUserInfo(String user) throws ClassNotFoundException, IOException {
+		out.writeObject(new AccountsRequestMessage(msgType.USER_REQUEST,Status.IN_PROGRESS, user, -1));
+		out.flush();
+		Message msg = (Message) in.readObject();
+		if (msg.getStatus() == Status.SUCCESS) {
+			CreateUserMessage cMsg = (CreateUserMessage) msg;
+			return cMsg.getInfo();
+		}
+		return null;
+	}
 }
 
 
