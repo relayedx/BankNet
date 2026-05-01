@@ -276,6 +276,7 @@ class TellerGUI implements RoleBasedGUI {
 	
 	public void handleFreezeAcct() {
 		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to freeze account:");
+		if (strAcctID == null) return;
 		int acctID = Integer.parseInt(strAcctID);
 		try {
 			Boolean result = clientController.freezeAccount(acctID);
