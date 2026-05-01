@@ -36,7 +36,7 @@ public class ClientController {
 				List<Message> listOfAccts = client.getAccts(username);
 				System.out.println(listOfAccts);
 				currentGUI.closeUI();
-				currentGUI = new AtmGUI(this, listOfAccts);
+				currentGUI = new AtmGUI(this, listOfAccts,username);
 				currentGUI.launchUI();
 			}
 		}

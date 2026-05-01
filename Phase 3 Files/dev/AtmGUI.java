@@ -11,10 +11,12 @@ public class AtmGUI implements RoleBasedGUI {
 	
 	private ClientController clientController;
 	private List<Message> userAccts;
+	private String user;
 	
-	public AtmGUI(ClientController clientController, List<Message> userAccts) {
+	public AtmGUI(ClientController clientController, List<Message> userAccts, String user) {
 		this.clientController = clientController;
 		this.userAccts = userAccts;
+		this.user = user;
 	}
 	
 	public void launchUI() {
@@ -75,10 +77,10 @@ public class AtmGUI implements RoleBasedGUI {
 	        JButton transferBtn = new JButton("Transfer Funds");
 	        JButton viewTrxBtn = new JButton("View Transactions");
 	        JButton freezeBtn = new JButton("Freeze Account");
-	        withdrawBtn.addActionListener(e -> handleWithdraw(acct.getAcctID(), balanceLabel, acct.getOwner()));
-	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID(), balanceLabel, acct.getOwner()));
-	        transferBtn.addActionListener(e -> handleTransfer(acct.getAcctID(), balanceLabel, acct.getOwner()));
-	        viewTrxBtn.addActionListener(e -> handleViewTrx(acct.getAcctID(), acct.getOwner()));
+	        withdrawBtn.addActionListener(e -> handleWithdraw(acct.getAcctID(), balanceLabel, user));
+	        depositBtn.addActionListener(e -> handleDeposit(acct.getAcctID(), balanceLabel, user));
+	        transferBtn.addActionListener(e -> handleTransfer(acct.getAcctID(), balanceLabel, user));
+	        viewTrxBtn.addActionListener(e -> handleViewTrx(acct.getAcctID(), user));
 	        freezeBtn.addActionListener(e -> handleFreeze(acct.getAcctID(),frozenLabel));
 	        btnPanel.add(withdrawBtn);
 	        btnPanel.add(depositBtn);
