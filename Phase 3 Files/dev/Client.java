@@ -215,8 +215,10 @@ public class Client {
 	}
 	
 	public TransactionMessage transfer(int outgoingAcctID, int incomingAcctID, float amt, String user) throws ClassNotFoundException, IOException {
-		Transaction outgoing = new Transaction(user, amt, TranType.TRANSFER);
-		Transaction incoming = new Transaction(user, amt, TranType.TRANSFER);
+		int transCount = getTransID();
+		
+		Transaction outgoing = new Transaction(transCount, user, amt, TranType.TRANSFER);
+		Transaction incoming = new Transaction(transCount, user, amt, TranType.TRANSFER);
 		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
 		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
 		// We could have this be returned in a list, idk
@@ -246,6 +248,7 @@ public class Client {
 		return myTransactions;
 	}
 	
+<<<<<<< HEAD
 	public boolean deleteAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
 		out.writeObject(new AccountsRequestMessage(msgType.AUTHUSER_DELETE, Status.IN_PROGRESS,user,acctID));
 		out.flush();
@@ -275,6 +278,19 @@ public class Client {
 			return cMsg.getInfo();
 		}
 		return null;
+=======
+	/* GETS WHAT THE TRANSACTION ID SHOULD BE FOR TRANSACTION REQUEST */
+	public int getTransID() throws ClassNotFoundException, IOException {
+		// request transaction id from server
+		out.writeObject(new Message(msgType.TRANSACTION_ID, Status.IN_PROGRESS));
+		out.flush();
+		
+		// reads the transaction id
+		Message msg = (Message) in.readObject();
+		int transCount = Integer.parseInt(msg.getText());
+		
+		return transCount;
+>>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
 	}
 }
 

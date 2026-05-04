@@ -14,11 +14,11 @@ public class AccountTester {
 		User user = new User("jerrick", "pass", info, false, authAccts, true);
 		User user1 = new User("crying", "pass", info, false, authAccts, true);
 		User user2 = new User("man", "pass", info, false, authAccts, true);
-		BankAcct test = new BankAcct(AcctType.Credit,user);
+		BankAcct test = new BankAcct(AcctType.Credit, user, 0);
 		test.addAuthUser(user1);
 		test.addAuthUser(user2);
-		Transaction trans1 = new Transaction(user.getUsername(), 100.23f, TranType.DEPOSIT);
-		Transaction trans2 = new Transaction(user.getUsername(), 10, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(0, user.getUsername(), 100.23f, TranType.DEPOSIT);
+		Transaction trans2 = new Transaction(1, user.getUsername(), 10, TranType.WITHDRAWAL);
 
 	
 		test.deposit(trans1);
@@ -30,7 +30,7 @@ public class AccountTester {
 		test.withdraw(trans2);
 		*/
 		LocalDate tester = LocalDate.now().plusDays(1001);
-		test.calculateMonths(tester);
+		test.calculateMonths(tester, 0);
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_REQUEST,Status.SUCCESS,test);
 		List<Transaction> transactions = msg.getTrans();
 		

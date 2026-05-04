@@ -30,8 +30,8 @@ public class CheckingAccountTests {
 		authAccts.add(2);
 		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
 		User user = new User("jerrick", "pass", info, false, authAccts, true);
-		testAcct = new BankAcct(AcctType.Checking,user);
-		Transaction trans1 = new Transaction("User", 100, TranType.DEPOSIT);
+		testAcct = new BankAcct(AcctType.Checking, user, 0);
+		Transaction trans1 = new Transaction(0, "User", 100, TranType.DEPOSIT);
 		testAcct.deposit(trans1);
 	}
 	
@@ -44,7 +44,7 @@ public class CheckingAccountTests {
 	@Test
 	@DisplayName("Deposit Test")
 	public void depositTest() {
-		Transaction trans1 = new Transaction("User", 10.45f, TranType.DEPOSIT);
+		Transaction trans1 = new Transaction(1, "User", 10.45f, TranType.DEPOSIT);
 		TransactionMessage msg = testAcct.deposit(trans1);
 		Assertions.assertAll(
 				// The msg getting sent back should be a success, balance should not equal to what it was previous, and transactions should be > 1
@@ -58,7 +58,7 @@ public class CheckingAccountTests {
 	@Test
 	@DisplayName("Deposit Test - Wrong Transaction Type")
 	public void depositWT() {
-		Transaction trans1 = new Transaction("User", 100, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(2, "User", 100, TranType.WITHDRAWAL);
 		TransactionMessage msg = testAcct.deposit(trans1);
 		
 		Assertions.assertAll(
@@ -70,7 +70,7 @@ public class CheckingAccountTests {
 	@Test
 	@DisplayName("Withdrawal Test")
 	public void withdrawTest() {
-		Transaction trans1 = new Transaction("User", 10.1f, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(3, "User", 10.1f, TranType.WITHDRAWAL);
 		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertAll(
 				// The msg getting sent back should be a success, balance should not equal to what it was previous, and transactions should be > 1
@@ -84,7 +84,7 @@ public class CheckingAccountTests {
 	@Test
 	@DisplayName("Withdrawal Overdraft Test")
 	public void overdraft() {
-		Transaction trans1 = new Transaction("User", 110, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(4, "User", 110, TranType.WITHDRAWAL);
 		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertAll(
 				() -> Assertions.assertEquals(Status.ERROR, msg.getStatus()),
@@ -95,7 +95,7 @@ public class CheckingAccountTests {
 	@Test
 	@DisplayName("Withdrawal Test - Wrong Transaction Type")
 	public void withdrawalWT() {
-		Transaction trans1 = new Transaction("User", 10, TranType.DEPOSIT);
+		Transaction trans1 = new Transaction(5, "User", 10, TranType.DEPOSIT);
 		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertEquals(Status.ERROR,msg.getStatus());
 	}

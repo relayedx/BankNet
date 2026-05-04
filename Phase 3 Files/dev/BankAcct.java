@@ -7,7 +7,7 @@ import java.util.List;
 import java.time.temporal.ChronoUnit;
 
 public class BankAcct {
-	private static int count = 0;
+	// private static int count = 0;
     private User owner;
     private List<User> authUser;
     private final int acctID;
@@ -56,8 +56,9 @@ public class BankAcct {
         this.authUser = new ArrayList<>(authUsers);
     }
     
-    public BankAcct(AcctType type, User owner) { // When a user opens an account
-    	this.acctID = ++count;
+    public BankAcct(AcctType type, User owner, int id) { // When a user opens an account
+    	this.acctID = id;	// gets id from database
+    	// (which keeps track of the latest bank id instead of instantiating from 0 at startup)
     	this.owner = owner;
     	this.type = type;
     	if (type != AcctType.Credit) {
@@ -169,7 +170,7 @@ public class BankAcct {
         return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, balance);
     }
     
-    public void calculateMonths(LocalDate date) { // Used for credit/savings, calculating accured interest
+    public void calculateMonths(LocalDate date, int transCount) { // Used for credit/savings, calculating accured interest
 
     	long monthsLate = Math.max(0,ChronoUnit.MONTHS.between(dueDate, date));
     	if (monthsLate == 0 || type == AcctType.Checking) { // If there is no due date or the account is checkings 
@@ -178,7 +179,7 @@ public class BankAcct {
     	// If we get here, we know we need to either add to the balance (Savings), or add what they owe (Credit)
     	if (type == AcctType.Savings) { // If we have a savings account
     		float toAdd = Math.round((balance * 0.0125f * monthsLate ) * 100) / 100.0f;
-    		Transaction sys = new Transaction("System/Interest", toAdd, TranType.DEPOSIT);
+    		Transaction sys = new Transaction(transCount, "System/Interest", toAdd, TranType.DEPOSIT);
     		balance += toAdd;
     		transactions.add(sys);
    
@@ -188,7 +189,7 @@ public class BankAcct {
     		float interest = Math.round((balance * 0.10f * monthsLate) * 100.0) / 100.0f;
     		balance += interest; // The amount owed would go into your balance
     		availCredit -= interest;  
-    		Transaction sys = new Transaction("System/Interest", interest, TranType.SYSTEM);
+    		Transaction sys = new Transaction(transCount, "System/Interest", interest, TranType.SYSTEM);
     		transactions.add(sys);
     		
     	}

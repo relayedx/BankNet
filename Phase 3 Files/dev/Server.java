@@ -2,6 +2,7 @@ package dev;
 import java.io.*;
 import java.util.List;
 import java.net.*;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -9,16 +10,37 @@ import java.util.Scanner;
 
 // Server class
 class Server {
-	DatabaseManager db;
+	/* private File UsersFile;
+	private File BankAccountsFile;
+	private List<User> usersDB;
+	private Accounts accountsDB; */
+	private static DatabaseManager db;
 	
 	Server() {
+		String directory = System.getProperty("user.dir");
+		String folderName = Path.of("").toAbsolutePath().getFileName().toString();
+		
+		System.out.println("Current Folder: " + folderName);
+		
+		if (folderName.equals("BankNet")) {
+			directory += "//Phase 3 Files";
+		}
+		
 		db = new DatabaseManager
 				// i changed to // b/c it wasn't working on my mac with \\ :sob: - jerrick
 				// i changed it as well b/c the db package is in Phase 3 Files for me :D - fosa
+<<<<<<< HEAD
 				(System.getProperty("user.dir") + "//db//AllUsers.txt",
 				 System.getProperty("user.dir") + "//db//AllAccounts.txt",
 				 System.getProperty("user.dir") + "//db//Users//",
 				 System.getProperty("user.dir") + "//db//Accounts//");
+=======
+				// i changed it again, does this new thing work for everyone :,D - michelle
+				(directory + "//db//AllUsers.txt",
+				 directory + "//db//AllAccounts.txt",
+				 directory + "//db//Users//",
+				 directory + "//db//Accounts//");
+>>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
 		db.loadData();
 	}
 	
@@ -229,6 +251,7 @@ class Server {
 						out.writeObject(transactions);
 						out.flush();
 					}
+<<<<<<< HEAD
 					if (type == msgType.USER_EDIT) {
 						CreateUserMessage aMsg = (CreateUserMessage) msg;
 						boolean updated = server.updateUser(aMsg.getInfo(), aMsg.getUser());
@@ -246,6 +269,17 @@ class Server {
 						out.flush();
 					}
 					
+=======
+					if (type == msgType.TRANSACTION_ID) {
+						String id = Integer.toString(db.getTransCount());
+						if (id != null) { // if so,
+							out.writeObject(new Message(msgType.TRANSACTION_ID, Status.SUCCESS, id)); // Send a success msg
+						}else {
+							out.writeObject(new Message(msgType.TRANSACTION_ID, Status.ERROR)); // Otherwise send error
+						}
+						out.flush();
+					}
+>>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
 					
 					
 				}
@@ -377,7 +411,7 @@ class Server {
 			AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.ERROR,null);
 			return msg;
 		}
-		BankAcct acct = new BankAcct(acctType, u);
+		BankAcct acct = new BankAcct(acctType, u, db.getBankCount());
 		db.addAccount(acct);
 		System.out.println("Created account");
 		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct);

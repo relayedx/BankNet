@@ -52,14 +52,18 @@ public class ClientController {
 	}
 	
 	public Message withdraw(int acctID, float amount, String user) throws ClassNotFoundException, IOException {
-		Transaction temp = new Transaction(user, amount, TranType.WITHDRAWAL);
+		int transCount = client.getTransID();
+		
+		Transaction temp = new Transaction(transCount, user, amount, TranType.WITHDRAWAL);
 		TransactionMessage msg = client.withdraw(acctID, temp); // We're going to get a transaction msg back.. 
 		// ..so we can have the updated bal and whether it was an error
 		return (Message) msg;
 	}
 	
 	public Message deposit (int acctID, float amount, String user) throws ClassNotFoundException, IOException{
-		Transaction temp = new Transaction(user, amount, TranType.DEPOSIT); 
+		int transCount = client.getTransID();
+		
+		Transaction temp = new Transaction(transCount, user, amount, TranType.DEPOSIT); 
 		TransactionMessage msg  = client.deposit(acctID, temp);
 		return (Message) msg;
 		

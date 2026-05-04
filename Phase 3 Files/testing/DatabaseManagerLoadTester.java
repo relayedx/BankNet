@@ -15,7 +15,7 @@ import dev.TranType;
 import dev.Transaction;
 
 public class DatabaseManagerLoadTester {
-	DatabaseManager database;
+	private DatabaseManager database;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -71,9 +71,9 @@ public class DatabaseManagerLoadTester {
 		
 		List<Transaction> trans1 = new ArrayList<Transaction>() {
 			{
-				add(new Transaction(LocalDateTime.of(2026, 4, 14, 10, 15, 30), username1, 184.27f, TranType.WITHDRAWAL));
-				add(new Transaction(LocalDateTime.of(2026, 3, 25, 13, 3, 27), username1, 116.18f, TranType.DEPOSIT));
-				add(new Transaction(LocalDateTime.of(2026, 4, 24, 0, 0, 0), username2, 7.00f, TranType.SYSTEM));
+				add(new Transaction(0, LocalDateTime.of(2026, 4, 14, 10, 15, 30), username1, 184.27f, TranType.WITHDRAWAL));
+				add(new Transaction(1, LocalDateTime.of(2026, 3, 25, 13, 3, 27), username1, 116.18f, TranType.DEPOSIT));
+				add(new Transaction(2, LocalDateTime.of(2026, 4, 24, 0, 0, 0), username2, 7.00f, TranType.SYSTEM));
 			}
 		};
 		
@@ -91,7 +91,7 @@ public class DatabaseManagerLoadTester {
 		
 		List<Transaction> trans2 = new ArrayList<Transaction>() {
 			{
-				add(new Transaction(LocalDateTime.of(2026, 4, 8, 10, 15, 30), username1, 27.67f, TranType.WITHDRAWAL));
+				add(new Transaction(3, LocalDateTime.of(2026, 4, 8, 10, 15, 30), username1, 27.67f, TranType.WITHDRAWAL));
 			}
 		};
 		

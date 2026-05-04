@@ -15,7 +15,8 @@ public class DatabaseManager {
 	private String accountsFile;	// = "..db/AllAccounts.txt";
 	private String userInfoFolder;
 	private String transactionFolder;
-	private static int counting;
+	private static int bankCount;
+	private static int transCount;
 	String defaultDelimiter = "|";		// using String for delimiter
 	String secondaryDelimiter = ",";	// so I can use .split() to parse data
 	
@@ -108,7 +109,7 @@ public class DatabaseManager {
 			
 			/// extracts the user's User Info from a different file
 			String userInfoFileName = userInfoFolder + username + "_info.txt";
-			System.out.println("User Info File Name: " + userInfoFileName);
+			System.out.println("\nUser Info File Name: " + userInfoFileName);
 			File userInfoFile = new File(userInfoFileName);
 			ArrayList<ArrayList<String>> userData =
 					loadFile(userInfoFile, defaultDelimiter);
@@ -192,7 +193,11 @@ public class DatabaseManager {
 			System.out.println("Available Credit: " + availCredit);
 			
 			// date has to be formatted like this "2023-12-31" for parse to work
-			LocalDate dueDate = LocalDate.parse(accountArrayList.get(8));
+			LocalDate dueDate = null;
+			// if account is checking, has a null dueDate variable (set above)
+			if (type != AcctType.Checking) {
+				dueDate = LocalDate.parse(accountArrayList.get(8));
+			}
 			System.out.println("Due Date: " + dueDate);
 			
 			boolean frozen = Boolean.parseBoolean(accountArrayList.get(6));
@@ -206,7 +211,7 @@ public class DatabaseManager {
 			
 			// tries to extract the account's Transaction data from a different file
 			String transactionFileName = transactionFolder + acctID + "_transactions.txt";
-			System.out.println("Transaction File Name: " + transactionFileName);
+			System.out.println("\nTransaction File Name: " + transactionFileName);
 			File transactionFile = new File(transactionFileName);
 			// instantiates ArrayList that will contain all the Transactions in the files
 			// Each Transaction should be an ArrayList that's already had its data separated by a delimiter
@@ -223,25 +228,29 @@ public class DatabaseManager {
 				/// [id]_transactions.txt format: date|user|amt|tranType
 			for (int j = 0; j < transactionData.size(); j++) {
 				
-				System.out.println("Transaction " + j);
+				System.out.println("\nTransaction " + j);
 				// the current data line (<-- reference point)
 				ArrayList<String> transactionLine = transactionData.get(j);
 				
 				// date has to be formatted like this "2024-12-31T10:15:30" for parse to work
-				LocalDateTime date = LocalDateTime.parse(transactionLine.get(0));
+				int id = Integer.parseInt(transactionLine.get(0));
+				System.out.println("ID: " + id);
+				LocalDateTime date = LocalDateTime.parse(transactionLine.get(1));
 				System.out.println("Date: " + date);
-				String user = transactionLine.get(1);
+				String user = transactionLine.get(2);
 				System.out.println("User: " + user);
-				float amt = Float.parseFloat(transactionLine.get(2));
+				float amt = Float.parseFloat(transactionLine.get(3));
 				System.out.println("Amount: " + amt);
-				TranType tranType = TranType.parseTranType(transactionLine.get(3));
-				System.out.println("Type: " + transactionLine.get(3));
+				TranType tranType = TranType.parseTranType(transactionLine.get(4));
+				System.out.println("Type: " + transactionLine.get(4));
 				
 				// turns all the Transaction data into a Transaction object
-				Transaction transaction = new Transaction(date, user, amt, tranType);
+				Transaction transaction = new Transaction(id, date, user, amt, tranType);
 				
 				// add the transactions (in Transaction form) to the local List<Transaction>
 				transactions.add(transaction);
+				
+				transCount++;
 			}
 			
 			// turns all the parsed Account data and parsed Transaction List into an Account object
@@ -251,7 +260,7 @@ public class DatabaseManager {
 			// adds the User to the active database
 			accountsDB.add(account);
 			// keeps track of the current BankAcct id
-			counting++;		// might need to alter BankAcct constructor to take in id
+			bankCount++;		// might need to alter BankAcct constructor to take in id
 			System.out.println("");
 		}
 		
@@ -440,6 +449,16 @@ public class DatabaseManager {
 		// or can't find all of User's authAccts, returns empty
 	}
 	
+	/* GETS THE NEWEST AVAILABLE ACCOUNT ID FOR NEW ACCOUNTS */
+	public int getBankCount() {
+		return bankCount;
+	}
+	
+	/* GETS THE NEWEST AVAILABLE TRANSACTION ID FOR NEW TRANSACTIONS */
+	public int getTransCount() {
+		return transCount;
+	}
+	
 	/* ADDS A USER OBJECT TO THE DATABASE AND RECORDS THE CHANGES TO FILES */
 	public boolean addUser(User user) {
 		if (user != null) {
@@ -470,6 +489,16 @@ public class DatabaseManager {
 			
 			// update account file method
 			writeToAllAccounts();
+			
+			// not sure why a new account would have transactions
+			// but if they do, also saves the transactions to file
+			for (int i = 0; i < account.getTrans().size(); i++) {
+				Transaction trans = account.getTrans().get(i);
+				addTransaction(account.getAcctID(), trans);
+			}
+			
+			// iterates up to an available account id
+			bankCount++;
 			
 			// operation success!
 			return true;
@@ -564,8 +593,11 @@ public class DatabaseManager {
 		if (account != null && trans != null) {
 			// update transaction file method
 			writeToTransactions(acctID, trans);
-			
+			// updates balance on account
 			writeToAllAccounts();
+
+			// iterates up to an available transaction id
+			transCount++;
 			
 			// operation success!
 			return true;
@@ -792,7 +824,8 @@ public class DatabaseManager {
 		File file = new File(fileName);		// open the file / creates a new file
 		String newData = "";
 		
-		// [id]_transactions.txt format: date|user|amt|tranType
+		// [id]_transactions.txt format: id|date|user|amt|tranType
+		newData += trans.getUID() + defaultDelimiter;
 		newData += trans.getDate() + defaultDelimiter;
 		newData += trans.getUser() + defaultDelimiter;
 		newData += trans.getAmount() + defaultDelimiter;

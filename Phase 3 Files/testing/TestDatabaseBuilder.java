@@ -62,9 +62,9 @@ public class TestDatabaseBuilder {
 		
 		List<Transaction> trans1 = new ArrayList<Transaction>() {
 			{
-				add(new Transaction(LocalDateTime.of(2026, 4, 14, 10, 15, 30), username1, 184.27f, TranType.WITHDRAWAL));
-				add(new Transaction(LocalDateTime.of(2026, 3, 25, 13, 3, 27), username1, 116.18f, TranType.DEPOSIT));
-				add(new Transaction(LocalDateTime.of(2026, 4, 24, 0, 0, 0), username2, 7.00f, TranType.SYSTEM));
+				add(new Transaction(0, LocalDateTime.of(2026, 4, 14, 10, 15, 30), username1, 184.27f, TranType.WITHDRAWAL));
+				add(new Transaction(1, LocalDateTime.of(2026, 3, 25, 13, 3, 27), username1, 116.18f, TranType.DEPOSIT));
+				add(new Transaction(2, LocalDateTime.of(2026, 4, 24, 0, 0, 0), username2, 7.00f, TranType.SYSTEM));
 			}
 		};
 		
@@ -73,7 +73,7 @@ public class TestDatabaseBuilder {
 		
 		List<Transaction> trans2 = new ArrayList<Transaction>() {
 			{
-				add(new Transaction(LocalDateTime.of(2026, 4, 8, 10, 15, 30), username1, 27.67f, TranType.WITHDRAWAL));
+				add(new Transaction(3, LocalDateTime.of(2026, 4, 8, 10, 15, 30), username1, 27.67f, TranType.WITHDRAWAL));
 			}
 		};
 		
@@ -90,13 +90,5 @@ public class TestDatabaseBuilder {
 		database.addAccount(account1);
 		database.addAccount(account2);
 		database.addAccount(account3);
-		
-		for (int i = 0; i < account1.getTrans().size(); i++) {
-			database.addTransaction(account1.getAcctID(), account1.getTrans().get(i));
-		}
-		
-		for (int i = 0; i < account2.getTrans().size(); i++) {
-			database.addTransaction(account2.getAcctID(), account2.getTrans().get(i));
-		}
 	}
 }

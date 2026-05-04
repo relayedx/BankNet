@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Transaction implements Serializable {
-	private static int count = 0;
+	// private static int count = 0;
 	private final int id;
 	private final LocalDateTime date;
 	private final String user;
@@ -12,16 +12,16 @@ public class Transaction implements Serializable {
 	private final TranType tranType;
 	
 	// added constructor to build Transaction objects during start up
-	public Transaction(LocalDateTime date, String user, float amt, TranType type) {
-		this.id = ++count;
+	public Transaction(int id, LocalDateTime date, String user, float amt, TranType type) {
+		this.id = id; // ++count;
 		this.date = date;
 		this.user = user;
 		amount = amt;
 		tranType = type;
 	}
 	
-	public Transaction(String user, float amt, TranType type) {
-		this.id = ++count;
+	public Transaction(int id, String user, float amt, TranType type) {
+		this.id = id; // ++count;
 		date = LocalDateTime.now();
 		this.user = user;
 		amount = amt;

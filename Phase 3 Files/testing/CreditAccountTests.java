@@ -31,7 +31,7 @@ public class CreditAccountTests {
 		authAccts.add(2);
 		UserInfo info = new UserInfo("first", "last", "add", LocalDate.now(), "phone");
 		User user = new User("jerrick", "pass", info, false, authAccts, true);
-		testAcct = new BankAcct(AcctType.Credit,user);
+		testAcct = new BankAcct(AcctType.Credit, user, 0);
 	}
 	
 	@Test
@@ -46,7 +46,7 @@ public class CreditAccountTests {
 	@Test
 	@DisplayName("Withdraw Test")
 	public void withdraw() {
-		Transaction trans1 = new Transaction("User", 10.35f, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(0, "User", 10.35f, TranType.WITHDRAWAL);
 		for (int i = 0; i < 9; i ++) {
 			testAcct.withdraw(trans1);
 		}
@@ -63,7 +63,7 @@ public class CreditAccountTests {
 	@Test
 	@DisplayName("Withdrawal Overdraft Test")
 	public void withdrawO() {
-		Transaction trans1 = new Transaction("User", 4001, TranType.WITHDRAWAL);
+		Transaction trans1 = new Transaction(1, "User", 4001, TranType.WITHDRAWAL);
 		TransactionMessage msg = testAcct.withdraw(trans1);
 		Assertions.assertAll(
 				() -> Assertions.assertEquals(Status.ERROR, msg.getStatus()),
@@ -75,7 +75,7 @@ public class CreditAccountTests {
 	@Test
 	@DisplayName("Deposit Test")
 	public void deposit() {
-		Transaction trans1 = new Transaction("User", 10.35f, TranType.DEPOSIT);
+		Transaction trans1 = new Transaction(2, "User", 10.35f, TranType.DEPOSIT);
 		for (int i = 0; i < 9; i ++) {
 			testAcct.deposit(trans1);
 		}
