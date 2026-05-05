@@ -347,7 +347,9 @@ class Server {
 			return msg; // Return an error message
 		}
 		// If the user trying this transaction is not the owner/authorized user
-		if(!user.getAuthAcctIDs().contains(acct.getAcctID())) {
+		System.out.println(!user.getAuthAcctIDs().contains(acct.getAcctID()));
+		System.out.println(user.getRole());
+		if(!user.getAuthAcctIDs().contains(acct.getAcctID()) && !user.getRole()) {
 			System.out.println("User not authorized to make account");
 			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
@@ -369,7 +371,7 @@ class Server {
 			return msg; // Return an error message
 		}
 		// If the user trying this transaction is not the owner/authorized user
-		if(!user.getAuthAcctIDs().contains(acct.getAcctID())) {
+		if(!user.getAuthAcctIDs().contains(acct.getAcctID()) && !user.getRole()) {
 			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
 		}
