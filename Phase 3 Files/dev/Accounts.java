@@ -25,17 +25,4 @@ public class Accounts {
 		return acctsRequested;
 	}
 	
-	/*
-	// get singular acct
-	public BankAcct getAcct(int acctID) {
-		BankAcct acctRequested;
-		for (BankAcct currBankAcct : bankAccts) {
-			int currentID = currBankAcct.getAcctID();
-			if (currentID == acctID) {
-				return currBankAcct;
-			}
-		}
-		
-	}
-	*/
 }
