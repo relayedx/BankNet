@@ -40,7 +40,6 @@ class TellerGUI implements RoleBasedGUI {
 		JButton closeAcctBtn = new JButton("Close Acct");
 		JButton addAuthUserBtn = new JButton("add Authorized User");
 		JButton delAuthUserBtn = new JButton("Delete Authorized User");
-		JButton addCreditLineBtn = new JButton("add Credit Line");
 		JButton viewTransactionsBtn = new JButton("View Transactions");
 		JButton updateUserInfoBtn = new JButton("Update User Info");
 		JButton logoutBtn = new JButton("logout");
@@ -54,7 +53,6 @@ class TellerGUI implements RoleBasedGUI {
 		closeAcctBtn.addActionListener(e -> handleCloseAcct());
 		addAuthUserBtn.addActionListener(e -> handleAddAuthUser());
 		delAuthUserBtn.addActionListener(e ->  handleDeleteAuthUser());
-		addCreditLineBtn.addActionListener(e -> handleAddCreditLine());
 		viewTransactionsBtn.addActionListener(e -> handleViewTransactions());
 		updateUserInfoBtn.addActionListener(e -> handleUpdateUserInfo());
 		logoutBtn.addActionListener(e -> handleLogout());
@@ -69,7 +67,6 @@ class TellerGUI implements RoleBasedGUI {
 		mainPanel.add(addAuthUserBtn);
 		mainPanel.add(delAuthUserBtn);
 		
-		mainPanel.add(addCreditLineBtn);
 		mainPanel.add(viewTransactionsBtn);
 		mainPanel.add(updateUserInfoBtn);
 		mainPanel.add(logoutBtn);
@@ -105,10 +102,11 @@ class TellerGUI implements RoleBasedGUI {
 	public void handleCreateBankAcct() {
 		String username = JOptionPane.showInputDialog(frame, "Enter username of customer:");
 		String acctType = JOptionPane.showInputDialog(frame, "Enter account type (checking, savings, credit):");
+		
 		try {
-			Boolean result = clientController.createAccount(username, acctType);
-			if (result) {
-				JOptionPane.showMessageDialog(frame, "Account Successfully created!");
+			int result = clientController.createAccount(username, acctType);
+			if (result > 0) {
+				JOptionPane.showMessageDialog(frame, "Account Successfully created! The customer's account ID is" + result);
 			} else {
 				JOptionPane.showMessageDialog(frame, "Account could not be created.");
 			}
@@ -286,7 +284,7 @@ class TellerGUI implements RoleBasedGUI {
 	
 	public void handleFreezeAcct() {
 		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to freeze account:");
-		if (strAcctID == null) return;
+		if (strAcctID.contentEquals("")) return; // If the field is empty, return
 		int acctID = Integer.parseInt(strAcctID);
 		try {
 			Boolean result = clientController.freezeAccount(acctID,user);
@@ -305,6 +303,7 @@ class TellerGUI implements RoleBasedGUI {
 	
 	public void handleCloseAcct() {
 		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to request it to be closed:");
+		if (strAcctID.contentEquals("")) return; // If the field is empty, return
 		int acctID = Integer.parseInt(strAcctID);
 		try {
 			Boolean result = clientController.closeAccount(acctID);
@@ -324,6 +323,7 @@ class TellerGUI implements RoleBasedGUI {
 	public void handleAddAuthUser() {
 		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to add authorized user to:");
 		String username = JOptionPane.showInputDialog(frame, "Enter the username of the requested authorized user:");
+		if (strAcctID.contentEquals("") || username.contentEquals("")) return; // If the fields are empty, return
 		int acctID = Integer.parseInt(strAcctID);
 		try {
 			Boolean result = clientController.addAuthUser(username, acctID);
@@ -338,9 +338,6 @@ class TellerGUI implements RoleBasedGUI {
 		} 
 	}
 	
-	public void handleAddCreditLine() {
-		
-	}
 	
 	public void handleLogout() {
 		try {

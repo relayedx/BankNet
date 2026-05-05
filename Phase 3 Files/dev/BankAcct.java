@@ -68,7 +68,7 @@ public class BankAcct {
     	}
     	if(type == AcctType.Credit) { // If account is a credit account
     		// Account is opened with a line of credit
-    		creditLine = 4000f; // TODO: Prolly change this credit line to something bigger... 
+    		creditLine = 4000f; 
     		availCredit = creditLine;
     	}
     	if(type != AcctType.Checking) {
@@ -119,7 +119,6 @@ public class BankAcct {
     }
 
     
-    // TODO: Remove all print statements, using it cause my brain hurts LOL
     public TransactionMessage withdraw(Transaction trans) {
     	if (trans.getType() == TranType.DEPOSIT) { // Is the transaction a deposit but trying to make a withdrawal
     		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance); // Return error
@@ -131,7 +130,6 @@ public class BankAcct {
         	float tempBal = Math.round((balance - trans.getAmount()) * 100.0) / 100.0f;
         	
         	if (tempBal < 0) { // If they try and withdraw
-        		System.out.println("Balance would overdraft acct, error!");
         		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance);
         	}
         	balance = tempBal;
@@ -139,11 +137,9 @@ public class BankAcct {
         	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
         }else {
         	float tempAvailCredit = Math.round((availCredit - trans.getAmount()) * 100.0) / 100.0f;        	if (tempAvailCredit < 0) {
-        		System.out.println("Withdrawal goes below availbile credit, error!");
         		return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR, trans, acctID, balance);
         	}
         	balance = Math.round((balance + trans.getAmount()) * 100) / 100f; // We'll just add onto the balance.
-        	System.out.println("New Balance: " + balance);
         	availCredit = tempAvailCredit;
         	transactions.add(trans);
         	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
@@ -165,7 +161,6 @@ public class BankAcct {
         	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
         	
         }
-        System.out.println("New Balance: " + balance);
         transactions.add(trans);
         return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, balance);
     }
@@ -183,7 +178,6 @@ public class BankAcct {
     		balance += toAdd;
     		transactions.add(sys);
    
-    		System.out.println(toAdd);
     	}else { // Else, the account is a credit (they owe to the bank
     		// Withdraw only allows credit is below 0, so we would need to override withdraw
     		float interest = Math.round((balance * 0.10f * monthsLate) * 100.0) / 100.0f;
@@ -195,6 +189,8 @@ public class BankAcct {
     	}
     	
     }
+    
+    /// SETTERS AND GETTERS /// 
 
     public void freezeAcc() {
         if (frozen) {

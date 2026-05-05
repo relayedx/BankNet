@@ -176,8 +176,12 @@ public class AtmGUI implements RoleBasedGUI {
 			Float transferAmt = Float.parseFloat(input);
 			int incomingAcctID = Integer.parseInt(transferToAcctID);
 			TransactionMessage res = clientController.transfer(outgoingAcctID, incomingAcctID, transferAmt, username);
-			String updatedBalance = String.valueOf(res.getUpdatedBalance());
-			balanceLabel.setText("$" + updatedBalance);
+			if (res.getStatus() == Status.SUCCESS) {
+				String updatedBalance = String.valueOf(res.getUpdatedBalance());
+				balanceLabel.setText("$" + updatedBalance);
+			}else {
+				JOptionPane.showMessageDialog(frame, "Transfer could not be made, check account IDs");
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "Error occured, see teller");
 		}

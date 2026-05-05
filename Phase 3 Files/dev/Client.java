@@ -59,34 +59,6 @@ public class Client {
         Client clientRef = new Client(socket, latch);
         ClientController clientController = new ClientController(clientRef);
         latch.await();
-        // Output stream socket.
-     
-        //OutputStream outputStream = socket.getOutputStream();
-
-        // Create object output stream from the output stream to send an object through it
-        //out = new ObjectOutputStream(outputStream);
-        // Create a input stream to read these objects as well
-        //in = new ObjectInputStream(socket.getInputStream());
-        
-        // instantiation of client and clientController
-        // once a clientController is instantiated it will call LoginGUI on its own!
-        //Client ref = new Client();
-        //controller = new ClientController(ref);
-        
-        /// SIMULATED LOGIN
-        /*
-        controller.login("test", "test"); // This will be called from GUI
-        controller.withdraw(1, 10, "User");
-        controller.resetPassword("test", "test");
-        controller.deposit(1, 120, "user");
-        controller.getSkelAccts("user");
-        */
-        // List of Message objects
-        //List<Message> messages = new ArrayList<>();
-       // messages.add(new Message("This is a test message!"));
-        
-        //System.out.println("Closing socket");
-        //socket.close();
     }
     
     public Message login(String username, String password) throws IOException, ClassNotFoundException { // Called from ClientController
@@ -160,11 +132,11 @@ public class Client {
     	
     }
     
-	public AccountMessage createAccount(String user, AcctType acctType) throws ClassNotFoundException, IOException{ // TODO: swap this w/ actual account type
+	public int createAccount(String user, AcctType acctType) throws ClassNotFoundException, IOException{ // TODO: swap this w/ actual account type
     	out.writeObject(new CreateAccountMessage(msgType.ACCOUNT_CREATE,Status.IN_PROGRESS,user,acctType));
     	out.flush();
-    	AccountMessage msg = (AccountMessage) in.readObject();
-    	return msg;
+    	AccountsRequestMessage msg = (AccountsRequestMessage) in.readObject();
+    	return msg.getID();
     }
 	
 	public boolean closeAccount(int acctID) throws ClassNotFoundException, IOException{
@@ -219,13 +191,13 @@ public class Client {
 		
 		Transaction outgoing = new Transaction(transCount, user, amt, TranType.TRANSFER);
 		Transaction incoming = new Transaction(transCount, user, amt, TranType.TRANSFER);
-		// TODO: When transferring, do we want both updated balances, or just where we're making the transfer from?
-		TransactionMessage w = withdraw(outgoingAcctID,outgoing);
-		// We could have this be returned in a list, idk
-		if (w.getStatus() == Status.ERROR) { // If withdrawing comes up with an error
-			return w;  // Don't deposit, return
-		}
 		TransactionMessage d = deposit(incomingAcctID,incoming);
+		
+		// We could have this be returned in a list, idk
+		if (d.getStatus() == Status.ERROR) { // If withdrawing comes up with an error
+			return d;  // Don't deposit, return
+		}TransactionMessage w = withdraw(outgoingAcctID,outgoing);
+		
 		return w;
 	}
 	

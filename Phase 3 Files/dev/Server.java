@@ -143,7 +143,7 @@ class Server {
 					}
 					if (type == msgType.WITHDRAWAL_REQUEST) {
 						TransactionMessage tMsg = (TransactionMessage) msg;
-						TransactionMessage withdraw = server.withdraw(tMsg.getID(), tMsg.getTransaction(), user);
+						TransactionMessage withdraw = server.withdraw(tMsg.getID(), tMsg.getTransaction(), tMsg.getTransaction().getUser());
 						// We will send back a transaction message
 						out.writeObject(withdraw);
 						out.flush();
@@ -151,7 +151,7 @@ class Server {
 					if (type == msgType.DEPOSIT_REQUEST) {
 						TransactionMessage tMsg = (TransactionMessage) msg;
 						// We'll call the arguments
-						TransactionMessage sendback = server.deposit(tMsg.getID(), tMsg.getTransaction());
+						TransactionMessage sendback = server.deposit(tMsg.getID(), tMsg.getTransaction(), tMsg.getTransaction().getUser());
 						out.writeObject(sendback);
 						out.flush();
 						
@@ -183,7 +183,7 @@ class Server {
 					}
 					if (type == msgType.ACCOUNT_CREATE) {
 						CreateAccountMessage aMsg =(CreateAccountMessage) msg; 
-						AccountMessage acct = (AccountMessage) server.createAcct(aMsg.getUser(), aMsg.getAcctType());
+						AccountsRequestMessage acct = (AccountsRequestMessage) server.createAcct(aMsg.getUser(), aMsg.getAcctType());
 						out.writeObject(acct);
 						out.flush();
 						
@@ -281,6 +281,7 @@ class Server {
 				server.logout(user);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
+				
 			}
 			finally {
 				try {
@@ -336,29 +337,40 @@ class Server {
 	}
 	
 	public TransactionMessage withdraw(int acctID, Transaction trans, String username) {
-		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
+		// This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
-		// For now, we will assume they have enough funds
 		BankAcct acct = db.getAccount(acctID);
-		if (acct == null) { // If there is no account under this ID.
+		User user = db.getUser(username);
+
+		if (acct == null || user == null) { // If there is no account under this ID.
 			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
 		}
-		User user = db.getUser(username);
-		// If the user trying this transaction is not a teller or the owner/authorized user
-		
+		// If the user trying this transaction is not the owner/authorized user
+		if(!user.getAuthAcctIDs().contains(acct.getAcctID())) {
+			System.out.println("User not authorized to make account");
+			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
+			return msg; // Return an error message
+		}
 		TransactionMessage temp = acct.withdraw(trans);
+		System.out.println("Withdrawal made");
 		db.addTransaction(acctID, trans);
 		return temp;
 	}
 	
-	public TransactionMessage deposit(int acctID, Transaction trans) {
-		// TODO: This is where accounts is called using these params, which will send back a TransactionMessage 
+	public TransactionMessage deposit(int acctID, Transaction trans, String username) {
+		// This is where accounts is called using these params, which will send back a TransactionMessage 
 		// (since we need both the updated balance, and whether or not this is a success)
-		// For now, we will assume they don't have enough funds
 		BankAcct acct = db.getAccount(acctID);
-		if (acct == null) { // If there is no account under this ID.
-			TransactionMessage msg = new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.ERROR,trans, acctID);
+		User user = db.getUser(username);
+
+		if (acct == null || user == null) { // If there is no account under this ID.
+			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
+			return msg; // Return an error message
+		}
+		// If the user trying this transaction is not the owner/authorized user
+		if(!user.getAuthAcctIDs().contains(acct.getAcctID())) {
+			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
 		}
 		TransactionMessage temp = acct.deposit(trans);
@@ -395,18 +407,18 @@ class Server {
 	}
 	
 	
-	public AccountMessage createAcct(String user, AcctType acctType) { // This will return a  acct back to user
+	public AccountsRequestMessage createAcct(String user, AcctType acctType) { // This will return a  acct back to user
 		// TODO: This will call accounts to create an account with these details, also automatically assinging the account to the user
 		// Call create account, returned is a skeleton acct msg
 		User u = db.getUser(user);
 		if (u == null) { // If the user was not found, we're going to return an error.
-			AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.ERROR,null);
+			AccountsRequestMessage msg = new AccountsRequestMessage(msgType.ACCOUNT_CREATE,Status.ERROR,-1);
 			return msg;
 		}
 		BankAcct acct = new BankAcct(acctType, u, db.getBankCount());
 		db.addAccount(acct);
 		System.out.println("Created account");
-		AccountMessage msg = new AccountMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct);
+		AccountsRequestMessage msg = new AccountsRequestMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct.getAcctID());
 		return msg;
 	}
 	
