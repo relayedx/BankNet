@@ -58,7 +58,7 @@ public class DatabaseManager {
 		
 		/* LOADS ALL USERS FROM A FILE */
 		File allUsersFile = new File(usersFile);	// open allUsers file
-		System.out.println(allUsersFile.exists());
+
 		/// loads all the contents of the files into this ArrayList of ArrayLists
 			// each ArrayList in the main ArrayList has a line's worth of data fields in it
 		ArrayList<ArrayList<String>> allUsersData = loadFile(allUsersFile, defaultDelimiter);
@@ -67,19 +67,17 @@ public class DatabaseManager {
 		for (int i = 0; i < allUsersData.size(); i++) {
 			/// AllUsers.txt format: username|password|isTeller|authorizedAcctIDs (id_1,id_2)
 				// ex. fwaffycafecat|balls123|false|1,3,4,20
-			
-			System.out.println("User " + i);
-			
+						
 			// the current data line (<-- reference point)
 			ArrayList<String> userArrayList = allUsersData.get(i);
 			
 			/// grabs each field and parses them properly into their data formats
 			String username = userArrayList.get(0);
-			System.out.println("Username: " + username);
+
 			String password = userArrayList.get(1);
-			System.out.println("Password: " + password);
+
 			boolean isTeller = Boolean.parseBoolean(userArrayList.get(2));
-			System.out.println("isTeller: " + isTeller);
+
 			String acctIDs = "";
 			
 			// if user has accounts
@@ -88,7 +86,6 @@ public class DatabaseManager {
 				acctIDs = userArrayList.get(3);
 			} // else, acctIDs is empty ("")
 			
-			System.out.println("acctIDs: " + acctIDs);
 			
 			/// turns the String of acctIDs into a List of Integers
 			// makes a local List<Integer>
@@ -109,7 +106,7 @@ public class DatabaseManager {
 			
 			/// extracts the user's User Info from a different file
 			String userInfoFileName = userInfoFolder + username + "_info.txt";
-			System.out.println("\nUser Info File Name: " + userInfoFileName);
+
 			File userInfoFile = new File(userInfoFileName);
 			ArrayList<ArrayList<String>> userData =
 					loadFile(userInfoFile, defaultDelimiter);
@@ -121,19 +118,17 @@ public class DatabaseManager {
 			// grabs each field from the User Info file and parses the date of birth
 				/// [username]_info.txt format: firstName|lastName|address|dob|phoneNum
 			String firstName = userInfoArrayList.get(0);
-			System.out.println("First Name: " + firstName);
+
 			String lastName = userInfoArrayList.get(1);
-			System.out.println("Last Name: " + lastName);
+
 			String address = userInfoArrayList.get(2);
-			System.out.println("Address: " + address);
+
 			// date has to be formatted like this "2023-12-31" for parse to work
 			LocalDate dob = LocalDate.parse(userInfoArrayList.get(3));
-			System.out.println("Date of Birth: " + dob);
+
 			String phoneNum = userInfoArrayList.get(4);
-			System.out.println("Phone Number: " + phoneNum);
-			
-			System.out.println("");
-			
+
+						
 			// turns all the User Info data into a UserInfo object
 			UserInfo info = new UserInfo(firstName, lastName, address, dob, phoneNum);
 			
@@ -159,17 +154,14 @@ public class DatabaseManager {
 			/// AllAccounts.txt format: id|owner|type|balance|credit|availCredit|frozen|closed|dueDate|AuthUsers (authUser1,authUser2)
 				// ex. 0|user0|Checking|10.00|0.00|0.00|false|false|2026-04-22|user1,user2
 			
-			System.out.println("Account " + i);
 			
 			// the current data line (<-- reference point)
 			ArrayList<String> accountArrayList = allAccountsData.get(i);
 			
 			/// grabs each field and parses them properly into their data formats
 			int acctID = Integer.parseInt(accountArrayList.get(0));
-			System.out.println("ID: " + acctID);
 			User owner = getUser(accountArrayList.get(1)); // get User object via username
 			
-			System.out.println("Type: " + accountArrayList.get(2));
 			AcctType type = AcctType.parseAcctType(accountArrayList.get(2));
 			
 			/// turns the String of usernames into a List of Users
@@ -186,11 +178,11 @@ public class DatabaseManager {
 			} // else, authUsers is empty (no elements in List<User>)
 			
 			float balance = Float.parseFloat(accountArrayList.get(3));
-			System.out.println("Balance: " + balance);
+
 			float creditLine = Float.parseFloat(accountArrayList.get(4));
-			System.out.println("Credit Line: " + creditLine);
+
 			float availCredit = Float.parseFloat(accountArrayList.get(5));
-			System.out.println("Available Credit: " + availCredit);
+
 			
 			// date has to be formatted like this "2023-12-31" for parse to work
 			LocalDate dueDate = null;
@@ -198,12 +190,10 @@ public class DatabaseManager {
 			if (type != AcctType.Checking) {
 				dueDate = LocalDate.parse(accountArrayList.get(8));
 			}
-			System.out.println("Due Date: " + dueDate);
 			
 			boolean frozen = Boolean.parseBoolean(accountArrayList.get(6));
-			System.out.println("Frozen: " + frozen);
+			
 			boolean closed = Boolean.parseBoolean(accountArrayList.get(7));
-			System.out.println("Closed: " + closed);
 			
 			/// turns the account's transaction file into a List of Transactions
 			// makes a local List<Transaction>
@@ -211,7 +201,7 @@ public class DatabaseManager {
 			
 			// tries to extract the account's Transaction data from a different file
 			String transactionFileName = transactionFolder + acctID + "_transactions.txt";
-			System.out.println("\nTransaction File Name: " + transactionFileName);
+
 			File transactionFile = new File(transactionFileName);
 			// instantiates ArrayList that will contain all the Transactions in the files
 			// Each Transaction should be an ArrayList that's already had its data separated by a delimiter
@@ -228,21 +218,19 @@ public class DatabaseManager {
 				/// [id]_transactions.txt format: date|user|amt|tranType
 			for (int j = 0; j < transactionData.size(); j++) {
 				
-				System.out.println("\nTransaction " + j);
 				// the current data line (<-- reference point)
 				ArrayList<String> transactionLine = transactionData.get(j);
 				
 				// date has to be formatted like this "2024-12-31T10:15:30" for parse to work
 				int id = Integer.parseInt(transactionLine.get(0));
-				System.out.println("ID: " + id);
+
 				LocalDateTime date = LocalDateTime.parse(transactionLine.get(1));
-				System.out.println("Date: " + date);
+
 				String user = transactionLine.get(2);
-				System.out.println("User: " + user);
+
 				float amt = Float.parseFloat(transactionLine.get(3));
-				System.out.println("Amount: " + amt);
+
 				TranType tranType = TranType.parseTranType(transactionLine.get(4));
-				System.out.println("Type: " + transactionLine.get(4));
 				
 				// turns all the Transaction data into a Transaction object
 				Transaction transaction = new Transaction(id, date, user, amt, tranType);
@@ -261,9 +249,7 @@ public class DatabaseManager {
 			accountsDB.add(account);
 			// keeps track of the current BankAcct id
 			bankCount++;		// might need to alter BankAcct constructor to take in id
-			System.out.println("");
 		}
-		System.out.println("Next Account ID: " + bankCount);
 		
 	}
 	
@@ -283,7 +269,6 @@ public class DatabaseManager {
 			// while there is still content to read
 			while (in.hasNextLine()) {
 				String data = in.nextLine();
-				// System.out.println("Data Line: " + data);
 				
 				// if the content isn't just whitespace
 				if (!data.trim().isEmpty()) {

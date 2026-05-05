@@ -126,7 +126,6 @@ class Server {
 					}
 					// Here, we will never do a command as long as the user is not logged in
 					if (!loggedIn) { // if the user is not logged in
-						System.out.println("ERROR: USER IS NOT LOGGED IN AND INCORRECT MSG SENT");
 						// We will skip the rest of the logic, and wait for our login message
 						continue;
 					}
@@ -307,7 +306,6 @@ class Server {
 		User user = db.getUser(username);
 		if (user != null && password.equals(user.getPassword())) {
 			if (user.getIsLoggedIn()) {  // Is the user currently logged in?
-				System.out.println("User " + username + " is already logged in, returning fail");
 				return new Message(msgType.LOGIN_REQUEST, Status.ERROR); // If yes, then error (no user can be logged in twice)
 			}
 			String role = "";
@@ -348,12 +346,10 @@ class Server {
 		}
 		// If the user trying this transaction is not the owner/authorized user
 		if(!user.getAuthAcctIDs().contains(acct.getAcctID()) && !user.getRole()) {
-			System.out.println("User not authorized to make account");
 			TransactionMessage msg = new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.ERROR,trans, acctID);
 			return msg; // Return an error message
 		}
 		TransactionMessage temp = acct.withdraw(trans);
-		System.out.println("Withdrawal made");
 		db.addTransaction(acctID, trans);
 		return temp;
 	}
@@ -417,7 +413,6 @@ class Server {
 		}
 		BankAcct acct = new BankAcct(acctType, u, db.getBankCount());
 		db.addAccount(acct);
-		System.out.println("Created account");
 		AccountsRequestMessage msg = new AccountsRequestMessage(msgType.ACCOUNT_CREATE,Status.SUCCESS,acct.getAcctID());
 		return msg;
 	}

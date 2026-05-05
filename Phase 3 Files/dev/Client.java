@@ -38,12 +38,8 @@ public class Client {
     	int serverPort = 1234;
     	String serverIP = "localhost";
     	
-        // Scanner sc = new Scanner(System.in); //System.in is a standard input stream.
-        // System.out.println("Enter the port number to connect to: <1234>");
-        int port = serverPort; // sc.nextInt();
-        // sc.nextLine(); // Flushes out the stream to get ready for asking for host address
-        // System.out.println("Enter the host address to connect to: <localhost> ");
-        String host = serverIP; // sc.nextLine();
+        int port = serverPort; 
+        String host = serverIP; 
         
         // Connect to the ServerSocket at host:port
         Socket socket = null;
@@ -62,25 +58,14 @@ public class Client {
     }
     
     public Message login(String username, String password) throws IOException, ClassNotFoundException { // Called from ClientController
-        System.out.println("Sending Login Message Object");
         out.writeObject(new LoginMessage(msgType.LOGIN_REQUEST, Status.IN_PROGRESS, username,password)); // Client makes msg to send to the server
         out.flush(); // Sends the message
 		Message res = (Message) in.readObject(); // We are expecting a message back
 		return res; // sending response from server back to clientController
 		
-		/*if (msg.getType() != msgType.LOGIN_REQUEST) { // If the server sends back anything else other than a login_request
-			return new LoginMessage(msgType.LOGIN_REQUEST, Stat); // Something is wrong, return false.
-		}
-		if (msg.getStatus() == Status.SUCCESS) { // If the login_request is true
-			return true;
-		}else {
-			return false;
-		}
-		*/
     }
     
     public List<Message> getAccts(String user) throws IOException, ClassNotFoundException{ // TODO: Finish this server side this can be for teller
-    	// System.out.println("Sending Skeleton Accts Msgs");
     	out.writeObject(new AccountsRequestMessage(msgType.ACCOUNTS_REQUEST, Status.SUCCESS, user));
     	out.flush();
     	List<Message> msgs = (List<Message>) in.readObject(); // We are expecting the list of their accts
@@ -106,11 +91,9 @@ public class Client {
     }
     
     public TransactionMessage deposit(int acctID, Transaction trans) throws IOException, ClassNotFoundException{
-    	System.out.println("Sending deposit request");
     	out.writeObject(new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.IN_PROGRESS,trans,acctID));
     	out.flush();
     	TransactionMessage msg = (TransactionMessage) in.readObject(); // We're expecting a transaction msf back
-    	System.out.println("Got response back" + msg.getStatus());
     	return msg;
     }
     

@@ -112,7 +112,6 @@ public class ClientController {
 	
 	public AccountMessage getAccount(String acctID) throws ClassNotFoundException, IOException{
 		AccountMessage acct = client.getAccount(acctID);
-		System.out.println(acct.getOwner());
 		return acct;
 	}
 	
