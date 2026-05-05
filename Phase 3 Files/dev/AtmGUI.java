@@ -169,7 +169,6 @@ public class AtmGUI implements RoleBasedGUI {
 			}
 			TransactionMessage res = (TransactionMessage) msg;
 			String updatedBalance = String.format("$%,.2f", res.getUpdatedBalance());
-			JOptionPane.showMessageDialog(frame, updatedBalance);
 			balanceLabel.setText(updatedBalance);		
 		
 		} catch (Exception e) {

@@ -518,6 +518,7 @@ class TellerGUI implements RoleBasedGUI {
 	public void handleDeleteAuthUser() {
 		String strAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID to delete authorized user from:");
 		String username = JOptionPane.showInputDialog(frame, "Enter the username of the requested deleted authorized user:");
+		if (strAcctID.contentEquals("") || username.contentEquals("")) return; // If the field is empty, return
 		int acctID = Integer.parseInt(strAcctID);
 		try {
 			Boolean result = clientController.deleteAuthUser(username, acctID);

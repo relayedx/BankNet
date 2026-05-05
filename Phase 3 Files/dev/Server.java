@@ -276,7 +276,6 @@ class Server {
 
 			}
 			catch (IOException e) {
-				e.printStackTrace();
 				server.logout(user);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
