@@ -58,7 +58,7 @@ public class DatabaseManager {
 		
 		/* LOADS ALL USERS FROM A FILE */
 		File allUsersFile = new File(usersFile);	// open allUsers file
-		
+		System.out.println(allUsersFile.exists());
 		/// loads all the contents of the files into this ArrayList of ArrayLists
 			// each ArrayList in the main ArrayList has a line's worth of data fields in it
 		ArrayList<ArrayList<String>> allUsersData = loadFile(allUsersFile, defaultDelimiter);
@@ -263,7 +263,7 @@ public class DatabaseManager {
 			bankCount++;		// might need to alter BankAcct constructor to take in id
 			System.out.println("");
 		}
-		
+		System.out.println("Next Account ID: " + bankCount);
 		
 	}
 	
@@ -451,7 +451,7 @@ public class DatabaseManager {
 	
 	/* GETS THE NEWEST AVAILABLE ACCOUNT ID FOR NEW ACCOUNTS */
 	public int getBankCount() {
-		return bankCount;
+		return ++bankCount;
 	}
 	
 	/* GETS THE NEWEST AVAILABLE TRANSACTION ID FOR NEW TRANSACTIONS */
@@ -481,14 +481,18 @@ public class DatabaseManager {
 	
 	/* ADDS AN ACCOUNT OBJECT TO THE DATABASE AND RECORDS THE CHANGES TO FILES */
 	public boolean addAccount(BankAcct account) {
-		if (account != null) {
+		User user = getUser(account.getOwner().getUsername());
+		if (account != null || user != null) {
 			// adds the account to the database
 			accountsDB.add(account);
+			// adds the account to the user's authorized accounts
+			user.addAuthAcct(account.getAcctID());
 			// sorts the database by id number
 			accountsDB.sort( (a, b) -> { return -1 * Integer.compare(b.getAcctID(), a.getAcctID()); } );
-			
+		
 			// update account file method
 			writeToAllAccounts();
+			writeToAllUsers();
 			
 			// not sure why a new account would have transactions
 			// but if they do, also saves the transactions to file
@@ -497,8 +501,6 @@ public class DatabaseManager {
 				addTransaction(account.getAcctID(), trans);
 			}
 			
-			// iterates up to an available account id
-			bankCount++;
 			
 			// operation success!
 			return true;

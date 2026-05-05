@@ -21,27 +21,20 @@ class Server {
 		String folderName = Path.of("").toAbsolutePath().getFileName().toString();
 		
 		System.out.println("Current Folder: " + folderName);
-		
+		System.out.println(directory);
 		if (folderName.equals("BankNet")) {
 			directory += "//Phase 3 Files";
 		}
 		
 		db = new DatabaseManager
-				// i changed to // b/c it wasn't working on my mac with \\ :sob: - jerrick
-				// i changed it as well b/c the db package is in Phase 3 Files for me :D - fosa
-<<<<<<< HEAD
-				(System.getProperty("user.dir") + "//db//AllUsers.txt",
-				 System.getProperty("user.dir") + "//db//AllAccounts.txt",
-				 System.getProperty("user.dir") + "//db//Users//",
-				 System.getProperty("user.dir") + "//db//Accounts//");
-=======
 				// i changed it again, does this new thing work for everyone :,D - michelle
 				(directory + "//db//AllUsers.txt",
 				 directory + "//db//AllAccounts.txt",
 				 directory + "//db//Users//",
 				 directory + "//db//Accounts//");
->>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
+		
 		db.loadData();
+
 	}
 	
 	public static void main(String[] args)
@@ -251,7 +244,6 @@ class Server {
 						out.writeObject(transactions);
 						out.flush();
 					}
-<<<<<<< HEAD
 					if (type == msgType.USER_EDIT) {
 						CreateUserMessage aMsg = (CreateUserMessage) msg;
 						boolean updated = server.updateUser(aMsg.getInfo(), aMsg.getUser());
@@ -269,7 +261,6 @@ class Server {
 						out.flush();
 					}
 					
-=======
 					if (type == msgType.TRANSACTION_ID) {
 						String id = Integer.toString(db.getTransCount());
 						if (id != null) { // if so,
@@ -279,7 +270,6 @@ class Server {
 						}
 						out.flush();
 					}
->>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
 					
 					
 				}
@@ -337,9 +327,11 @@ class Server {
 	public boolean logout(String username) { 
 		// I don't know what would cause the logout to return an error...
 		User user = db.getUser(username);
-		
-		user.setIsLoggedIn(false);
-		return true;
+		if (user != null) {
+			user.setIsLoggedIn(false);
+			return true;
+		}
+		return false;
 		
 	}
 	

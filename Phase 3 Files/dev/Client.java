@@ -248,7 +248,6 @@ public class Client {
 		return myTransactions;
 	}
 	
-<<<<<<< HEAD
 	public boolean deleteAuthUser(String user, int acctID) throws ClassNotFoundException, IOException{
 		out.writeObject(new AccountsRequestMessage(msgType.AUTHUSER_DELETE, Status.IN_PROGRESS,user,acctID));
 		out.flush();
@@ -278,7 +277,7 @@ public class Client {
 			return cMsg.getInfo();
 		}
 		return null;
-=======
+	}
 	/* GETS WHAT THE TRANSACTION ID SHOULD BE FOR TRANSACTION REQUEST */
 	public int getTransID() throws ClassNotFoundException, IOException {
 		// request transaction id from server
@@ -290,7 +289,6 @@ public class Client {
 		int transCount = Integer.parseInt(msg.getText());
 		
 		return transCount;
->>>>>>> c80685e (fixed merge conflicts and added consistent id tracking to bank accounts and transactions)
 	}
 }
 
