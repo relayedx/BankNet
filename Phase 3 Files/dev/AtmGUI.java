@@ -26,7 +26,7 @@ public class AtmGUI implements RoleBasedGUI {
 		}
 		frame = new JFrame("Welcome Customer!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1000, 550);
+		frame.setSize(1200, 550);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		
@@ -65,7 +65,12 @@ public class AtmGUI implements RoleBasedGUI {
 	        
 
 	        // Center — balance
-	        JLabel balanceLabel = new JLabel(String.format("$%,.2f", acct.getBalance()));
+	        JLabel balanceLabel = new JLabel();
+	        if (acct.getAcctType() != AcctType.Credit) {
+	        	balanceLabel.setText(String.format("$%,.2f", acct.getBalance()));
+	        }else {
+	        	balanceLabel.setText(String.format("Avail Credit: $%,.2f", acct.getAvailCredit()));
+	        }
 	        balanceLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 	        balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -129,6 +134,7 @@ public class AtmGUI implements RoleBasedGUI {
 		// getting withdrawl amount
 		String input = JOptionPane.showInputDialog(frame, 
 				"Enter amount you'd like to withdraw (see teller if cents needed): ");
+		if (input.contentEquals("") || input == null) return;
 		Float amount = strToFloat(input);
 		
 		if (amount.equals(null)) {
@@ -154,6 +160,7 @@ public class AtmGUI implements RoleBasedGUI {
 		// getting deposit amount
 		String input = JOptionPane.showInputDialog(frame, 
 				"Enter amount you'd like to deposit (see teller if cents needed): ");
+		if (input.contentEquals("") || input == null) return;
 		Float amount = strToFloat(input);
 		
 		if (amount.equals(null)) {
@@ -179,6 +186,7 @@ public class AtmGUI implements RoleBasedGUI {
 	public void handleTransfer(int outgoingAcctID, JLabel balanceLabel, String username) {
 		String input = JOptionPane.showInputDialog(frame, "Enter transfer amount: ");
 		String transferToAcctID = JOptionPane.showInputDialog(frame, "Enter Account ID you'd like to transfer to: ");
+		if (input.contentEquals("") || input == null || transferToAcctID.contentEquals("") || transferToAcctID == null) return;
 		
 		try {
 			Float transferAmt = Float.parseFloat(input);

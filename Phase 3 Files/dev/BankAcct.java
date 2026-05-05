@@ -142,7 +142,7 @@ public class BankAcct {
         	balance = Math.round((balance + trans.getAmount()) * 100) / 100f; // We'll just add onto the balance.
         	availCredit = tempAvailCredit;
         	transactions.add(trans);
-        	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, balance);
+        	return new TransactionMessage(msgType.WITHDRAWAL_REQUEST,Status.SUCCESS, trans, acctID, availCredit);
         }
     }
 
@@ -162,7 +162,7 @@ public class BankAcct {
         	
         }
         transactions.add(trans);
-        return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, balance);
+        return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, availCredit);
     }
     
     public void calculateMonths(LocalDate date, int transCount) { // Used for credit/savings, calculating accured interest
