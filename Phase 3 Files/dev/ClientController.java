@@ -34,7 +34,6 @@ public class ClientController {
 			} else {
 				// this is a customer so we can req for their accounts
 				List<Message> listOfAccts = client.getAccts(username);
-				System.out.println(listOfAccts);
 				currentGUI.closeUI();
 				currentGUI = new AtmGUI(this, listOfAccts,username);
 				currentGUI.launchUI();
@@ -167,6 +166,12 @@ public class ClientController {
 		return client.getUserInfo(user);
 	}
 	
+	public void refreshATM(String user) throws ClassNotFoundException, IOException{
+		List<Message> listOfAccts = client.getAccts(user);
+		currentGUI.closeUI();
+		currentGUI = new AtmGUI(this, listOfAccts,user);
+		currentGUI.launchUI();
+	}
 	
 	
 }

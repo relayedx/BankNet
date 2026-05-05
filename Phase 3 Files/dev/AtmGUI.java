@@ -139,6 +139,10 @@ public class AtmGUI implements RoleBasedGUI {
 		try {
 			Message msg = clientController.withdraw(acctID, amount, username);
 			TransactionMessage res = (TransactionMessage) msg;
+			if (msg.getStatus() != Status.SUCCESS) {
+				JOptionPane.showMessageDialog(frame, "error occured, see teller");
+				return;
+			}
 			String updatedBalance = String.format("$%,.2f", res.getUpdatedBalance());
 			balanceLabel.setText(updatedBalance);	
 		} catch (Exception e) {
@@ -159,10 +163,15 @@ public class AtmGUI implements RoleBasedGUI {
 		// initiate command via clientController
 		try {
 			Message msg = clientController.deposit(acctID, amount, username);
+			if (msg.getStatus() != Status.SUCCESS) {
+				JOptionPane.showMessageDialog(frame, "error occured, see teller");
+				return;
+			}
 			TransactionMessage res = (TransactionMessage) msg;
 			String updatedBalance = String.format("$%,.2f", res.getUpdatedBalance());
 			JOptionPane.showMessageDialog(frame, updatedBalance);
 			balanceLabel.setText(updatedBalance);		
+		
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame, "error occured, see teller");
 		}
@@ -177,8 +186,8 @@ public class AtmGUI implements RoleBasedGUI {
 			int incomingAcctID = Integer.parseInt(transferToAcctID);
 			TransactionMessage res = clientController.transfer(outgoingAcctID, incomingAcctID, transferAmt, username);
 			if (res.getStatus() == Status.SUCCESS) {
-				String updatedBalance = String.valueOf(res.getUpdatedBalance());
-				balanceLabel.setText("$" + updatedBalance);
+				clientController.refreshATM(user);
+		
 			}else {
 				JOptionPane.showMessageDialog(frame, "Transfer could not be made, check account IDs");
 			}
