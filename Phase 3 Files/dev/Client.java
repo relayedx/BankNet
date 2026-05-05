@@ -36,7 +36,7 @@ public class Client {
     	
     	// automatically connects the client to the server
     	int serverPort = 5512;
-    	String serverIP = "134.154.64.106";
+    	String serverIP = "localhost";
     	
         int port = serverPort; 
         String host = serverIP; 

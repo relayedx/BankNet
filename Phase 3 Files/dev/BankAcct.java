@@ -159,6 +159,7 @@ public class BankAcct {
         }else {
         	balance = Math.round((balance - trans.getAmount()) * 100) / 100.0f;
         	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
+        	transactions.add(trans);
         	return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, availCredit);
         	
         }

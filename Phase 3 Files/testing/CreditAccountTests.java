@@ -75,7 +75,7 @@ public class CreditAccountTests {
 	@Test
 	@DisplayName("Deposit Test")
 	public void deposit() {
-		Transaction trans1 = new Transaction(2, "User", 10.35f, TranType.DEPOSIT);
+		Transaction trans1 = new Transaction(2, "jerrick", 10.35f, TranType.DEPOSIT);
 		for (int i = 0; i < 9; i ++) {
 			testAcct.deposit(trans1);
 		}
