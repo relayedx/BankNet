@@ -45,7 +45,7 @@ class Server {
 		try {
 
 			// server is listening on port 1234
-			server = new ServerSocket(1234);
+			server = new ServerSocket(5512);
 			server.setReuseAddress(true);
 			var pool = Executors.newFixedThreadPool(20);
 			// running infinite loop for getting

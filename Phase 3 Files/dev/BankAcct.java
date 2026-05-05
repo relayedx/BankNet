@@ -159,10 +159,11 @@ public class BankAcct {
         }else {
         	balance = Math.round((balance - trans.getAmount()) * 100) / 100.0f;
         	availCredit = Math.round((availCredit + trans.getAmount()) * 100) / 100.0f;
+        	return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, availCredit);
         	
         }
         transactions.add(trans);
-        return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, availCredit);
+        return new TransactionMessage(msgType.DEPOSIT_REQUEST,Status.SUCCESS, trans, acctID, balance);
     }
     
     public void calculateMonths(LocalDate date, int transCount) { // Used for credit/savings, calculating accured interest

@@ -35,8 +35,8 @@ public class Client {
     	CountDownLatch latch = new CountDownLatch(1);
     	
     	// automatically connects the client to the server
-    	int serverPort = 1234;
-    	String serverIP = "localhost";
+    	int serverPort = 5512;
+    	String serverIP = "134.154.64.106";
     	
         int port = serverPort; 
         String host = serverIP; 
@@ -44,7 +44,7 @@ public class Client {
         // Connect to the ServerSocket at host:port
         Socket socket = null;
         try {
-        	socket = new Socket(host, port);
+        	socket = new Socket(serverIP, port);
         	System.out.println("Connected to " + host + ":" + port);
         } catch (IOException e) {
             System.err.println("Failed to connect to " + host + ":" + port);
