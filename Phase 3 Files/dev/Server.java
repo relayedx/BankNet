@@ -21,7 +21,6 @@ class Server {
 		String folderName = Path.of("").toAbsolutePath().getFileName().toString();
 		
 		System.out.println("Current Folder: " + folderName);
-		System.out.println(directory);
 		if (folderName.equals("BankNet")) {
 			directory += "//Phase 3 Files";
 		}

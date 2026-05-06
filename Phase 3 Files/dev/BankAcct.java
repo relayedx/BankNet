@@ -37,7 +37,7 @@ public class BankAcct {
 		this.transactions = trans;
 	}
     
-    public BankAcct(int acctID, AcctType type, User owner, float balance,
+    /* public BankAcct(int acctID, AcctType type, User owner, float balance,
     		boolean frozen, boolean closed, String dueDate, List<User> authUsers, List<Transaction> transactions) { // from server loadAccounts
     	this.acctID = acctID;
     	this.owner = owner;
@@ -54,7 +54,7 @@ public class BankAcct {
     	this.closed = closed;
         this.transactions = new ArrayList<Transaction>(transactions);
         this.authUser = new ArrayList<>(authUsers);
-    }
+    } */
     
     public BankAcct(AcctType type, User owner, int id) { // When a user opens an account
     	this.acctID = id;	// gets id from database
