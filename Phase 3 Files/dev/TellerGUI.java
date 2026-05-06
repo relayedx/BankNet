@@ -38,11 +38,11 @@ class TellerGUI implements RoleBasedGUI {
 		JButton depositBtn = new JButton("Deposit");
 		JButton freezeAcctBtn = new JButton("Freeze Acct");
 		JButton closeAcctBtn = new JButton("Close Acct");
-		JButton addAuthUserBtn = new JButton("add Authorized User");
+		JButton addAuthUserBtn = new JButton("Add Authorized User");
 		JButton delAuthUserBtn = new JButton("Delete Authorized User");
 		JButton viewTransactionsBtn = new JButton("View Transactions");
 		JButton updateUserInfoBtn = new JButton("Update User Info");
-		JButton logoutBtn = new JButton("logout");
+		JButton logoutBtn = new JButton("Logout");
 		
 		// adding action listeners for buttons
 		createUserBtn.addActionListener(e -> handleCreateUser());
