@@ -5,7 +5,7 @@ the format for how the data is parsed being:
 username|password|isTeller|authorizedAccts
 - isTeller is just a place holder for "true" or "false" representing whether that user is a teller or not and if they do happen to be a teller
 you can just have "0" be the place holder for authorizedAccts as all accounts have unique ID's that start at 1
-- To use this application start the server by running the server.java file and upon a successful server being ran clients can now connect!
+- To use this application start the server by running the server.java file and upon a successful server being running clients can now connect!
 - To connect from the client end, start the client.java file and make sure you either have the ip of the server that is running hard coded
 or prompt for user input.
 - Upon a successful connection a GUI will pop up being the login interface where both tellers and customers can log in
